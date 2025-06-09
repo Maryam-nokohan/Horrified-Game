@@ -5,90 +5,121 @@
 #include "../include/Dice.hpp"
 #include "../include/Game.hpp"
 #include "../include/Location.hpp"
+#include "../include/Dracula.hpp"
+#include "../include/invisible.hpp"
+#include "../include/ErrorHandler.hpp"
 #include <iostream>
 #include "algorithm"
 #include <random>
 #include <ftxui/component/component.hpp>
 #include <ftxui/component/screen_interactive.hpp>
 #include <ftxui/dom/elements.hpp>
+#include "../include/Terminal.hpp"
 #include <memory>
-using namespace ftxui;
-void Game ::SetUpGame()
-{
-    InitializeCards();
-    // InitializeCharacters();
-    InitializeItem();
-}
-Game ::Game() : terrorLevel(0), heroPlayer(nullptr), GameOver(false)
-{
-    SetUpGame();
-}
-Game ::~Game() {};
 
 void Game ::InitializeLocations()
 {
+    //fix
+    mapPlan.addLocation("Cave", 0, 0);
+    mapPlan.addLocation("Camp", 1, 0);
+    mapPlan.addLocation("Precinct", 2, 0);
+    mapPlan.addLocation("Inn", 3, 0);
+    mapPlan.addLocation("Barn", 4, 0);
+    mapPlan.addLocation("Dungeon", 5, 0);
+    mapPlan.addLocation("Tower", 6, 0);
+    mapPlan.addLocation("Docks", 7, 0);
+    mapPlan.addLocation("Institute", 9, 0);
+    mapPlan.addLocation("Laboratory", 10, 0);
+    mapPlan.addLocation("Graveyard", 11, 0);
+    mapPlan.addLocation("Church", 12, 0);
+    mapPlan.addLocation("Shop", 13, 0);
+    mapPlan.addLocation("Hospital", 14, 0);
+    mapPlan.addLocation("Museum", 15, 0);
+    mapPlan.addLocation("Abbey", 16, 0);
+    mapPlan.addLocation("Mansion", 17, 0);
+    mapPlan.addLocation("Theater", 19, 0);
+    mapPlan.addLocation("Crypt", 20, 0);
+    
+    
+    
     mapPlan.addEdge("Cave", "Camp");
+    
     mapPlan.addEdge("Camp", "Precinct");
+    
     mapPlan.addEdge("Precinct", "Inn");
-    mapPlan.addEdge("Inn", "Barn");
-    mapPlan.addEdge("Barn", "Dungeon");
-
-    mapPlan.addEdge("Dungeon", "Tower");
-    mapPlan.addEdge("Tower", "Docks");
-    mapPlan.addEdge("Docks", "Waterfront");
-    mapPlan.addEdge("Waterfront", "Institute");
-
-    mapPlan.addEdge("Institute", "Laboratory");
-    mapPlan.addEdge("Laboratory", "Graveyard");
-    mapPlan.addEdge("Graveyard", "Church");
-    mapPlan.addEdge("Church", "Shop");
-    mapPlan.addEdge("Shop", "Hospital");
-    mapPlan.addEdge("Hospital", "Museum");
-    mapPlan.addEdge("Museum", "Abbey");
-    mapPlan.addEdge("Abbey", "Mansion");
-    mapPlan.addEdge("Mansion", "Lagoon");
-    mapPlan.addEdge("Lagoon", "Camp");
-
-    mapPlan.addEdge("Theater", "Precinct");
-    mapPlan.addEdge("Theater", "Station");
+    
+    mapPlan.addEdge("Precinct", "Theater");
+    
+    mapPlan.addEdge("Precinct", "Mansion");
+    
+    mapPlan.addEdge("Inn", "Theater");
+    
+    mapPlan.addEdge("Inn", "Camp");
+    
+    mapPlan.addEdge("Inn", "Mansion");
+    
+    mapPlan.addEdge("Barn", "Theater");
+    
     mapPlan.addEdge("Theater", "Tower");
-
-    mapPlan.addEdge("Shop", "Theater");
-    mapPlan.addEdge("Station", "Graveyard");
-    mapPlan.addEdge("Station", "Museum");
-
-    mapPlan.addEdge("Church", "Hospital");
+    
+    mapPlan.addEdge("Dungeon", "Tower");
+    
+    mapPlan.addEdge("Tower", "Docks");
+    
+    mapPlan.addEdge("Institute", "Laboratory");
+    
+    mapPlan.addEdge("Laboratory", "Shop");
+    
+    mapPlan.addEdge("Graveyard", "Church");
+    
+    mapPlan.addEdge("Church", "Shop");
+    
+    mapPlan.addEdge("Shop" , "Theater");
+    
+    mapPlan.addEdge("Shop" ,"Mansion");
+    
+    mapPlan.addEdge("Shop" , "Museum");
+    
+    mapPlan.addEdge("Church" , "Hospital");
+    
+    mapPlan.addEdge("Church" , "Mansion");
+    
+    mapPlan.addEdge("Museum" , "Mansion");
+    
+    mapPlan.addEdge("Museum" , "Church");
+    
+    mapPlan.addEdge("Abbey", "Mansion");
+    
+    mapPlan.addEdge("Abbey" , "Crypt");
+    
+    mapPlan.addEdge("Mansion" , "Camp");
+    
+    
 }
 void Game::ShowMapRoad() const
 {
-    std::vector<Element> lines;
-
-    for (const auto &[name, loc] : mapPlan.getLocations())
+    using namespace ftxui;
+    
+    std::cout << "Map Plan:\n";
+    for(auto & c : mapPlan.getLocations())
     {
-        std::string line = name + " -> ";
-
-        for (const auto &neighbor : loc->GetNeighbors())
+        std :: cout <<"City : " << c.first <<"\n";
+        std :: cout << "is connected to : ";
+        for(auto & nei : c.second->GetNeighbors())
         {
-            line += neighbor->GetName() + ", ";
+            std :: cout << nei->GetCityName()<< " and , ";
         }
-
-        if (!loc->GetNeighbors().empty())
-        {
-            line.pop_back();
-            line.pop_back();
-        }
-
-        lines.push_back(text(line));
+       std ::  cout << '\n';
     }
-
-    auto document = vbox(std::move(lines)) | border | center;
-
-    auto screen = ScreenInteractive::TerminalOutput();
-    screen.Loop(Container::Vertical({Renderer([=]
-                                              { return document; })}));
+    
 }
+void Game ::InitializeItem() {
 
-void Game ::InitializeItem() {}
+    //Add all item like this :
+    Items.push_back(Item(ItemColor::Yellow , 2 , "Docks"));
+
+
+}
 void Game ::InitializeCards()
 {
     // Perk Card
@@ -147,3 +178,77 @@ void Game ::InitializeCards()
     }
     std ::shuffle(MonsterDeck.begin(), MonsterDeck.end(), std ::mt19937(std ::random_device()()));
 }
+void Game :: InitializeCharacters()
+{
+    //villager
+    //Hero :
+    heroes.push_back(std :: make_unique<Mayor>());
+    heroes.push_back(std :: make_unique<Archaeologist>());
+    //monster
+    Monsters.push_back(std :: make_unique<Dracula>());
+    Monsters.push_back(std :: make_unique<InvisibleMan>());
+}
+void Game::GameStart() {
+    ShowInTerminal MyTerminal;
+
+    int StartMenuSelected = MyTerminal.MenuGenerator(std::vector<std::string>{"Start", "Exit"});
+    std::string p1, p2;
+    std::string last1, last2;
+
+    switch (StartMenuSelected) {
+    case 0:{  
+        std::cout << "========== Welcome to HORRIFIED ==========\n";
+        std::cout << "What's Your Name Player 1? ";
+        std::getline(std::cin, p1);
+        CheckString(p1);
+        std::cout << "When was the last time that you ate garlic " << p1 << "? (Ex: 2 days ago, 2 months ago, ...): ";
+        std::getline(std::cin, last1);
+        CheckFloat(last1);
+
+        std::cout << "What's Your Name Player 2? ";
+        std::getline(std::cin, p2);
+        CheckString(p2);
+        std::cout << "When was the last time that you ate garlic " << p2 << "? (Ex: 2 days ago, 2 months ago, ...): ";
+        std::getline(std::cin, last2);
+        CheckFloat(last2);
+
+        if (last1 > last2)
+            std::cout << p2 << " You can choose a hero: \n"; 
+        else
+            std::cout << p1 << " You can choose a hero: \n";
+
+        int HeroChoose = MyTerminal.MenuGenerator(std::vector<std::string>{"Mayor", "Archaeologist"});
+        switch (HeroChoose) {
+        case 0: 
+            heroPlayer = std::make_unique<Mayor>();  
+            break;
+        case 1: 
+            heroPlayer = std::make_unique<Archaeologist>();  
+            break;
+        default:
+            break;
+        }
+        break;  
+    }
+    case 1:  
+        std::cout << "Logging Out ...\n";
+        exit(0);  
+        break;
+
+    default:
+        break;
+    }
+}
+
+void Game ::SetUpGame()
+{
+    InitializeLocations();
+    InitializeCards();
+    InitializeCharacters();
+    InitializeItem();
+}
+Game ::Game() : terrorLevel(0), heroPlayer(nullptr), GameOver(false)
+{
+    SetUpGame();
+}
+Game ::~Game() {};
