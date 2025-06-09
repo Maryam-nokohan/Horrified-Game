@@ -1,7 +1,9 @@
 #include "../include/Location.hpp"
 #include "../include/Map.hpp"
-#include "../include/Location.hpp"
+#include <stdexcept>
+#include <iostream>
 #include <memory>
+#include <random>
 using namespace std;
 Map ::Map(){}
 void Map ::addLocation(const std::string &name, int x, int y)
@@ -26,4 +28,30 @@ void Map ::addEdge(const std::string &from, const std::string &to)
 const std::unordered_map<std::string, std::unique_ptr<Location>>&  Map ::getLocations() const
 {
     return MapPlan;
+}
+
+
+std :: string Map :: GetRandomLocation()const{
+    if(MapPlan.empty()) throw std :: runtime_error("Map is empty \n");
+    std :: vector <std :: string > keys;
+    for(const auto & pair : MapPlan)
+    {
+        keys.push_back(pair.first);
+    }
+    std :: random_device rd;
+    std :: mt19937 gen ( rd());
+    std :: uniform_int_distribution<>dist(0 , keys.size()-1);
+    return keys[dist(gen)];
+
+}
+ const Location * Map :: GetLocationptr(const std :: string & name)const {
+    auto it = MapPlan.find(name);
+    if(it != MapPlan.end())
+    return it->second.get();
+    else
+    return nullptr;
+}
+Location & Map :: GetLocation(const std :: string & name){
+    return *MapPlan.at(name);
+
 }
