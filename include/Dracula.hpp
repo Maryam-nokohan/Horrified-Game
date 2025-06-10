@@ -2,8 +2,8 @@
 #define DRACULA_HPP
 #include "../include/Monster.hpp"
 #include <vector> 
+#include <memory>
 class Dracula : public Monster{
-    protected :
     private :
     std :: vector <bool> Coffins;
 
@@ -15,7 +15,5 @@ class Dracula : public Monster{
     bool IsCoffinDestroyed(const int &index)const;
     void DestroyCoffin(const int &index);
     bool AllCoffinDestroyed()const;
-
-
 };
 #endif
