@@ -2,11 +2,12 @@
 #define PERK_HPP
 #include "../include/Card.hpp"
 class PerkCard : public Card{
-    protected :
+    private:
 
     public :
-    PerkCard(const std :: string&name , const std :: string info);
-    void Apply()override;
+    PerkCard(const std :: string & name): Card(name){};
+    void ShowCard()const override;
+    void ApplyEffect()override;
     private :
 };
 #endif

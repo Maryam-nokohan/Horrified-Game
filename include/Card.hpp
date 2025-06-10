@@ -4,13 +4,14 @@
 class Card{
     protected :
     std :: string Name;
-    std :: string Info;
-    
-    private :
     public :
-    Card(const std :: string & name , const std :: string info) : Name(name) , Info(info){}
-    virtual ~Card();
-    virtual void Apply()=0;
+    Card() = default;
+    Card(const std :: string & name );
+    void SetName(const std :: string& );
+    std :: string GetName();
+    virtual ~Card() = default;
+    virtual void ShowCard() const = 0;
+    virtual void ApplyEffect()=0;
 
 };
 #endif
