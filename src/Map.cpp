@@ -10,7 +10,7 @@ void Map ::addLocation(const std::string &name, int x, int y)
 {
     if (MapPlan.find(name) == MapPlan.end())
     {
-        MapPlan[name] = std::make_unique<Location>(name, x, y);
+        MapPlan[name] = std::make_shared<Location>(name, x, y);
     }
 }
 void Map ::addEdge(const std::string &from, const std::string &to)
@@ -20,12 +20,12 @@ void Map ::addEdge(const std::string &from, const std::string &to)
 
     if (it1 != MapPlan.end() && it2 != MapPlan.end())
     {
-        it1->second->AddNeighbor(it2->second.get());
-        it2->second->AddNeighbor(it1->second.get());
+        it1->second->AddNeighbor(it2->second);
+        it2->second->AddNeighbor(it1->second);
     }
 }
 
-const std::unordered_map<std::string, std::unique_ptr<Location>>&  Map ::getLocations() const
+const std::unordered_map<std::string, std::shared_ptr<Location>>&  Map ::getLocations() const
 {
     return MapPlan;
 }
@@ -44,12 +44,12 @@ std :: string Map :: GetRandomLocation()const{
     return keys[dist(gen)];
 
 }
- const Location * Map :: GetLocationptr(const std :: string & name)const {
+  const std :: shared_ptr <Location>& Map :: GetLocationptr(const std :: string & name)const {
     auto it = MapPlan.find(name);
     if(it != MapPlan.end())
-    return it->second.get();
+    return it->second;
     else
-    return nullptr;
+     throw std::out_of_range("Location not found!");
 }
 Location & Map :: GetLocation(const std :: string & name){
     return *MapPlan.at(name);
