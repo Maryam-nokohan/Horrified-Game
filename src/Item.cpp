@@ -1,15 +1,15 @@
 #include "../include/Item.hpp"
-
- Item::Item(ItemColor color, int power, const std::string& location) : 
- color(color) {
+#include "../include/Location.hpp"
+ Item::Item(ItemColor color, int power, const std::string& loc , const std::string& name) : 
+ color(color) , name(name) {
     if(power<=0 || power>10){
         throw std::invalid_argument("Power must be between 1 and 10");
     }
-    if(location.empty()){
+    if(loc.empty()){
         throw std::invalid_argument("Location can't be empty");
     }
     this->power = power;
-    this->location = location ;
+     location=nullptr;
  }
 
 ItemColor Item::getColor() const{
@@ -19,16 +19,16 @@ ItemColor Item::getColor() const{
 int Item::getPower() const{
     return power;
 }
-const std::string& Item::getLocation() const{
+const std::shared_ptr<Location>& Item::getLocation() const{
     return location;
 
     }
-void Item::setLocation(const std::string& newLoc){
-    if(newLoc.empty()){
-        throw std::invalid_argument("New location can't be empty");
-    }
-    location = newLoc ;
-
+const std::string& Item::getName() const{
+    return name;
+}
+void Item::setLocation(const std::shared_ptr<Location>& newLoc){
+    location = newLoc;
+    location->AddItem(shared_from_this());
 }
     bool Item :: operator==(Item item){
         if(item.getColor() == color && item.getLocation() == location  && power == item.getPower())
