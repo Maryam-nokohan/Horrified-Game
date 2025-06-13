@@ -8,24 +8,25 @@
 #include "../include/MonsterCard.hpp"
 #include "../include/Hero.hpp"
 #include "../include/Map.hpp"
+#include "../include/Item.hpp"
 #include "../include/Location.hpp"
 #include "../include/Terminal.hpp"
 #include <vector>
 #include <memory>
 class Game{
-    friend class ShowInTerminal;
     private :
+    ShowInTerminal MyTerminal;
     Map mapPlan;
-    std :: vector <std :: unique_ptr<Hero>> heroes;
-    std :: vector <std :: unique_ptr <Monster>> Monsters;
-    // std :: vector <Villager> villagers;
-    std :: vector <Item> Items;
-
-    std :: vector <std :: unique_ptr<PerkCard>> PerkDeck;
-    std :: vector <std :: unique_ptr< MonsterCard>> MonsterDeck;
+    std :: vector <std :: shared_ptr<Hero>> heroes;
+    std :: vector <std :: shared_ptr <Monster>> Monsters;
+    std :: vector <std :: shared_ptr<Villager>> villagers;
+    std :: vector <std :: shared_ptr <Item>> Items;
+    std :: vector <std :: shared_ptr<PerkCard>> PerkDeck;
+    std :: vector <std :: shared_ptr< MonsterCard>> MonsterDeck;
     int terrorLevel;
-    std :: unique_ptr <Hero> heroPlayer;
+    std :: shared_ptr <Hero>heroPlayer;
     bool GameOver;
+    bool skipMonsterPhase;
     void SetUpGame();
     void InitializeLocations();
     void InitializeItem();
@@ -34,13 +35,16 @@ class Game{
     public :
     void GameStart();
     void ShowMapRoad()const;
+    void LocationOverView();
+    void PlayerGetHit();
+
     Game();
     Game(const Game &) = delete;
     Game & operator=(const Game &) = delete;
     ~Game();
-    // void HeroPhase();
-    // void MonsterPhase();
-    // void CheckGameEnd();
+    void HeroPhase();
+    void MonsterPhase();
+    bool CheckGameEnd();
     // void IncreaseTerrorLevel();
 
 };
