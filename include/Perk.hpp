@@ -6,8 +6,7 @@ class PerkCard : public Card{
 
     public :
     PerkCard(const std :: string & name): Card(name){};
-    void ShowCard()const override;
-    void ApplyEffect()override;
+    std :: string ShowCard()const override;
     private :
 };
 #endif

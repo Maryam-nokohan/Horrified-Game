@@ -10,8 +10,7 @@ class Card{
     void SetName(const std :: string& );
     std :: string GetName();
     virtual ~Card() = default;
-    virtual void ShowCard() const = 0;
-    virtual void ApplyEffect()=0;
+    virtual std :: string ShowCard() const = 0;
 
 };
 #endif

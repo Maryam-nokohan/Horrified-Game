@@ -20,9 +20,8 @@ class MonsterCard : public Card{
     MonsterStrike Strikes;
     public :
     int GetItem()const ;
-    void ShowCard()const override;
+    std :: string ShowCard()const override;
     MonsterCard(const std :: string &name , int item , const std :: string & event , const MonsterStrike& strike);
-    void ApplyEffect() override;
     // void ApplyItemEffect();
     // void ApplyEventEffect();
     // void ApplyStrikeEffect();

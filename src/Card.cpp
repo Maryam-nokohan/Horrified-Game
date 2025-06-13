@@ -6,7 +6,6 @@ Card :: Card(const string & name ){
     SetName(name);
 }
 void Card :: SetName(const string &name){
-    // if(CheckString(name));
     this ->Name = name;
 }
 

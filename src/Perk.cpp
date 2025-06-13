@@ -3,8 +3,7 @@
 #include <iostream>
 #include <string>
 using namespace std;
-void PerkCard::ShowCard() const{
+std :: string PerkCard::ShowCard() const{
     cout << string(10 ,'=') <<"Card" <<string(10 , '=') <<'\n';
     cout << string(10 ,'=') << Name <<string(10 , '=') <<'\n'; 
 }
-void PerkCard ::ApplyEffect(){}

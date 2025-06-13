@@ -9,7 +9,7 @@ MonsterCard :: MonsterCard(const std :: string &name , int item , const std :: s
     this->Event = event;
     this->Strikes = strike;
 }
-void :: MonsterCard :: ShowCard()const{
+std :: string MonsterCard :: ShowCard()const{
     
     cout << string(10 ,'=') <<"Card Info" <<string(10 , '=') <<'\n';
     cout << string(10 ,'=') << Name <<string(10 , '=') <<'\n';
@@ -17,7 +17,6 @@ void :: MonsterCard :: ShowCard()const{
     cout <<"Event :"<<Event <<'\n';
     cout <<"Strike : "<< "Symbol : " <<Strikes.MonsterSymbol <<'|' <<"Move : " << Strikes.MoveNum <<'|'<<"Dice : " <<Strikes.DiceRoll<<'\n';    
 }
-void :: MonsterCard :: ApplyEffect(){}
 // void :: MonsterCard :: ApplyItemEffect();
 // void :: MonsterCard :: ApplyEventEffect();
 // void :: MonsterCard :: ApplyStrikeEffect();
