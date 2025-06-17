@@ -1,12 +1,12 @@
 #ifndef PERK_HPP
 #define PERK_HPP
 #include "../include/Card.hpp"
+class Game;
 class PerkCard : public Card{
-    private:
 
     public :
     PerkCard(const std :: string & name): Card(name){};
-    std :: string ShowCard()const override;
-    private :
-};
+    std :: string GetName();
+    void ApplyEffect(Game&) override;
+    };
 #endif
