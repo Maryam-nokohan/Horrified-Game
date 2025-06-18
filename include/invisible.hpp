@@ -4,16 +4,18 @@
 #include <vector>
 class InvisibleMan : public Monster{
     private :
-    std :: vector <bool> Evidences;
+    std :: vector <std::pair< bool , std :: string>> Evidences;
     
     public :
     InvisibleMan();
     void Move(std :: shared_ptr<Location>) override;
-    void Attack() override;
-    // void StalkUnseen();
-    bool IsEvidenceCollected(const int &index)const;
-    void DestroyEvidence(const int &index);
-    bool AllEvidenceCollected()const;
+    void StalkUnseen(Game& game, int moves);
+     bool IsEvidenceDestroyed(std :: string LocationName);
+    void AddDetroyedEvidence(std :: string LocaitonName);
+    bool CanBeDefeated() override;
+    bool IsTasksLocation(std :: string) override;
+
+  
 
 
 

@@ -7,16 +7,18 @@
 #include <memory>
 class Dracula : public Monster{
     private :
-    std :: vector <bool> Coffins;
+    std :: vector<std:: pair<bool , std :: string>>Table;
 
     public :
     Dracula();
     void Move(std :: shared_ptr<Location>) override;
-    void Attack() override;
     void DarkCharm(std :: shared_ptr<Hero>);
-    void ShowDraculaMat();
-    bool IsCoffinDestroyed(const int &index)const;
-    void DestroyCoffin(const int &index);
-    bool AllCoffinDestroyed()const;
+    // void ShowDraculaMat();
+    bool IsCoffinDestroyed(std :: string LocationName);
+    void AddDetroyedCoffin(std :: string LocaitonName);
+    bool CanBeDefeated() override;
+    bool IsTasksLocation(std :: string);
+
+    
 };
 #endif

@@ -65,6 +65,13 @@ std::vector<std :: shared_ptr< Item>> &Location::GetItems()
 {
     return itemes;
 }
+void Location::ClearItems()
+{
+    for(auto & item : itemes)
+    {
+        RemoveItem(item);
+    }
+}
 // Heros in that location :
 
 void Location ::AddHero(std :: shared_ptr<Hero> HeroName)

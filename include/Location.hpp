@@ -27,6 +27,7 @@ public:
     std :: vector<std:: shared_ptr<Monster>> GetMonsters() const ;
     void AddItem(std :: shared_ptr< Item> ItemName);
     void RemoveItem(std :: shared_ptr< Item> ItemName); 
+    void ClearItems();
     std :: vector<std :: shared_ptr< Item>>& GetItems();
     void AddVillager(std :: shared_ptr<Villager> villagerName);
     void RemoveVillager(std :: shared_ptr<Villager> villagerName);

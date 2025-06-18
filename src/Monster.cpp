@@ -3,6 +3,7 @@
 #include "../include/Item.hpp"
 #include "../include/Location.hpp"
 #include "../include/Map.hpp"
+#include "../include/Game.hpp"
 #include <unordered_map>
 #include <limits>
 #include <algorithm>
@@ -17,6 +18,30 @@ this->FrenzyOrder = frenzyOrder;
 this->HasFrenzy = hasFrenzy;
 }
 
+void Monster ::Attack(Game& game)
+{
+    game.MyTerminal.StylizeTextBoard(Name + " Attacks!");
+    auto  heros = CurrentLocation->GetHero();
+    auto  Villagers = CurrentLocation->GetVillager();
+    if(heros.empty())
+    {
+        if(!Villagers.empty()){
+        CurrentLocation->RemoveVillager(Villagers.back());
+        game.increaseTerrorLevel();
+        }
+        else
+        {
+            game.MyTerminal.StylizeTextBoard("No opponent nearby to attack");
+            game.MyTerminal.ShowPause();
+        }
+    }
+    else
+    {
+       auto HeroToAttack = heros.back();
+       HeroToAttack->PlayerGetHit(game);
+    }
+
+}
 
 std :: string Monster ::GetName () {return Name;}
 int Monster :: GetFrenzyOrder()const{
@@ -44,29 +69,29 @@ if(currLoc)
 }
 }
 
-Location& Monster::FindNearestOpponent(Map& plan, std::shared_ptr<Location> monsterLocation, int monsterMoves) {
-    std::unordered_map<Location*, int> distances;
-    std::unordered_map<Location*, Location*> prev;
-    std::queue<Location*> q;
+const std :: shared_ptr< Location>& Monster::FindNearestOpponent(Map& plan, std::shared_ptr<Location> monsterLocation, int monsterMoves) {
+    std::unordered_map<std :: shared_ptr<Location>, int> distances;
+    std::unordered_map<std :: shared_ptr<Location>, std :: shared_ptr<Location>> prev;
+    std::queue<std :: shared_ptr<Location>> q;
 
     // BFS to calculate distances
-    distances[monsterLocation.get()] = 0;
-    q.push(monsterLocation.get());
+    distances[monsterLocation] = 0;
+    q.push(monsterLocation);
 
     while (!q.empty()) {
-        Location* curr = q.front();
+        std :: shared_ptr<Location> curr = q.front();
         q.pop();
         for (auto& neighbor : curr->GetNeighbors()) {
-            if (distances.find(neighbor.get()) == distances.end()) {
-                distances[neighbor.get()] = distances[curr] + 1;
-                prev[neighbor.get()] = curr;
-                q.push(neighbor.get());
+            if (distances.find(neighbor) == distances.end()) {
+                distances[neighbor] = distances[curr] + 1;
+                prev[neighbor] = curr;
+                q.push(neighbor);
             }
         }
     }
 
     struct OpponentInfo {
-        Location* loc;
+        std :: shared_ptr<Location> loc;
         int dist;
         bool isHero;
     };
@@ -75,7 +100,7 @@ Location& Monster::FindNearestOpponent(Map& plan, std::shared_ptr<Location> mons
     int minDist = std::numeric_limits<int>::max();
 
     for (const auto& [name, locPtr] : plan.getLocations()) {
-        Location* loc = locPtr.get();
+        std :: shared_ptr<Location> loc = locPtr;
         if (distances.find(loc) == distances.end()) continue;
 
         int dist = distances[loc];
@@ -103,7 +128,7 @@ Location& Monster::FindNearestOpponent(Map& plan, std::shared_ptr<Location> mons
         }
     }
 
-    if (candidates.empty()) return *monsterLocation;
+    if (candidates.empty()) return monsterLocation;
 
     // Prefer hero if multiple at same minDist
     std::vector<OpponentInfo> best;
@@ -115,18 +140,18 @@ Location& Monster::FindNearestOpponent(Map& plan, std::shared_ptr<Location> mons
     OpponentInfo chosen = best[rand() % best.size()];
 
     // Build path back to monster
-    std::vector<Location*> path;
-    Location* step = chosen.loc;
-    while (step != monsterLocation.get()) {
+    std::vector<std :: shared_ptr<Location>> path;
+    std :: shared_ptr<Location> step = chosen.loc;
+    while (step->GetCityName() != monsterLocation->GetCityName()) {
         path.push_back(step);
         step = prev[step];
     }
     std::reverse(path.begin(), path.end());
 
     if (path.size() <= static_cast<size_t>(monsterMoves)) {
-        return *chosen.loc;
+        return chosen.loc;
     } else {
-        return *path[monsterMoves - 1];
+        return path[monsterMoves - 1];
     }
 }
 

@@ -15,7 +15,7 @@ class Item :public std :: enable_shared_from_this<Item>
     std :: shared_ptr<Location> CurrentLocation;
 
  public:
-    Item(ItemColor , int , const std::string& , const std::string&);
+    Item(ItemColor , int , std :: shared_ptr<Location>, const std::string& name);
     ItemColor getColor() const;
     int getPower() const;
     const std::shared_ptr<Location>& getLocation() const;

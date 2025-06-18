@@ -21,7 +21,7 @@ public:
     void addEdge(const std::string &from, const std::string &to);
     const std::unordered_map<std::string, std::shared_ptr<Location>>& getLocations() const;
     std :: string GetRandomLocation()const;
-    const std :: shared_ptr<Location>&  GetLocationptr(const std :: string &)const ;
+    const std :: shared_ptr<Location>&  GetLocationptr(const std :: string )const ;
     Location & GetLocation(const std :: string &);
 };
 #endif
