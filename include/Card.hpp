@@ -1,16 +1,16 @@
 #ifndef CARD_HPP
 #define CARD_HPP
 #include <string>
+class Game;
 class Card{
     protected :
     std :: string Name;
-    std :: string Info;
-    
-    private :
     public :
-    Card(const std :: string & name , const std :: string info) : Name(name) , Info(info){}
-    virtual ~Card();
-    virtual void Apply()=0;
-
+    Card() = default;
+    Card(const std :: string & name );
+    virtual void ApplyEffect(Game & )=0;
+    void SetName(const std :: string& );
+    std :: string GetName();
+    virtual ~Card() = default;
 };
 #endif

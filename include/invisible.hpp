@@ -8,9 +8,9 @@ class InvisibleMan : public Monster{
     
     public :
     InvisibleMan();
-    void Power() override;
-    void Move() override;
+    void Move(std :: shared_ptr<Location>) override;
     void Attack() override;
+    // void StalkUnseen();
     bool IsEvidenceCollected(const int &index)const;
     void DestroyEvidence(const int &index);
     bool AllEvidenceCollected()const;

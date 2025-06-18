@@ -1,23 +1,35 @@
 #ifndef MONSTERCARD_HPP
 #define MONSTERCARD_HPP
 #include <string>
-
+#include "../include/Card.hpp"
+#include <memory>
+class Game;
+class Monster;
 struct MonsterStrike
 {
-    char MonsterSymbol;
+    std :: string MonsterSymbol;
     int MoveNum;
     int DiceRoll;
+    MonsterStrike() = default;
+    MonsterStrike(std :: string s , int m , int d) : MonsterSymbol(s) , MoveNum(m) , DiceRoll(d){}
+
 };
 
 
-class Monster{
-    protected :
-    int Item;
+class MonsterCard : public Card{
+    private :
+    int item;
     std :: string Event;
     MonsterStrike Strikes;
     public :
-    private :
-
+    int GetItem()const ;
+    std :: string GetOrderSymbold();
+    int GetMove();
+    int GetDiceRoll();
+    std :: string GetEvent();
+    MonsterCard(const std :: string &name , int item , const std :: string & event , const MonsterStrike& strike);
+    void ApplyEffect(Game &) override;
+    void ApplyMonsterStrike(Game & game , std ::shared_ptr<Monster> monsterName);
 };
 
 #endif

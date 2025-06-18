@@ -1,0 +1,584 @@
+#include "../include/Monster.hpp"
+#include "../include/LocationNames.hpp"
+#include "../include/MonsterCard.hpp"
+#include "../include/Mayor.hpp"
+#include "../include/Archaelogist.hpp"
+#include "../include/Card.hpp"
+#include "../include/Perk.hpp"
+#include "../include/Dice.hpp"
+#include "../include/Game.hpp"
+#include "../include/Location.hpp"
+#include "../include/Dracula.hpp"
+#include "../include/invisible.hpp"
+#include "../include/ErrorHandler.hpp"
+#include "../include/Villager.hpp"
+#include "../include/Names.hpp"
+#include <unordered_set>
+#include <queue>
+#include <iostream>
+#include "algorithm"
+#include <random>
+#include "../include/Terminal.hpp"
+#include <memory>
+namespace ErrorType
+{
+    inline const std ::string String = "string";
+    inline const std ::string Int = "int";
+    inline const std ::string Float = "float";
+}
+using namespace ErrorType;
+using namespace LocationNames;
+using namespace Names;
+
+void Game ::InitializeLocations()
+{
+    mapPlan.addLocation(Cave, 0, 0);
+    mapPlan.addLocation(Camp, 1, 0);
+    mapPlan.addLocation(Precinct, 2, 0);
+    mapPlan.addLocation(Inn, 3, 0);
+    mapPlan.addLocation(Barn, 4, 0);
+    mapPlan.addLocation(Dungeon, 5, 0);
+    mapPlan.addLocation(Tower, 6, 0);
+    mapPlan.addLocation(Docks, 7, 0);
+    mapPlan.addLocation(Institute, 9, 0);
+    mapPlan.addLocation(Laboratory, 10, 0);
+    mapPlan.addLocation(Graveyard, 11, 0);
+    mapPlan.addLocation(Church, 12, 0);
+    mapPlan.addLocation(Shop, 13, 0);
+    mapPlan.addLocation(Hospital, 14, 0);
+    mapPlan.addLocation(Museum, 15, 0);
+    mapPlan.addLocation(Abbey, 16, 0);
+    mapPlan.addLocation(Mansion, 17, 0);
+    mapPlan.addLocation(Theater, 19, 0);
+    mapPlan.addLocation(Crypt, 20, 0);
+
+    mapPlan.addEdge(Cave, Camp);
+
+    mapPlan.addEdge(Camp, Precinct);
+
+    mapPlan.addEdge(Precinct, Inn);
+
+    mapPlan.addEdge(Precinct, Theater);
+
+    mapPlan.addEdge(Precinct, Mansion);
+
+    mapPlan.addEdge(Inn, Theater);
+
+    mapPlan.addEdge(Inn, Camp);
+
+    mapPlan.addEdge(Inn, Mansion);
+
+    mapPlan.addEdge(Barn, Theater);
+
+    mapPlan.addEdge(Theater, Tower);
+
+    mapPlan.addEdge(Dungeon, Tower);
+
+    mapPlan.addEdge(Tower, Docks);
+
+    mapPlan.addEdge(Institute, Laboratory);
+
+    mapPlan.addEdge(Laboratory, Shop);
+
+    mapPlan.addEdge(Graveyard, Church);
+
+    mapPlan.addEdge(Church, Shop);
+
+    mapPlan.addEdge(Shop, Theater);
+
+    mapPlan.addEdge(Shop, Mansion);
+
+    mapPlan.addEdge(Shop, Museum);
+
+    mapPlan.addEdge(Church, Hospital);
+
+    mapPlan.addEdge(Church, Mansion);
+
+    mapPlan.addEdge(Museum, Mansion);
+
+    mapPlan.addEdge(Museum, Church);
+
+    mapPlan.addEdge(Abbey, Mansion);
+
+    mapPlan.addEdge(Abbey, Crypt);
+
+    mapPlan.addEdge(Mansion, Camp);
+}
+void Game ::InitializeItem()
+{
+
+    for (int i = 0; i < 2; i++)
+    {
+
+        Items.push_back(std::make_shared<Item>(ItemColor::Yellow, 2, mapPlan.GetLocationptr(LocationNames::Docks), Flower));
+        Items.push_back(std::make_shared<Item>(ItemColor::Yellow, 3, mapPlan.GetLocationptr(LocationNames::Camp), TarotDeck));
+        Items.push_back(std::make_shared<Item>(ItemColor::Yellow, 2, mapPlan.GetLocationptr(LocationNames::Inn), Garlic));
+        Items.push_back(std::make_shared<Item>(ItemColor::Yellow, 3, mapPlan.GetLocationptr(LocationNames::Mansion), MirroredBox));
+        Items.push_back(std::make_shared<Item>(ItemColor::Yellow, 3, mapPlan.GetLocationptr(LocationNames::Abbey), Stake));
+        Items.push_back(std::make_shared<Item>(ItemColor::Yellow, 4, mapPlan.GetLocationptr(LocationNames::Museum), ScrollOfThoth));
+        Items.push_back(std::make_shared<Item>(ItemColor::Yellow, 3, mapPlan.GetLocationptr(LocationNames::Camp), Violin));
+        Items.push_back(std::make_shared<Item>(ItemColor::Yellow, 3, mapPlan.GetLocationptr(LocationNames::Museum), Tablet));
+        Items.push_back(std::make_shared<Item>(ItemColor::Yellow, 4, mapPlan.GetLocationptr(LocationNames::Camp), Wolfsbane));
+        Items.push_back(std::make_shared<Item>(ItemColor::Yellow, 4, mapPlan.GetLocationptr(LocationNames::Camp), Charm));
+        Items.push_back(std::make_shared<Item>(ItemColor::Red, 2, mapPlan.GetLocationptr(LocationNames::Inn), Dart));
+        Items.push_back(std::make_shared<Item>(ItemColor::Red, 3, mapPlan.GetLocationptr(LocationNames::Mansion), FirePoker));
+        Items.push_back(std::make_shared<Item>(ItemColor::Red, 5, mapPlan.GetLocationptr(LocationNames::Theater), Rapier));
+        Items.push_back(std::make_shared<Item>(ItemColor::Red, 2, mapPlan.GetLocationptr(LocationNames::Graveyard), Shovel));
+        Items.push_back(std::make_shared<Item>(ItemColor::Red, 5, mapPlan.GetLocationptr(LocationNames::Barn), Torch));
+        Items.push_back(std::make_shared<Item>(ItemColor::Red, 4, mapPlan.GetLocationptr(LocationNames::Barn), Pitchfork));
+        Items.push_back(std::make_shared<Item>(ItemColor::Red, 6, mapPlan.GetLocationptr(LocationNames::Barn), Rifle));
+        Items.push_back(std::make_shared<Item>(ItemColor::Red, 6, mapPlan.GetLocationptr(LocationNames::Shop), SilverCane));
+        Items.push_back(std::make_shared<Item>(ItemColor::Red, 3, mapPlan.GetLocationptr(LocationNames::Docks), Knife));
+        Items.push_back(std::make_shared<Item>(ItemColor::Red, 6, mapPlan.GetLocationptr(LocationNames::Precinct), Pistol));
+        Items.push_back(std::make_shared<Item>(ItemColor::Red, 4, mapPlan.GetLocationptr(LocationNames::Shop), BearTrap));
+        Items.push_back(std::make_shared<Item>(ItemColor::Red, 4, mapPlan.GetLocationptr(LocationNames::Institute), Speargun));
+        Items.push_back(std::make_shared<Item>(ItemColor::Blue, 1, mapPlan.GetLocationptr(LocationNames::Institute), AnatomyTest));
+        Items.push_back(std::make_shared<Item>(ItemColor::Blue, 1, mapPlan.GetLocationptr(LocationNames::Laboratory), Contrifuge));
+        Items.push_back(std::make_shared<Item>(ItemColor::Blue, 1, mapPlan.GetLocationptr(LocationNames::Tower), Kite));
+        Items.push_back(std::make_shared<Item>(ItemColor::Blue, 2, mapPlan.GetLocationptr(LocationNames::Tower), Research));
+        Items.push_back(std::make_shared<Item>(ItemColor::Blue, 2, mapPlan.GetLocationptr(LocationNames::Mansion), Telescope));
+        Items.push_back(std::make_shared<Item>(ItemColor::Blue, 2, mapPlan.GetLocationptr(LocationNames::Precinct), Searchlight));
+        Items.push_back(std::make_shared<Item>(ItemColor::Blue, 2, mapPlan.GetLocationptr(LocationNames::Laboratory), Experiment));
+        Items.push_back(std::make_shared<Item>(ItemColor::Blue, 2, mapPlan.GetLocationptr(LocationNames::Institute), Analysis));
+        Items.push_back(std::make_shared<Item>(ItemColor::Blue, 3, mapPlan.GetLocationptr(LocationNames::Institute), Rotenone));
+        Items.push_back(std::make_shared<Item>(ItemColor::Blue, 3, mapPlan.GetLocationptr(LocationNames::Tower), CosmicRayDiffuser));
+        Items.push_back(std::make_shared<Item>(ItemColor::Blue, 3, mapPlan.GetLocationptr(LocationNames::Tower), Nebularium));
+        Items.push_back(std::make_shared<Item>(ItemColor::Blue, 3, mapPlan.GetLocationptr(LocationNames::Inn), MonocaneMixture));
+        Items.push_back(std::make_shared<Item>(ItemColor::Blue, 3, mapPlan.GetLocationptr(LocationNames::Camp), Fossil));
+    }
+    std ::shuffle(Items.begin(), Items.end(), std ::mt19937(std ::random_device()()));
+    // Randomly put 12 cards in map
+    SetRandomItems(12);
+}
+void Game::SetRandomItems(int numberOfItems)
+{
+    for (int i = 0; i < numberOfItems; ++i)
+    {
+        std ::shared_ptr<Item> temp = Items.back();
+        temp->setLocation(temp->getLocation());
+        Items.pop_back();
+    }
+}
+void Game ::InitializeCards()
+{
+    // Perk Card
+    for (int i = 0; i < 3; ++i)
+    {
+        PerkDeck.push_back(std ::shared_ptr<PerkCard>(new PerkCard(VisitFromDetective)));
+    }
+    for (int i = 0; i < 3; ++i)
+    {
+        PerkDeck.push_back(std ::shared_ptr<PerkCard>(new PerkCard(BreakOfDown)));
+    }
+    for (int i = 0; i < 3; ++i)
+    {
+        PerkDeck.push_back(std ::shared_ptr<PerkCard>(new PerkCard(OverStock)));
+    }
+    for (int i = 0; i < 3; ++i)
+    {
+        PerkDeck.push_back(std ::shared_ptr<PerkCard>(new PerkCard(LateIntoTheNight)));
+    }
+    for (int i = 0; i < 3; ++i)
+    {
+        PerkDeck.push_back(std ::shared_ptr<PerkCard>(new PerkCard(Repel)));
+    }
+    for (int i = 0; i < 3; ++i)
+    {
+        PerkDeck.push_back(std ::shared_ptr<PerkCard>(new PerkCard(Hurry)));
+    }
+    std ::shuffle(PerkDeck.begin(), PerkDeck.end(), std ::mt19937(std ::random_device()()));
+    // Monster Card
+    for (int i = 0; i < 3; ++i)
+    {
+        MonsterDeck.push_back(std ::make_shared<MonsterCard>(FromTheBat, 2, "Place Dracula in the hero feild", MonsterStrike("I", 1, 2)));
+    }
+    for (int i = 0; i < 3; ++i)
+    {
+        MonsterDeck.push_back(std ::make_shared<MonsterCard>(Sunrise, 0, "Put Dracula in Crypt", MonsterStrike("I", 1, 2)));
+    }
+    for (int i = 0; i < 2; ++i)
+    {
+        MonsterDeck.push_back(std ::make_shared<MonsterCard>(Thief, 2, "put Invisible man in a location with the most items and remove all the item from that location", MonsterStrike("ID", 1, 3)));
+    }
+    MonsterDeck.push_back(std ::make_shared<MonsterCard>(TheDelivery, 3, "Put Chick and Wilbur in Dock", MonsterStrike("F", 1, 3)));
+    MonsterDeck.push_back(std ::make_shared<MonsterCard>(FortuneTeller, 3, "put maleva in camp", MonsterStrike("F", 1, 2)));
+    MonsterDeck.push_back(std ::make_shared<MonsterCard>(FormerEmployer, 3, "put dr.cranly in Lab", MonsterStrike("IF", 1, 2)));
+    MonsterDeck.push_back(std ::make_shared<MonsterCard>(HurriedAssistant, 3, "put Fritz in Tower", MonsterStrike("D", 2, 3)));
+    MonsterDeck.push_back(std ::make_shared<MonsterCard>(TheInnocent, 3, "put Maria in Barn", MonsterStrike("FDI", 1, 3)));
+    MonsterDeck.push_back(std ::make_shared<MonsterCard>(EgyptianExpert, 3, "put prof.Pearson in cave", MonsterStrike("DF", 2, 2)));
+    MonsterDeck.push_back(std ::make_shared<MonsterCard>(TheIchthyologist, 3, "put dr.Read in Institute", MonsterStrike("F", 1, 2)));
+    for (int i = 0; i < 2; ++i)
+    {
+        MonsterDeck.push_back(std ::make_shared<MonsterCard>(OnTheMove, 3, "give Frenzy to the next Monster and take each villager one move closer to their safe house", MonsterStrike("F", 3, 2)));
+    }
+    for (int i = 0; i < 2; ++i)
+    {
+        MonsterDeck.push_back(std ::make_shared<MonsterCard>(HypnoticGaze, 2, "Closest Villager or Hero getting one move close to monster", MonsterStrike("I", 1, 2)));
+    }
+    std ::shuffle(MonsterDeck.begin(), MonsterDeck.end(), std ::mt19937(std ::random_device()()));
+}
+void Game ::InitializeCharacters()
+{
+
+    // villager:
+    villagers.push_back(std ::make_shared<Villager>(DrCranley, mapPlan.GetLocationptr(Precinct)));
+    villagers.push_back(std ::make_shared<Villager>(DrReed, mapPlan.GetLocationptr(Camp)));
+    villagers.push_back(std ::make_shared<Villager>(ProfPearson, mapPlan.GetLocationptr(Museum)));
+    villagers.push_back(std ::make_shared<Villager>(Maleva, mapPlan.GetLocationptr(Shop)));
+    villagers.push_back(std ::make_shared<Villager>(Fritz, mapPlan.GetLocationptr(Institute)));
+    villagers.push_back(std ::make_shared<Villager>(WilburAndChick, mapPlan.GetLocationptr(Dungeon)));
+    villagers.push_back(std ::make_shared<Villager>(Maria, mapPlan.GetLocationptr(Camp)));
+    // Hero and giving the start perk Card :
+    auto startArchloc = mapPlan.GetLocationptr(Docks);
+    auto startMayorloc = mapPlan.GetLocationptr(Theater);
+    heroes.push_back(std ::make_shared<Mayor>(startMayorloc));
+    heroes[0]->GetPerkCard(PerkDeck.back());
+    PerkDeck.pop_back();
+    heroes.push_back(std ::make_shared<Archaeologist>(startArchloc));
+    heroes[1]->GetPerkCard(PerkDeck.back());
+    PerkDeck.pop_back();
+    // monster
+    Monsters.push_back(std ::make_shared<Dracula>());
+    Monsters.push_back(std ::make_shared<InvisibleMan>());
+    Monsters[0]->SetLocation(mapPlan.GetLocationptr(Crypt));
+    Monsters[1]->SetLocation(mapPlan.GetLocationptr(Laboratory));
+}
+void Game ::SetUpGame()
+{
+    InitializeLocations();
+    InitializeCards();
+    InitializeCharacters();
+    InitializeItem();
+}
+void Game::HeroPhase()
+{
+    MyTerminal.StylizeTextBoard("===========HeroPhase===========");
+    while (heroPlayer->getRemainingActions())
+    {
+        MyTerminal.StylizeTextBoard("Choose an Action " + heroPlayer->getName() + " : ");
+        int selected = MyTerminal.Show(*this, {"Move", "Guid", "Pick up", "Advance", "Defeat", "Special Action", "Use Perks"});
+        // Move
+        if (selected == 0)
+        {
+            MyTerminal.StylizeTextBoard("Select a location to move:");
+            auto neighbors = heroPlayer->getLocation()->GetNeighbors();
+            std::vector<std::string> neighborNames;
+            for (const auto &loc : neighbors)
+                neighborNames.push_back(loc->GetCityName());
+
+            int select = MyTerminal.Show(*this, neighborNames);
+            if (select >= 0 && select < neighbors.size())
+            {
+                auto nextLocation = neighbors[select];
+                auto villagers = heroPlayer->getLocation()->GetVillager();
+
+                if (!villagers.empty())
+                {
+                    MyTerminal.StylizeTextBoard("Would you like to move all the villagers with you?");
+                    int choice = MyTerminal.Show(*this, {"Yes", "No"});
+                    if (choice == 0)
+                    {
+                        for (auto &v : villagers)
+                            v->SetLocation(nextLocation);
+                    }
+                }
+
+                heroPlayer->getLocation()->RemoveHero(heroPlayer);
+                heroPlayer->moveTo(nextLocation);
+            }
+        }
+
+        // Guide
+        else if (selected == 1)
+        {
+            auto currentLoc = heroPlayer->getLocation();
+            auto neighbors = currentLoc->GetNeighbors();
+            std::vector<std::string> guideOptions;
+            std::vector<std::pair<std::shared_ptr<Villager>, std::shared_ptr<Location>>> guideable;
+
+            for (const auto &neighbor : neighbors)
+            {
+                for (const auto &villager : neighbor->GetVillager())
+                {
+                    guideOptions.push_back(villager->getName() + " (at " + neighbor->GetCityName() + ")");
+                    guideable.emplace_back(villager, neighbor);
+                }
+            }
+
+            if (!guideOptions.empty())
+            {
+                int choice = MyTerminal.Show(*this, guideOptions);
+                if (choice >= 0 && choice < guideable.size())
+                {
+                    auto villager = guideable[choice].first;
+                    auto from = guideable[choice].second;
+                    from->RemoveVillager(villager);
+                    villager->moveTo(currentLoc);
+                    currentLoc->AddVillager(villager);
+                    MyTerminal.StylizeTextBoard("You guided " + villager->getName() + " to " + currentLoc->GetCityName() + ".\n");
+                    MyTerminal.ShowPause();
+                }
+            }
+            else
+            {
+                MyTerminal.StylizeTextBoard("No villagers in nearby locations to guide.\n");
+                MyTerminal.ShowPause();
+            }
+        }
+
+        // Pick up
+        else if (selected == 2)
+        {
+            if (!heroPlayer->getLocation()->GetItems().empty())
+            {
+                heroPlayer->pickUpItems();
+                MyTerminal.StylizeTextBoard(heroPlayer->getName() + " Pick up all the Items!");
+                auto invisible = std::dynamic_pointer_cast<InvisibleMan>(Monsters[1]);
+                if (invisible->IsTasksLocation(heroPlayer->getLocation()->GetCityName()))
+                {
+                    MyTerminal.StylizeTextBoard("You pick up one of the evidences in city " + heroPlayer->getLocation()->GetCityName());
+                }
+                MyTerminal.ShowPause();
+            }
+            else
+            {
+                MyTerminal.StylizeTextBoard("Not any Items to pick up");
+                MyTerminal.ShowPause();
+            }
+        }
+
+        // Advance
+        else if (selected == 3)
+        {
+
+            auto city = heroPlayer->getLocation()->GetCityName();
+            auto &inventory = heroPlayer->getInventory();
+            const int requiredPower = 6;
+
+            auto dracula = std::dynamic_pointer_cast<Dracula>(Monsters[0]);
+            auto invisible = std::dynamic_pointer_cast<InvisibleMan>(Monsters[1]);
+            if (!dracula->IsTasksLocation(city) && !(heroPlayer->getLocation()->GetCityName() == Precinct))
+            {
+                MyTerminal.StylizeTextBoard("Nothing can be advanced at this location.");
+                MyTerminal.ShowPause();
+            }
+            // Dracula logic
+            else if (dracula->IsTasksLocation(city))
+            {
+                try
+                {
+                    if (dracula->IsCoffinDestroyed(city))
+                    {
+                        MyTerminal.StylizeTextBoard("You already destroyed the coffin at " + city + ".");
+                        MyTerminal.ShowPause();
+                        continue;
+                    }
+                    else
+                    {
+
+                        std::vector<std::shared_ptr<Item>> redItems;
+                        for (const auto &item : inventory)
+                            if (item->getColor() == ItemColor::Red)
+                                redItems.push_back(item);
+
+                        std::sort(redItems.begin(), redItems.end(), [](auto &a, auto &b)
+                                  { return a->getPower() < b->getPower(); });
+
+                        int total = 0;
+                        std::vector<std::shared_ptr<Item>> usedItems;
+                        for (const auto &item : redItems)
+                        {
+                            if (total >= requiredPower)
+                                break;
+                            total += item->getPower();
+                            usedItems.push_back(item);
+                        }
+
+                        if (total >= requiredPower)
+                        {
+                            for (auto &item : usedItems)
+                                heroPlayer->RemoveItem(item);
+                            dracula->AddDetroyedCoffin(city);
+                            heroPlayer->DecreaseAction();
+                            MyTerminal.StylizeTextBoard("You smashed a Dracula coffin at " + city + "!");
+                        }
+                        else
+                        {
+                            MyTerminal.StylizeTextBoard("Not enough red item power.");
+                        }
+                        MyTerminal.ShowPause();
+                    }
+                }
+                catch (const std::exception &e)
+                {
+                }
+            }
+            // Invisible Man logic
+            else
+            {
+                try
+                {
+                    if (city == Precinct)
+                    {
+
+                        bool Found = false;
+                        for (const auto &item : inventory)
+                        {
+                            auto itemLoc = item->getLocation()->GetCityName();
+                            if (invisible->IsTasksLocation(itemLoc))
+                            {
+                                Found = true;
+                                if (invisible->IsEvidenceDestroyed(itemLoc))
+                                {
+                                    MyTerminal.StylizeTextBoard("You already collected evidence at " + city + ".");
+                                    MyTerminal.ShowPause();
+                                    break;
+                                }
+                                else
+                                {
+                                    heroPlayer->RemoveItem(item);
+                                    invisible->AddDetroyedEvidence(itemLoc);
+                                    heroPlayer->DecreaseAction();
+                                    MyTerminal.StylizeTextBoard("You collected Invisible Man evidence at " + itemLoc + " and put it into " + Precinct);
+                                    MyTerminal.ShowPause();
+                                    break;
+                                }
+                            }
+                        }
+                        if (!Found)
+                        {
+                            MyTerminal.StylizeTextBoard("You don't have any item to put in " + Precinct);
+                            MyTerminal.ShowPause();
+                        }
+                    }
+                }
+                catch (const std::exception &e)
+                {
+                    // Not Invisible Man location
+                }
+            }
+        }
+
+        // Defeat
+        else if (selected == 4)
+        {
+            auto monster = heroPlayer->getLocation()->GetMonsters();
+
+            if (heroPlayer->DefeatAction(monster))
+            {
+                for (const auto &m : monster)
+                {
+                    MyTerminal.StylizeTextBoard("You defeated " + m->GetName());
+                }
+            }
+            else
+                MyTerminal.StylizeTextBoard("Defeat action can't be Done right now");
+            MyTerminal.ShowPause();
+        }
+
+        // Special Action
+        else if (selected == 5)
+        {
+            heroPlayer->specialAction();
+        }
+        else if (selected == 6)
+        {
+            auto perk = heroPlayer->UsePerkCard();
+            perk->ApplyEffect(*this);
+        }
+    }
+}
+void Game::increaseTerrorLevel() { terrorLevel++; }
+void Game::MonsterPhase()
+{
+    MyTerminal.StylizeTextBoard("===========MonsterPhase===========");
+    auto randomCard = MonsterDeck.back();
+    randomCard->ApplyEffect(*this);
+    MonsterDeck.pop_back();
+}
+
+std::vector<std::shared_ptr<Villager>> &Game::getVillagers() { return villagers; }
+Map &Game::getMapPlan() { return mapPlan; }
+void Game::GameStart()
+{
+    // Start Logo:
+    MyTerminal.StylizeTextBoard("===========Welcome to HORRIFIED===========");
+    // Start menue:
+    int StartMenuSelected = MyTerminal.MenuGenerator(std::vector<std::string>{"Start", "Exit"});
+    std::string p1, p2;
+    int lastTime1, lastTime2;
+
+    switch (StartMenuSelected)
+    {
+    case 0:
+    {
+        // Garlic questions :
+        p1 = MyTerminal.GetInput("What's Your Name Player 1? ", String);
+        lastTime1 = stoi(MyTerminal.GetInput("When was the last time that you ate garlic " + p1 + "? (Ex: 2 days): ", Int));
+        p2 = MyTerminal.GetInput("What's Your Name Player 2? ", String);
+        lastTime2 = stoi(MyTerminal.GetInput("When was the last time that you ate garlic " + p2 + "? (Ex: 2 days): ", Int));
+        MyTerminal.Refresh();
+        if (lastTime1 >= lastTime2)
+            MyTerminal.StylizeTextBoard(p2 + " You can choose a hero: \n");
+        else
+            MyTerminal.StylizeTextBoard(p1 + " You can choose a hero: \n");
+
+        int HeroChoose = MyTerminal.MenuGenerator(std::vector<std::string>{"Mayor", "Archaeologist"});
+        switch (HeroChoose)
+        {
+        case 0:
+            heroPlayer = heroes[0];
+            break;
+        case 1:
+            heroPlayer = heroes[1];
+            break;
+        default:
+            break;
+        }
+        break;
+    }
+    case 1:
+        std::cout << "Logging Out ...\n";
+        exit(0);
+        break;
+
+    default:
+        break;
+    }
+    MyTerminal.Refresh();
+    MyTerminal.StylizeTextBoard("=====================(Game Starts...)=====================");
+    MyTerminal.ShowPause();
+    while (!CheckGameEnd())
+    {
+        HeroPhase();
+        if (!skipMonsterPhase)
+        {
+         MonsterPhase();
+        }
+    }
+}
+Game ::Game() : terrorLevel(0), heroPlayer(nullptr), GameOver(false)
+{
+    SetUpGame();
+}
+Game ::~Game() {};
+
+bool Game::CheckGameEnd()
+{
+    if (MonsterDeck.empty() && !Monsters.empty())
+    {
+        MyTerminal.StylizeTextBoard("Mosters Win!\n");
+        GameOver = true;
+    }
+    else if (terrorLevel == 7)
+    {
+        MyTerminal.StylizeTextBoard("Mosters Win!\n");
+        GameOver = true;
+    }
+    else if (Monsters.empty())
+    {
+        MyTerminal.StylizeTextBoard("Heros Win!\n");
+        GameOver = true;
+    }
+    return GameOver;
+}
