@@ -1,9 +1,13 @@
 #include "../include/Dracula.hpp"
 #include "../include/Monster.hpp"
+#include "../include/Game.hpp"
+#include "../include/LocationNames.hpp"
 #include <stdexcept>
 #include <iostream>
+using namespace LocationNames;
+
 //Constructor :
-Dracula :: Dracula() : Monster("Dracula",1,true){Coffins ={false , false , false , false};}
+Dracula :: Dracula() : Monster("Dracula",1,true){Table ={{false ,Crypt} ,{ false ,Cave} , {false,Dungeon} , {false,Graveyard} };}
 //Power:
 void Dracula :: DarkCharm(std :: shared_ptr<Hero> CurrentHero) {
 std :: cout << "Dracula using Dark Charm !!\n";
@@ -23,38 +27,57 @@ void Dracula :: Move(std :: shared_ptr<Location> NearestOppenent) {
     CurrentLocation = NearestOppenent;
     CurrentLocation->AddMonster(shared_from_this());   
 }
-//Attack :
-
-void Dracula :: Attack() {
-    std :: cout << "Dracula Attacks!!\n";
-}
-bool Dracula :: IsCoffinDestroyed(const int &index)const{
-    if(index < 0 || index >=4 ) return false;
-    return Coffins[index];
-    
-}
-void Dracula :: DestroyCoffin(const int &index){
-    if(index >= 0 && index <4 )
-    Coffins[index] = true;
-
-
-}
-bool Dracula :: AllCoffinDestroyed()const{
-    for(const auto & conffin : Coffins)
+//coffins :
+void Dracula::AddDetroyedCoffin( std :: string LocationName)
+{
+    if(!IsCoffinDestroyed(LocationName)){
+    for(auto & coffin : Table)
     {
-        if(!conffin)
+        if(coffin.second == LocationName)
+        coffin.first = true;
+
+    }
+}
+}
+
+bool Dracula ::IsCoffinDestroyed(std :: string locName)
+{
+    for(auto & pair : Table)
+    {
+        if(pair.second == locName)
+        {
+                return pair.first;
+        }
+    }
+    throw std :: invalid_argument("Coffin Not found in this Location!\n");
+}
+bool Dracula :: CanBeDefeated()
+{
+    for(const auto & c : Table)
+    {
+        if(!c.first)
         return false;
+
     }
     return true;
-
 }
-void Dracula:: ShowDraculaMat(){
-    std :: cout << "Dracula Mat : ";
-    for(const auto & coff : Coffins)
+bool Dracula::IsTasksLocation(std :: string LocationName)
+{
+    for(const auto & loc : Table)
     {
-        if(coff)
-        std :: cout << "* " ;
-        else 
-        std :: cout << "-";
+        if(loc.second == LocationName)
+        return true;
     }
+    return false;
 }
+
+// void Dracula:: ShowDraculaMat(){
+//     std :: cout << "Dracula Mat : ";
+//     for(const auto & coff : Table)
+//     {
+//         if(coff)
+//         std :: cout << "* " ;
+//         else 
+//         std :: cout << "-";
+//     }
+// }
