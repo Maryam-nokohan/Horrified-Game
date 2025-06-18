@@ -9,12 +9,10 @@ void Archaeologist::specialAction() {
     if(remainingActions <= 0) return;
 
     std::vector<std :: shared_ptr<Location>> neighbors = currentLocation->GetNeighbors();
-    for(std :: shared_ptr<Location> neighbor : neighbors){
-        std::vector<std :: shared_ptr<Item>>& itemsThere = neighbor->GetItems();
+        std::vector<std :: shared_ptr<Item>>& itemsThere = neighbors[0]->GetItems();
         for(auto item : itemsThere){
             inventory.push_back(item);
         }
         itemsThere.clear();
-    }
     remainingActions--;
 }
