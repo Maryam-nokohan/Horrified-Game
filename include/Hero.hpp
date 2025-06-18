@@ -7,6 +7,7 @@ class Location;
 class Monster;
 class Item;
 class PerkCard;
+class Game;
 
 enum class ActionType
 {
@@ -36,15 +37,21 @@ public:
     void GetPerkCard(std :: shared_ptr<PerkCard>);
     void resetActions();
     void moveTo(std :: shared_ptr<Location>);
+    void PlayerGetHit(Game& game);
     void pickUpItems();
     virtual void specialAction() = 0;
+    virtual bool DefeatAction(std ::vector< std :: shared_ptr<Monster>>);
     void SetLocation(std :: shared_ptr<Location>location);
+    virtual void SetAction(int);
 
     const std::string &getName() const;
     int getRemainingActions() const;
     const std :: shared_ptr<Location> & getLocation() const;
     const std::vector<std :: shared_ptr< Item>> &getInventory() const;
     void RemoveItem(const std :: shared_ptr< Item>);
+    std::shared_ptr<PerkCard> PeekPerkCard() const ;
+    void DecreaseAction();
+
 };
 
 #endif
