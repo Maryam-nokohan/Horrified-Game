@@ -44,7 +44,7 @@ std :: string Map :: GetRandomLocation()const{
     return keys[dist(gen)];
 
 }
-  const std :: shared_ptr <Location>& Map :: GetLocationptr(const std :: string & name)const {
+  const std :: shared_ptr <Location>& Map :: GetLocationptr(const std :: string name)const {
     auto it = MapPlan.find(name);
     if(it != MapPlan.end())
     return it->second;
