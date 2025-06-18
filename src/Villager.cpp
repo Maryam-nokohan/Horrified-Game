@@ -10,6 +10,8 @@ Villager :: Villager(const std :: string Name , std :: shared_ptr<Location> Safe
 Villager::Villager(const std::string& name, std :: shared_ptr<Location> startLocation, std :: shared_ptr<Location> safeLocation) : 
 name(name) , currentLocation(std :: move (startLocation)) , safeLocation(std :: move (safeLocation)), alive(true){}
 
+const std::string & Villager ::getCurrentLocationName()const {return currentLocation->GetCityName(); }
+
 const std::string& Villager::getName() const{
     return name;
 }
