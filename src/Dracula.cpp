@@ -9,19 +9,22 @@ using namespace LocationNames;
 //Constructor :
 Dracula :: Dracula() : Monster("Dracula",1,true){Table ={{false ,Crypt} ,{ false ,Cave} , {false,Dungeon} , {false,Graveyard} };}
 //Power:
-void Dracula :: DarkCharm(std :: shared_ptr<Hero> CurrentHero) {
-std :: cout << "Dracula using Dark Charm !!\n";
-if(CurrentHero->getLocation()->GetCityName() == CurrentLocation->GetCityName())
+void Dracula :: DarkCharm(Game &game) {
+game.MyTerminal.StylizeTextBoard("Dracula using Dark Charm !!");
+if(game.heroPlayer->getLocation()->GetCityName() == CurrentLocation->GetCityName())
 {
-    std :: cout << "Hero Already in Dracula's Location.\n";
+    game.MyTerminal.StylizeTextBoard( "Hero Already in Dracula's Location.");
+    game.MyTerminal.ShowPause();
+    return;
 }
-auto HeroLocation = CurrentHero->getLocation();
-HeroLocation->RemoveHero(CurrentHero);
-CurrentLocation->AddHero(CurrentHero);
+auto HeroLocation = game.heroPlayer->getLocation();
+HeroLocation->RemoveHero(game.heroPlayer);
+CurrentLocation->AddHero(game.heroPlayer);
+game.MyTerminal.StylizeTextBoard(game.heroPlayer->getName() + " moved to dracula spot!");
+game.MyTerminal.ShowPause();
 }
 //Move :
 void Dracula :: Move(std :: shared_ptr<Location> NearestOppenent) {
-    std :: cout << "Dracula Moves toward nearest hero or villager!!\n";
     if(!CurrentLocation) return;
     CurrentLocation->RemoveMonster(shared_from_this());
     CurrentLocation = NearestOppenent;
@@ -70,14 +73,14 @@ bool Dracula::IsTasksLocation(std :: string LocationName)
     }
     return false;
 }
+std :: vector<bool> Dracula::GetCoffinsDestroyed()
+{
+    std::vector<bool> coffins;
+    for(const auto & c : Table)
+    {
+        coffins.push_back(c.first);
+    }
+    return coffins;
+}
 
-// void Dracula:: ShowDraculaMat(){
-//     std :: cout << "Dracula Mat : ";
-//     for(const auto & coff : Table)
-//     {
-//         if(coff)
-//         std :: cout << "* " ;
-//         else 
-//         std :: cout << "-";
-//     }
-// }
+

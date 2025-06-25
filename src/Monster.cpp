@@ -4,6 +4,7 @@
 #include "../include/Location.hpp"
 #include "../include/Map.hpp"
 #include "../include/Game.hpp"
+#include "../include/ErrorHandler.hpp"
 #include <unordered_map>
 #include <limits>
 #include <algorithm>
@@ -11,51 +12,32 @@
 #include <iostream>
 #include <memory>
 #include <string>
-
-Monster ::Monster(const std :: string  name  , int frenzyOrder ,bool hasFrenzy ){
+//Constructor
+Monster ::Monster(const std :: string  name  , int frenzyOrder ,bool hasFrenzy ) :CurrentLocation(nullptr) {
 this->Name = name;
+if(frenzyOrder >=0)
 this->FrenzyOrder = frenzyOrder;
+else 
+throw std :: invalid_argument("frenzy order can't be negative!\n");
 this->HasFrenzy = hasFrenzy;
 }
-
-void Monster ::Attack(Game& game)
-{
-    game.MyTerminal.StylizeTextBoard(Name + " Attacks!");
-    auto  heros = CurrentLocation->GetHero();
-    auto  Villagers = CurrentLocation->GetVillager();
-    if(heros.empty())
-    {
-        if(!Villagers.empty()){
-        CurrentLocation->RemoveVillager(Villagers.back());
-        game.increaseTerrorLevel();
-        }
-        else
-        {
-            game.MyTerminal.StylizeTextBoard("No opponent nearby to attack");
-            game.MyTerminal.ShowPause();
-        }
-    }
-    else
-    {
-       auto HeroToAttack = heros.back();
-       HeroToAttack->PlayerGetHit(game);
-    }
-
-}
-
+//Get methods
 std :: string Monster ::GetName () {return Name;}
 int Monster :: GetFrenzyOrder()const{
     return FrenzyOrder;
 
 }
 bool Monster ::  GetFrenzyMarker()const{
-return HasFrenzy;
+return HasFrenzy;}
+const std::shared_ptr<Location>& Monster ::  GetLocation()const{
+if(CurrentLocation)
+return CurrentLocation;
+else throw std::invalid_argument("No location Set for Monster " + Name);
 }
+
+//Set methods
 void Monster ::  SetFrenzyMarker(bool hasMarker){
 HasFrenzy = hasMarker;
-}
-const std::shared_ptr<Location>& Monster ::  GetLocation()const{
-return CurrentLocation;
 }
 void Monster ::  SetLocation(std :: shared_ptr<Location> currLoc){
 if(CurrentLocation)
@@ -68,8 +50,8 @@ if(currLoc)
     currLoc->AddMonster(shared_from_this());
 }
 }
-
-const std :: shared_ptr< Location>& Monster::FindNearestOpponent(Map& plan, std::shared_ptr<Location> monsterLocation, int monsterMoves) {
+//Find nearest opponent to attack
+const std :: shared_ptr< Location> Monster::FindNearestOpponent(Map& plan, std::shared_ptr<Location> monsterLocation, int monsterMoves) {
     std::unordered_map<std :: shared_ptr<Location>, int> distances;
     std::unordered_map<std :: shared_ptr<Location>, std :: shared_ptr<Location>> prev;
     std::queue<std :: shared_ptr<Location>> q;
@@ -154,4 +136,36 @@ const std :: shared_ptr< Location>& Monster::FindNearestOpponent(Map& plan, std:
         return path[monsterMoves - 1];
     }
 }
+//Attack
+bool Monster ::Attack(Game& game)
+{
+    bool successe = false;
+    game.MyTerminal.StylizeTextBoard(Name + " Attacks!");
+    auto  herosNear = CurrentLocation->GetHero();
+    auto  VillagersNear = CurrentLocation->GetVillager();
+    if(herosNear.empty())
+    {
+        if(!VillagersNear.empty()){
+        CurrentLocation->RemoveVillager(VillagersNear.back());
+        VillagersNear.back()->SetLocation(nullptr);
+        game.MyTerminal.StylizeTextBoard(Name + " killed " + VillagersNear.back()->getName());
+        game.MyTerminal.ShowPause();
+        successe = true;
+        game.increaseTerrorLevel();
+        return successe;
+        }
+        else
+        {
+            game.MyTerminal.StylizeTextBoard("No opponent nearby to attack");
+            game.MyTerminal.ShowPause();
+            return successe;
+        }
+    }
+    else
+    {
+       auto HeroToAttack = herosNear.back();
+       successe = HeroToAttack->PlayerGetHit(game);
+       return successe;
+    }
 
+}
