@@ -34,7 +34,7 @@ int ShowInTerminal ::MenuGenerator(const std::vector<std::string> Options)
 }
 void ShowInTerminal ::StylizeTextBoard(const std ::string txt)
 {
-    auto element = text(txt) | borderHeavy | color(Color ::DarkBlue);
+    auto element = text(txt) | borderHeavy | color(Color ::LightGreen);
     auto screen = Screen ::Create(Dimension ::Fit(element));
     Render(screen, element);
     std ::cout << screen.ToString() << '\n';
@@ -107,14 +107,14 @@ Abbey____│        │                                │
   Crypt           │                                │
                   Shop_____________________________│
 Institute____Lab__│
-)") | border | bgcolor(Color::Khaki1) | color(Color::Green);
+)") | border | bgcolor(Color::DarkKhaki) | color(Color::Black);
 }
 Element ShowInTerminal::RenderDraculaMat(std ::vector<bool> coffins)
 {
     std::string ShowCoffins = "";
     for (const auto &c : coffins)
     {
-        ShowCoffins += (c ? " * " : " - ");
+        ShowCoffins += (c ?  u8"\u2713" : u8"\u2717");
     }
     return hbox({text("Dracula Mat : ") | bold | color(Color::Red),
                  text(ShowCoffins) | bold | color(Color::Black) | bgcolor(Color::SandyBrown)});
@@ -124,7 +124,7 @@ Element ShowInTerminal::RenderInvisibleManMat(std::vector<bool> evidences)
     std::string ShowCollected = "";
     for (const auto &e : evidences)
     {
-        ShowCollected += (e ? " * " : " - ");
+        ShowCollected += (e ? u8"\u2713" : u8"\u2717");
     }
     return hbox({text("Invisible Man Mat : ") | bold | color(Color::YellowLight),
                  text(ShowCollected) | bold | color(Color::BlueViolet) | bgcolor(Color::SandyBrown)});
@@ -276,10 +276,9 @@ for (const auto &[name, loc] : locations) {
 
 int ShowInTerminal::ShowHeroPhase(Game &game, const std::vector<std::string> options)
 {
-    // Print
-    StylizeTextBoard("===============================================HeroPhase===============================================");
+ // Print
+    StylizeTextBoard("========================================HeroPhase ========================================");
     std::cout << "\n";
-    //elements
     int selectedIndex = -1;
     std::shared_ptr<MonsterCard> monsterCardView =std ::make_shared<MonsterCard>("MonsterCards",0, "", MonsterStrike("", 0, 0));
     auto mapView = RenderMap();                            //
@@ -301,50 +300,47 @@ int ShowInTerminal::ShowHeroPhase(Game &game, const std::vector<std::string> opt
             game.Monsters,
             game.villagers,
             game.GetItemsInGame(),
-            game.heroes).Render();  
+            game.heroes);  
+    auto doc = locOverview.Render();
 
- //Left Side
-    auto leftPanel = vbox({
-        terrorView,
-        separator(),
-        mapView | bgcolor(Color::Khaki1)
-    }) | border;
+    auto menuComponent = ftxui::Menu(options, &selectedIndex) | color(Color ::LightGreen) | bgcolor(Color::Black);
+    auto Menurenderer = Renderer(menuComponent, [&]
+                             { return vbox({
+                                          hbox(text("selected = "), text(std::to_string(selectedIndex))) | color(Color::LightGreen),
+                                          separator(),
+                                          menuComponent->Render() | frame,
+                                      }) |
+                                      border | bgcolor(Color::Black); });
 
-    //Middle Side
-    auto middlePanel = hbox({
-        heroInfo,
-        separator(),
-        perkCard,
-        separator(),
-        monsterCard,
-        separator(),
-        DraculaMat ,
-        separator(),
-        InvisibleManMat
-    }) | border;
+    // layout
+    auto layout = Renderer([&] {
+        return vbox({
+            hbox({ftxui::separator(), terrorView, ftxui::separator()}),
+            ftxui::separator(),
+            hbox({ftxui::separator(), mapView, ftxui::separator(), doc | bgcolor(Color::Black), ftxui::separator()}),
+            hbox({ftxui::separator(), heroInfo, ftxui::separator(),
+                  perkCard, ftxui::separator(),
+                  monsterCard, ftxui::separator(),
+                  DraculaMat, ftxui::separator(),
+                  InvisibleManMat, ftxui::separator()}),
+            ftxui::separator(),
+            text("Choose your action:"),
+        });
+    });
 
-auto menuComponent = Menu(&options, &selectedIndex);
+    // Combine layout and menu
+    auto combined = Container::Vertical({ layout, Menurenderer });
+    auto final_renderer = Renderer(combined, [&] {
+        return vbox({
+            layout->Render(),
+            Menurenderer->Render() | frame | border | bgcolor(Color::Black),
+        });
+    });
 
-auto finalLayout = Renderer(menuComponent, [&] {
-    return vbox({
-        hbox({
-            leftPanel,
-            separator(),
-            menuComponent->Render() | color(Color :: LightGreen) | bgcolor(Color::Black),
-            separator(),
-            middlePanel
-        }) | flex,
-        separator(),
-        text("==============================Location OverView=============================="),
-        separator(),
-        locOverview
-    }) | border;
-});
+    auto screen = ScreenInteractive::FitComponent();
+    screen.Loop(final_renderer);
 
-auto screen = ScreenInteractive::Fullscreen();
-screen.Loop(finalLayout);
-return selectedIndex;
-
+    return selectedIndex;
 }
 void ShowInTerminal:: ShowMonsterPhase( Game & game){
     //print
