@@ -9,14 +9,14 @@
 #include <iostream>
 using namespace LocationNames;
 InvisibleMan:: InvisibleMan() : Monster("Invisible Man",6,false){Evidences ={ {false , Inn} , {false , Laboratory} , {false ,Barn } , {false ,Mansion } , {false , Institute}};}
-
+//Move method
 void InvisibleMan :: Move(std :: shared_ptr<Location> NearestOppenent) {
-    std :: cout << "Invisible Man Moves toward nearest hero or villager!!\n";
     if(!CurrentLocation) return;
     CurrentLocation->RemoveMonster(shared_from_this());
     CurrentLocation = NearestOppenent;
     CurrentLocation->AddMonster(shared_from_this());
 }
+//Check if the location has evidence
 bool InvisibleMan::IsTasksLocation(std :: string LocationName)
 {
     for(const auto & loc : Evidences)
@@ -26,15 +26,19 @@ bool InvisibleMan::IsTasksLocation(std :: string LocationName)
     }
 return false;
 }
-
+//Power
 void InvisibleMan::StalkUnseen(Game& game, int moves) {
     auto& villagers = game.getVillagers();
     auto& map = game.getMapPlan(); 
-
+    if(villagers.empty())
+    {
+        game.MyTerminal.StylizeTextBoard("No villager in the map to use Stalk unseen!");
+        return;
+    }
     auto locals = CurrentLocation->GetVillager();
     if (!locals.empty()) {
         auto target = locals.back();
-        game.MyTerminal.StylizeTextBoard("Invisible Man uses Stalk Unseen and attacks " + target->getName());
+        game.MyTerminal.StylizeTextBoard("Invisible Man is already in "+target->getCurrentLocation()->GetCityName()+ " uses Stalk Unseen and attacks " + target->getName());
         CurrentLocation->RemoveVillager(target);
         return;
     }
@@ -96,7 +100,7 @@ void InvisibleMan::StalkUnseen(Game& game, int moves) {
         game.MyTerminal.StylizeTextBoard("Invisible Man moved to " + CurrentLocation->GetCityName() + " but found no one to attack.");
     }
 }
-
+//Check if evidence already destroyed
  bool InvisibleMan:: IsEvidenceDestroyed(std :: string LocationName){
     for(auto & pair : Evidences)
     {
@@ -128,4 +132,13 @@ bool InvisibleMan ::CanBeDefeated()
         return false;
     }
     return true;
+}
+std :: vector<bool> InvisibleMan::GetEvidences()
+{
+    std :: vector<bool> Evidenc;
+    for(const auto & e : Evidences)
+    {
+        Evidenc.push_back(e.first);
+    }
+    return Evidenc;
 }

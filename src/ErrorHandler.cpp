@@ -8,17 +8,6 @@ void CheckString(std ::string test)
     {
         throw std ::invalid_argument("Error : empty string is invalid input !!\n");
     }
-    if (test.empty())
-    {
-        throw std ::invalid_argument("Error : empty string is invalid input !!\n");
-    }
-    for (auto c : test)
-    {
-        if (isdigit(c))
-        {
-            throw std ::invalid_argument("Error : Number isn't availiable!!\n");
-        }
-    }
 }
 void CheckFloat(std ::string test)
 {

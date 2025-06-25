@@ -1,164 +1,218 @@
 #include "../include/Hero.hpp"
-#include "Location.hpp"
-#include <iostream>
+#include "../include/Location.hpp"
 #include "../include/Dracula.hpp"
 #include "../include/invisible.hpp"
 #include "../include/Game.hpp"
+#include "../include/Perk.hpp"
+#include "../include/LocationNames.hpp"
+#include <iostream>
 #include <vector>
 #include <algorithm>
 #include <memory>
-
+using namespace LocationNames;
+//constructor
 Hero::Hero(const std::string &Name, int MaxActions, std ::shared_ptr<Location> CurrentLocation)
-    : name(Name), maxActions(MaxActions), remainingActions(MaxActions), currentLocation(CurrentLocation) {}
-
-void Hero:: GetPerkCard(std :: shared_ptr<PerkCard> Card){
+    : name(Name), maxActions(MaxActions), remainingActions(MaxActions)
+{
+    if (CurrentLocation)
+    {
+        currentLocation = CurrentLocation;
+    }
+    else
+        throw std ::invalid_argument("Location can't be nullptr for hero");
+}
+//add perkCard to inventory
+void Hero::GetPerkCard(std ::shared_ptr<PerkCard> Card)
+{
     PerkCards.push_back(Card);
 }
-
-void Hero:: SetAction(int NumOfAction){
-    maxActions = NumOfAction;
+//Set max action
+void Hero::SetAction(int NumOfAction)
+{
+    if (NumOfAction >= 0){
+        remainingActions = NumOfAction;
+    }
+    else
+        throw std::invalid_argument("Number of actions can't be nagetive!\n");
 }
-std::shared_ptr<PerkCard> Hero::UsePerkCard() {
-    if (!PerkCards.empty()) {
+//remove card from inventory
+void Hero::UsePerkCard(Game & game)
+{
+    if (!PerkCards.empty())
+    {
         auto card = PerkCards.back();
+        card->ApplyEffect(game);
         PerkCards.pop_back();
-        return card;
     }
-    return nullptr;
+    else{
+    game.MyTerminal.StylizeTextBoard("No perks in the inventory!");
+    game.MyTerminal.ShowPause();}
 }
-void Hero::DecreaseAction(){--remainingActions;};
-void Hero :: PlayerGetHit(Game &game){
+void Hero::DecreaseAction() { --remainingActions; }
+bool Hero::PlayerGetHit(Game &game)
+{
+    bool successe = false;
 
-    if(!inventory.empty()){
-    game.MyTerminal.StylizeTextBoard("Would You Like to use an Items ?");
-    int selected =game.MyTerminal.Show(game , std :: vector<std :: string>{"Yes" ,"No"});
-    switch (selected)
+    if (!inventory.empty())
     {
-    case 0:{
-    std :: vector <std :: string > ItemNames;
-     for(const auto & item : inventory)
+        game.MyTerminal.StylizeTextBoard("Would You Like to use an Items ?");
+        int selected = game.MyTerminal.ShowHeroPhase(game, std ::vector<std ::string>{"Yes", "No"});
+        switch (selected)
+        {
+        case 0:
+        {
+            std ::vector<std ::string> ItemNames;
+            for (const auto &item : inventory)
+            {
+                ItemNames.push_back(item->getName());
+            }
+            game.MyTerminal.StylizeTextBoard("Choose an Item to discard :");
+            int index = game.MyTerminal.ShowHeroPhase(game, ItemNames);
+            RemoveItem(inventory[index]);
+            DecreaseAction();
+            return successe;
+        }
+        case 1:
+        {
+            successe = true;
+            game.MyTerminal.StylizeTextBoard("monster hits you you'll start from the hospital in the next hero phase");
+            game.MyTerminal.ShowPause();
+            currentLocation->RemoveHero(shared_from_this());
+            SetLocation(game.mapPlan.GetLocationptr(Hospital));
+            game.terrorLevel++;
+            return successe;
+        }
+        default: return false;
+            break;
+        }
+    }
+    else
     {
-        ItemNames.push_back(item->getName());
-    }
-    game.MyTerminal.StylizeTextBoard( "Choose an Item to discard :");
-    int index = game.MyTerminal.Show(game, ItemNames);
-    RemoveItem(inventory[index]);
-    DecreaseAction();
-    break;
-    }
-    case 1 : {
+        game.MyTerminal.StylizeTextBoard("Not enaugth Items !!");
+        game.MyTerminal.StylizeTextBoard("monster hits you you'll start from the hospital in the next hero phase");
+        successe = true;
+        game.MyTerminal.ShowPause();
         currentLocation->RemoveHero(shared_from_this());
-        SetLocation(game.mapPlan.GetLocationptr("Hospital"));
+        SetLocation(game.mapPlan.GetLocationptr(Hospital));
         game.terrorLevel++;
-        break;}
-        default:
-        break;
+        return successe;
     }
 }
-else{
-   
-
-    game.MyTerminal.StylizeTextBoard("Not enaugth Items !!");
-    game.MyTerminal.ShowPause();
-    currentLocation->RemoveHero(shared_from_this());
-    SetLocation(game.mapPlan.GetLocationptr("Hospital"));
-    game.terrorLevel++;
-}
-
-}
-
 void Hero::resetActions()
 {
     remainingActions = maxActions;
 }
-bool Hero::DefeatAction(std ::vector< std :: shared_ptr<Monster>> monsters)
+void Hero::DefeatAction(std ::shared_ptr<Monster> monster, Game &game)
 {
-    std :: shared_ptr<Monster> monster;
-    if(monsters.size() == 2)
+    if (!monster)
     {
-       std :: vector< std :: shared_ptr<Monster>> m1;
-       std :: vector< std :: shared_ptr<Monster>> m2;
-        m1.push_back( monsters[1]);
-        m2.push_back(monsters[0]);
-        DefeatAction(m1);
-        DefeatAction(m2);
-    }
-    else
-    {
-        monster = monsters[0];
-    }
-    //Dracula
-    if(!monster->CanBeDefeated())
-    {
-        return false;
+        throw std ::invalid_argument("No monster to defeat");
     }
     int total = 0;
-    int requiredPower = 6;
-    std::vector<std :: shared_ptr<Item>> usedItems;
-    if(auto dracula = std :: dynamic_pointer_cast<Dracula>(monster))
+    int requiredPower = 0;
+    auto monsterName = monster->GetName();
+    std::vector<std ::shared_ptr<Item>> usedItems;
+    if (!monster->CanBeDefeated())
     {
-        if(monster->GetLocation()->GetCityName() == currentLocation->GetCityName())
+        game.MyTerminal.StylizeTextBoard("you haven't completed the task for " + monster->GetName() + "!");
+        game.MyTerminal.ShowPause();
+        return;
+    }
+    if (monsterName == "Dracula")
+    {
+        total = 0;
+        requiredPower = 6;
+        if (auto dracula = std ::dynamic_pointer_cast<Dracula>(monster))
         {
-                 std::vector<std :: shared_ptr<Item>> YellowItems;
-                for (const auto& item : inventory)
+            if (monster->GetLocation()->GetCityName() == currentLocation->GetCityName())
+            {
+                std::vector<std ::shared_ptr<Item>> YellowItems;
+                for (const auto &item : inventory)
                     if (item->getColor() == ItemColor::Yellow)
                         YellowItems.push_back(item);
 
-                std::sort(YellowItems.begin(), YellowItems.end(), [](const std :: shared_ptr<Item>& a, const std :: shared_ptr<Item>& b) {
-                    return a->getPower() < b->getPower();
-                });
+                std::sort(YellowItems.begin(), YellowItems.end(), [](const std ::shared_ptr<Item> &a, const std ::shared_ptr<Item> &b)
+                          { return a->getPower() < b->getPower(); });
 
-                for (const auto& item : YellowItems) {
-                    if (total >= requiredPower) break;
+                for (const auto &item : YellowItems)
+                {
+                    if (total >= requiredPower)
+                        break;
                     total += item->getPower();
                     usedItems.push_back(item);
                 }
-
+            }
+            else
+            {
+                game.MyTerminal.StylizeTextBoard("You are not in the same place as monster!");
+                game.MyTerminal.ShowPause();
+                return;
+            }
         }
-
     }
-    //Invisible man
-    else if(auto invisibleMan = std :: dynamic_pointer_cast<InvisibleMan>(monster))
+
+    // Invisible man
+    else
     {
-        if(monster->GetLocation()->GetCityName() == currentLocation->GetCityName())
+        auto invisibleMan = std ::dynamic_pointer_cast<InvisibleMan>(monster);
+        if (monster->GetLocation()->GetCityName() == currentLocation->GetCityName())
         {
-             requiredPower = 9;
-                 std::vector<std :: shared_ptr<Item>> RedItems;
-                for (const auto& item : inventory)
-                    if (item->getColor() == ItemColor::Red)
-                        RedItems.push_back(item);
+            requiredPower = 9;
+            std::vector<std ::shared_ptr<Item>> RedItems;
+            for (const auto &item : inventory)
+                if (item->getColor() == ItemColor::Red)
+                    RedItems.push_back(item);
 
-                std::sort(RedItems.begin(), RedItems.end(), [](const std :: shared_ptr<Item>& a, const std :: shared_ptr<Item>& b) {
-                    return a->getPower() < b->getPower();
-                });
+            std::sort(RedItems.begin(), RedItems.end(), [](const std ::shared_ptr<Item> &a, const std ::shared_ptr<Item> &b)
+                      { return a->getPower() < b->getPower(); });
 
-                int total = 0;
-                for (const auto& item : RedItems) {
-                    if (total >= requiredPower) break;
+            int total = 0;
+            for (const auto &item : RedItems)
+            {
+                if (total >= requiredPower)
+                {
+                    break;
+                }
+                else
+                {
                     total += item->getPower();
                     usedItems.push_back(item);
                 }
+            }
+        }
+        else
+        {
 
+            game.MyTerminal.StylizeTextBoard("You are not in the same place as monster!");
+            game.MyTerminal.ShowPause();
+            return;
         }
     }
-     if (total >= requiredPower ) {
-                    for (const auto& item : usedItems)
-                        this->RemoveItem(item);
-                        return true;
-                } else {
-                    return false;
-                }
-
+    if (total >= requiredPower)
+    {
+        for (const auto &item : usedItems)
+        {
+            this->RemoveItem(item);
+            monster->GetLocation()->RemoveMonster(monster);
+        }
+        game.MyTerminal.StylizeTextBoard("You defeated " + monsterName);
+    }
+    else
+    {
+        game.MyTerminal.StylizeTextBoard("You Don't have enougth Items!");
+        game.MyTerminal.ShowPause();
+        return;
+    }
 }
 void Hero::moveTo(std ::shared_ptr<Location> newLocation)
 {
     if (remainingActions > 0)
     {
         SetLocation(newLocation);
-        --remainingActions;
+        DecreaseAction();
     }
 }
-void Hero ::RemoveItem(const std :: shared_ptr< Item> item)
+void Hero::RemoveItem(const std ::shared_ptr<Item> item)
 {
     auto it = std ::find(inventory.begin(), inventory.end(), item);
     if (it != inventory.end())
@@ -166,45 +220,41 @@ void Hero ::RemoveItem(const std :: shared_ptr< Item> item)
 }
 void Hero::pickUpItems()
 {
-    if (remainingActions > 0)
-    {
         auto items = currentLocation->GetItems();
         if (!items.empty())
         {
             inventory.insert(inventory.end(), items.begin(), items.end());
-            for (auto &item : items)
-            {
-               
-                currentLocation->RemoveItem(item);
-                --remainingActions;
-            }
+            currentLocation->ClearItems();
         }
-    }
+        DecreaseAction();
 }
-void Hero ::SetLocation(std ::shared_ptr<Location> location)
+void Hero::SetLocation(std ::shared_ptr<Location> location)
 {
     if (currentLocation && currentLocation->GetCityName() == location->GetCityName())
     {
         return;
     }
 
-    if (currentLocation != nullptr)
+    if (currentLocation)
     {
         currentLocation->RemoveHero(shared_from_this());
     }
 
     currentLocation = location;
 
-    if (currentLocation != nullptr)
+    if (currentLocation)
     {
         currentLocation->AddHero(shared_from_this());
     }
+    else
+        throw std ::invalid_argument("Error! Nullptr location for Hero !\n");
 }
 const std::string &Hero::getName() const
 {
     return name;
 }
-std::shared_ptr<PerkCard> Hero::PeekPerkCard() const {
+std::shared_ptr<PerkCard> Hero::PeekPerkCard() const
+{
     if (!PerkCards.empty())
         return PerkCards.back();
     return nullptr;
@@ -213,13 +263,14 @@ int Hero::getRemainingActions() const
 {
     return remainingActions;
 }
-
 const std ::shared_ptr<Location> &Hero::getLocation() const
 {
-    return currentLocation;
+    if (currentLocation)
+        return currentLocation;
+    else
+        throw std::invalid_argument("Location is null for hero!\n");
 }
-
-const std::vector<std :: shared_ptr< Item>> &Hero::getInventory() const
+const std::vector<std ::shared_ptr<Item>> &Hero::getInventory() const
 {
     return inventory;
 }

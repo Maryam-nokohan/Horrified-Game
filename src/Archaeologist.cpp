@@ -3,16 +3,23 @@
 #include "../include/Item.hpp"
 
 Archaeologist::Archaeologist(std::shared_ptr<Location> startLocation)
-    : Hero("Archaeologist", 4, startLocation) {}
+    : Hero("Archaeologist", 4, startLocation) {
+    }
 
-void Archaeologist::specialAction() {
-    if(remainingActions <= 0) return;
-
+std::string Archaeologist::specialAction() {
     std::vector<std :: shared_ptr<Location>> neighbors = currentLocation->GetNeighbors();
-        std::vector<std :: shared_ptr<Item>>& itemsThere = neighbors[0]->GetItems();
+        std::vector<std :: shared_ptr<Item>> itemsThere = neighbors[0]->GetItems();
+        if(!itemsThere.empty()){
+            std::string output;
         for(auto item : itemsThere){
             inventory.push_back(item);
+            item->getLocation()->ClearItems();
+            output+= " get " +  item->getName() + " form " + item->getLocation()->GetCityName() + "\n"; 
         }
         itemsThere.clear();
-    remainingActions--;
+        DecreaseAction();
+        return output;
+    }
+    else
+    return "Not any item in the nearby locations!";
 }

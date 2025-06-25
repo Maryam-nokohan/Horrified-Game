@@ -2,11 +2,12 @@
 #define MAYOR_HPP
 #include "../include/Hero.hpp"
 #include <memory>
+#include <string>
 
 class Mayor : public Hero {
 public:
     Mayor(std :: shared_ptr<Location>);
-    void specialAction() override;
+    std::string specialAction() override;
 };
 
 #endif

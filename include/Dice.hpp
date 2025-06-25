@@ -8,5 +8,7 @@ std :: vector <std :: string> DiceFaces;
 public :
 Dice();
 std :: string DiceRoll();
+void SetFaces();
+~Dice()=default;
 };
 #endif

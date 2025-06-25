@@ -19,9 +19,9 @@ class Monster : public std :: enable_shared_from_this<Monster>
     Monster(const std :: string  name, int frenzyOrder ,bool hasFrenzy );
 
     virtual void Move(std :: shared_ptr<Location>)=0;
-    virtual void Attack(Game &game);
+    virtual bool Attack(Game &game);
       
-   const std :: shared_ptr< Location>& FindNearestOpponent(Map& ,std :: shared_ptr<Location>, int );
+   const std :: shared_ptr< Location> FindNearestOpponent(Map& ,std :: shared_ptr<Location>, int );
     std :: string GetName();
     int GetFrenzyOrder()const;
     bool GetFrenzyMarker()const;

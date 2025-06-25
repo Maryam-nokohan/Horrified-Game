@@ -18,7 +18,7 @@ void PerkCard ::ApplyEffect(Game & game)
                 for (const auto& [name, loc] : game.mapPlan.getLocations())
                     cities.push_back(name);
                 game.MyTerminal.StylizeTextBoard("Choose a City to put invisible man:");
-                int idx = game.MyTerminal.Show(game ,cities);
+                int idx = game.MyTerminal.ShowHeroPhase(game ,cities);
                 game.Monsters[1]->SetLocation(game.mapPlan.GetLocationptr(cities[idx]));
             }
             else if (name == BreakOfDown) {
@@ -34,22 +34,25 @@ void PerkCard ::ApplyEffect(Game & game)
                 game.heroPlayer->SetAction(2+ game.heroPlayer->getRemainingActions());
             }
             else if (name == Repel) {
+                bool found = false;
                 int times = 2;
                 while(times--){
-                for(auto & m : game.Monsters)
-                {
-                    auto neighbor = m->GetLocation()->GetNeighbors();
-                    m->Move(neighbor[0]);
-                }}
-               /*  std::vector<std::string> names;
-                for (auto& m : game.Monsters) names.push_back(m->GetName());
-                int idx = game.MyTerminal.Show(*this ,names);
-                auto monster = Monsters[idx];
-                auto neighbors = monster->GetLocation()->GetNeighbors();
-                std::vector<std::string> opts;
-                for (auto& loc : neighbors) opts.push_back(loc->GetCityName());
-                int dest = game.MyTerminal.Show(*this ,opts);
-                monster->SetLocation(mapPlan.GetLocationptr(opts[dest])); */
+                if(game.Monsters[0]){
+                    found = true;
+                auto Dneighbor = game.Monsters[0]->GetLocation()->GetNeighbors();
+                game.Monsters[0]->Move(Dneighbor[0]);}
+                if(game.Monsters[1]){
+                    found = true;
+                auto Ineighbor = game.Monsters[1]->GetLocation()->GetNeighbors();
+                game.Monsters[1]->Move(Ineighbor[1]);
+                }
+            }
+            if(!found)
+            {
+                game.MyTerminal.StylizeTextBoard("No monster to use repel Card!");
+                game.MyTerminal.ShowPause();
+            }
+           
             }
             else if (name == Hurry) {
                    int times = 2;

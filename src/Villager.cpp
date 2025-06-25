@@ -1,16 +1,13 @@
 #include "../include/Villager.hpp"
 #include "../include/Location.hpp"
+#include <stdexcept>
 
-Villager :: Villager(const std :: string Name , std :: shared_ptr<Location> SafeLoc)
+Villager :: Villager(const std :: string Name , std :: shared_ptr<Location> SafeLoc): currentLocation(nullptr) , alive(true)
 {
     name = Name;
     safeLocation = SafeLoc;
-
 }
-Villager::Villager(const std::string& name, std :: shared_ptr<Location> startLocation, std :: shared_ptr<Location> safeLocation) : 
-name(name) , currentLocation(std :: move (startLocation)) , safeLocation(std :: move (safeLocation)), alive(true){}
-
-const std::string & Villager ::getCurrentLocationName()const {return currentLocation->GetCityName(); }
+const std::string  Villager ::getCurrentLocationName()const {return currentLocation->GetCityName(); }
 
 const std::string& Villager::getName() const{
     return name;
@@ -25,7 +22,8 @@ bool Villager::isAlive() const{
     return alive;
 }
 void Villager::moveTo(std :: shared_ptr<Location> newLocation){
-    currentLocation =std :: move (newLocation) ;
+
+   SetLocation(newLocation);
 }
 void Villager::kill(){
     alive = false;
@@ -41,19 +39,18 @@ return;
 
 }
 void Villager:: SetLocation(std :: shared_ptr <Location> location){
-      if (currentLocation && currentLocation->GetCityName() == location->GetCityName()) {
-        return;
-    }
-
-    if (currentLocation != nullptr) {
+    
+    if (currentLocation) {
         currentLocation->RemoveVillager(shared_from_this());
     }
 
     currentLocation = location;
 
-    if (currentLocation != nullptr) {
+    if (currentLocation) {
         currentLocation->AddVillager(shared_from_this());
+        rescue();
     }
-    rescue();
+    else 
+    currentLocation = nullptr;
 
 }

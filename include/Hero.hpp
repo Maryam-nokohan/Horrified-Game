@@ -9,16 +9,6 @@ class Item;
 class PerkCard;
 class Game;
 
-enum class ActionType
-{
-    Move,
-    Guide,
-    PickUp,
-    Advance,
-    Defeat,
-    Special
-};
-
 class Hero : public std :: enable_shared_from_this<Hero>
 {
 protected:
@@ -33,14 +23,14 @@ public:
     Hero() = default;
     Hero(const std::string &, int, std :: shared_ptr<Location>);
     virtual ~Hero() = default;
-    std::shared_ptr<PerkCard> UsePerkCard();
+    void UsePerkCard(Game&);
     void GetPerkCard(std :: shared_ptr<PerkCard>);
     void resetActions();
     void moveTo(std :: shared_ptr<Location>);
-    void PlayerGetHit(Game& game);
+    bool PlayerGetHit(Game& game);
     void pickUpItems();
-    virtual void specialAction() = 0;
-    virtual bool DefeatAction(std ::vector< std :: shared_ptr<Monster>>);
+    virtual std::string specialAction() = 0;
+    virtual void DefeatAction(std :: shared_ptr<Monster> , Game&);
     void SetLocation(std :: shared_ptr<Location>location);
     virtual void SetAction(int);
 

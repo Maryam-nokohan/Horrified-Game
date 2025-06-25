@@ -9,15 +9,16 @@ struct MonsterStrike
 {
     std :: string MonsterSymbol;
     int MoveNum;
-    int DiceRoll;
+    int DiceRolls;
     MonsterStrike() = default;
-    MonsterStrike(std :: string s , int m , int d) : MonsterSymbol(s) , MoveNum(m) , DiceRoll(d){}
+    MonsterStrike(std :: string s , int m , int d) : MonsterSymbol(s) , MoveNum(m) , DiceRolls(d){}
 
 };
 
 
 class MonsterCard : public Card{
     private :
+    bool EndStrike;
     int item;
     std :: string Event;
     MonsterStrike Strikes;

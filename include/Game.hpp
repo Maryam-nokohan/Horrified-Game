@@ -19,19 +19,21 @@ class Game{
     friend class ShowInTerminal;
     friend class PerkCard;
     friend class MonsterCard;
+    friend class Dracula;
     private :
     Map mapPlan;
+    int terrorLevel;
+    std :: shared_ptr <Hero>heroPlayer;
+    bool GameOver;
+    bool skipMonsterPhase;
+    Dice GameDice;
     std :: vector <std :: shared_ptr<Hero>> heroes;
     std :: vector <std :: shared_ptr <Monster>> Monsters;
     std :: vector <std :: shared_ptr<Villager>> villagers;
     std :: vector <std :: shared_ptr <Item>> Items;
+    std :: vector <std :: shared_ptr <Item>> EmptyBackUpItems;
     std :: vector <std :: shared_ptr<PerkCard>> PerkDeck;
     std :: vector <std :: shared_ptr< MonsterCard>> MonsterDeck;
-    int terrorLevel;
-    std :: shared_ptr<Dice> GameDice;
-    std :: shared_ptr <Hero>heroPlayer;
-    bool GameOver;
-    bool skipMonsterPhase;
     void SetUpGame();
     void InitializeLocations();
     void InitializeItem();
@@ -40,7 +42,6 @@ class Game{
     public :
     ShowInTerminal MyTerminal;
     void GameStart();
-    void LocationOverView();
     Game();
     Game(const Game &) = delete;
     Game & operator=(const Game &) = delete;
@@ -48,12 +49,13 @@ class Game{
     void HeroPhase();
     void SetRandomItems(int);
     void MonsterPhase();
+    void SwitchPlayer();
+    void Help();
     bool CheckGameEnd();
     void increaseTerrorLevel();
     std::vector<std::shared_ptr<Villager>>& getVillagers();
     Map& getMapPlan();
-
-    // void IncreaseTerrorLevel();
+    std::vector<std::shared_ptr<Item>> GetItemsInGame();
 
 };
 #endif

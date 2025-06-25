@@ -1,12 +1,12 @@
 #include "../include/Item.hpp"
 #include "../include/Location.hpp"
  Item::Item(ItemColor color, int power, std :: shared_ptr<Location>loc , const std::string& name) : 
- color(color) , name(name) {
+ color(color) , name(name) , CurrentLocation(nullptr){
     if(power<=0 || power>10){
         throw std::invalid_argument("Power must be between 1 and 10");
     }
     this->power = power;
-     location=loc;
+     ItemLocation=loc;
  }
 
 ItemColor Item::getColor() const{
@@ -16,19 +16,32 @@ ItemColor Item::getColor() const{
 int Item::getPower() const{
     return power;
 }
-const std::shared_ptr<Location>& Item::getLocation() const{
-    return location;
-
+const std::shared_ptr<Location> Item::getLocation() const{
+    if(CurrentLocation)
+    return CurrentLocation;
+    else
+    return nullptr;
     }
+const std::shared_ptr<Location>& Item::GetItemLocationName()const{return ItemLocation;}
 const std::string& Item::getName() const{
     return name;
 }
 void Item::setLocation(const std::shared_ptr<Location>& newLoc){
-    location = newLoc;
-    location->AddItem(shared_from_this());
+    if(CurrentLocation != nullptr)
+    {
+        CurrentLocation->RemoveItem(shared_from_this());
+    }
+    CurrentLocation = newLoc;
+    if(newLoc){
+    CurrentLocation->AddItem(shared_from_this());
+    }
+    else
+    {
+        CurrentLocation = nullptr;
+    }
 }
     bool Item :: operator==(Item item){
-        if(item.getColor() == color && item.getLocation() == location  && power == item.getPower())
+        if(item.getColor() == color && item.GetItemLocationName() == ItemLocation  && power == item.getPower())
         return true;
         else
         return false;

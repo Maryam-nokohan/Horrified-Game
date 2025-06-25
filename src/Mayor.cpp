@@ -4,6 +4,6 @@
 Mayor::Mayor(std :: shared_ptr<Location> startLocation)
     : Hero("Mayor", 5, startLocation) {}
 
-void Mayor::specialAction() {
-    std::cout << "Mayor has no special ability.\n";
+std::string Mayor::specialAction() {
+    return "Mayor has no special ability.\n";
 }
