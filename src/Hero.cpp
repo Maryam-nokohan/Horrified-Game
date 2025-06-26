@@ -121,8 +121,9 @@ void Hero::DefeatAction(std ::shared_ptr<Monster> monster, Game &game)
     if (monsterName == "Dracula")
     {
         total = 0;
-        requiredPower = 6;
-        if (auto dracula = std ::dynamic_pointer_cast<Dracula>(monster))
+        requiredPower =6 ;
+        auto dracula = game.GetDracula();
+        if (dracula)
         {
             if (monster->GetLocation()->GetCityName() == currentLocation->GetCityName())
             {
@@ -154,7 +155,8 @@ void Hero::DefeatAction(std ::shared_ptr<Monster> monster, Game &game)
     // Invisible man
     else
     {
-        auto invisibleMan = std ::dynamic_pointer_cast<InvisibleMan>(monster);
+        auto invisibleMan = game.GetInvisibleMan();
+        if(invisibleMan){
         if (monster->GetLocation()->GetCityName() == currentLocation->GetCityName())
         {
             requiredPower = 9;
@@ -188,14 +190,24 @@ void Hero::DefeatAction(std ::shared_ptr<Monster> monster, Game &game)
             return;
         }
     }
+    }
     if (total >= requiredPower)
     {
         for (const auto &item : usedItems)
         {
             this->RemoveItem(item);
-            monster->GetLocation()->RemoveMonster(monster);
         }
+        monster->GetLocation()->RemoveMonster(monster);
+         auto &monsters = game.Monsters;    
+                monsters.erase(std::remove_if(monsters.begin(),
+                               monsters.end(),
+                               [&monster](const std::shared_ptr<Monster> &m) {
+                                   return m == monster;
+                               }),
+               monsters.end());
+
         game.MyTerminal.StylizeTextBoard("You defeated " + monsterName);
+        game.MyTerminal.ShowPause();
     }
     else
     {
