@@ -34,7 +34,7 @@ int ShowInTerminal ::MenuGenerator(const std::vector<std::string> Options)
 }
 void ShowInTerminal ::StylizeTextBoard(const std ::string txt)
 {
-    auto element = text(txt) | borderHeavy | color(Color ::BlueViolet) | bgcolor(Color::Black);
+    auto element = paragraph(txt) | borderHeavy | color(Color ::BlueViolet) | bgcolor(Color::Black);
     auto screen = Screen ::Create(Dimension ::Fit(element));
     Render(screen, element);
     std ::cout << screen.ToString() << '\n';
