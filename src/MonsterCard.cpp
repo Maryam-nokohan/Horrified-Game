@@ -37,8 +37,8 @@ void MonsterCard ::ApplyEffect(Game & game)
     game.MyTerminal.StylizeTextBoard("Added " + std :: to_string(item) + " items to map");
     game.MyTerminal.ShowPause();
     //apply event
-    auto dracula = std::dynamic_pointer_cast<Dracula>(game.Monsters[0]);
-    auto invisible = std::dynamic_pointer_cast<InvisibleMan>(game.Monsters[1]);
+    auto dracula = game.GetDracula();
+    auto invisible = game.GetInvisibleMan();
 
     if (Name == Sunrise)
     {
@@ -56,6 +56,7 @@ void MonsterCard ::ApplyEffect(Game & game)
     else if (Name == FromTheBat)
     {
         if(dracula){
+        dracula->GetLocation()->RemoveMonster(dracula);
         dracula->SetLocation(game.heroPlayer->getLocation());
         game.MyTerminal.StylizeTextBoard(FromTheBat+ " Card Event Applyed  :"  + Event);
         game.MyTerminal.ShowPause();
@@ -63,11 +64,12 @@ void MonsterCard ::ApplyEffect(Game & game)
         else {
             game.MyTerminal.StylizeTextBoard("dracula isn't in the game to apply "+ FromTheBat+" card effect!");
             game.MyTerminal.ShowPause();
-            return;}
+            }
     }
 
     else if (Name == Thief)
     {
+        if(invisible){
         std::shared_ptr<Location> bestLoc = nullptr;
         int maxItems = -1;
         for (auto &[name, loc] :game.mapPlan.getLocations())
@@ -89,8 +91,14 @@ void MonsterCard ::ApplyEffect(Game & game)
         {
             game.MyTerminal.StylizeTextBoard("No items in game to apply " + Thief + " effect!");
             game.MyTerminal.ShowPause();
-            return;
         }
+    }
+    else 
+    {
+        game.MyTerminal.StylizeTextBoard("Invisible man is not in the game to apply " + Thief + " effect!");
+        game.MyTerminal.ShowPause();
+
+    }
     }
 
     else if (Name == TheDelivery)
@@ -258,14 +266,28 @@ void MonsterCard ::ApplyEffect(Game & game)
     else if (Name == OnTheMove)
     {
         int frenzyIndex = 0;
-        for (size_t i = 0; i < game.Monsters.size(); ++i)
-        if (game.Monsters[i]->GetFrenzyMarker())
-        frenzyIndex = (i + 1) %game. Monsters.size();
-        
-        for (auto &m : game.Monsters)
-        m->SetFrenzyMarker(false);
-        game.Monsters[frenzyIndex]->SetFrenzyMarker(true);
-        
+        if(dracula)
+        {
+            if(dracula->GetFrenzyMarker())
+            {
+                if(invisible)
+                {
+                    dracula->SetFrenzyMarker(false);
+                    invisible->SetFrenzyMarker(true);
+                }
+            }
+        }
+        else if(invisible)
+        {
+            if(invisible->GetFrenzyMarker())
+            {
+                if(dracula)
+                {
+                    invisible->SetFrenzyMarker(false);
+                    dracula->SetFrenzyMarker(true);
+                }
+            }
+        }
         for (auto &v : game.villagers)
         {
             auto from = v->getCurrentLocation();
@@ -314,12 +336,13 @@ void MonsterCard ::ApplyEffect(Game & game)
             }
         }
         game.MyTerminal.StylizeTextBoard(OnTheMove + " Card Event Applyed  :"  + Event);
-           game.MyTerminal.ShowPause();
+        game.MyTerminal.ShowPause();
     }
 
     else if (Name == HypnoticGaze)
     {
-        auto monsterLoc = game.Monsters[0]->GetLocation(); 
+        if(dracula){
+        auto monsterLoc = dracula->GetLocation(); 
         std::shared_ptr<Hero> closestHero = nullptr;
         std::shared_ptr<Villager> closestVillager = nullptr;
         int minDist = std::numeric_limits<int>::max();
@@ -413,8 +436,14 @@ void MonsterCard ::ApplyEffect(Game & game)
             }
         }
            game.MyTerminal.StylizeTextBoard(HypnoticGaze + " Card Event Applyed  :"  + Event);
-           game.MyTerminal.ShowPause();
     }
+    else
+    {
+    game.MyTerminal.StylizeTextBoard("dracula isn't in the game to apply "+ HypnoticGaze +" card effect!");
+    
+}
+game.MyTerminal.ShowPause();
+}
 
     //apply strikes : 
     game.MyTerminal.StylizeTextBoard("Applying Strikes ...");
@@ -422,24 +451,29 @@ void MonsterCard ::ApplyEffect(Game & game)
     {
         if(EndStrike)
         return;
-        if (ch == 'D')
+        if (ch == 'D' && dracula)
         {
-            ApplyMonsterStrike(game , game.Monsters[0]);
+            ApplyMonsterStrike(game , dracula);
         }
-        else if (ch == 'I')
+        else if (ch == 'I' && invisible)
         {
-            ApplyMonsterStrike(game , game. Monsters[1]);
+            ApplyMonsterStrike(game , invisible);
         }
         else if (ch == 'F')
         {
-            if (game.Monsters[0]->GetFrenzyMarker())
+            if(dracula){
+            if (dracula->GetFrenzyMarker())
             {
-                ApplyMonsterStrike(game , game.Monsters[0]);
+                ApplyMonsterStrike(game ,dracula);
+                return;
             }
-            else if (game.Monsters[1]->GetFrenzyMarker())
+        }
+            if(invisible){
+            if(invisible->GetFrenzyMarker())
             {
-                ApplyMonsterStrike(game , game.Monsters[1]);
+                ApplyMonsterStrike(game , invisible);
             }
+        }
         }
     }
     game.MyTerminal.ShowPause();
