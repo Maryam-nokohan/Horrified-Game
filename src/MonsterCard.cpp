@@ -171,7 +171,6 @@ void MonsterCard ::ApplyEffect(Game & game)
         }
     }
 
-
     else if (Name == HurriedAssistant)
     {
         bool found = false;
@@ -194,6 +193,7 @@ void MonsterCard ::ApplyEffect(Game & game)
             return;
         }
     }
+
     else if (Name == TheInnocent)
     {
         bool found = false;
@@ -262,7 +262,7 @@ void MonsterCard ::ApplyEffect(Game & game)
             return;
         }
     }
-//check
+   
     else if (Name == OnTheMove)
     {
         int frenzyIndex = 0;
@@ -333,6 +333,14 @@ void MonsterCard ::ApplyEffect(Game & game)
                 from->RemoveVillager(v);
                 v->SetLocation(nextStep);
                 game.MyTerminal.StylizeTextBoard("Villager " + v->getName() + " moves toward safe house: " + nextStep->GetCityName());
+                 if (v->isAlive() == State ::Rescued)
+                            {
+                                game.RemoveVillagerFromGame(v);
+                                game.MyTerminal.StylizeTextBoard("You rescued " + v->getName());
+                                game.heroPlayer->GetPerkCard(game.PerkDeck.back());
+                                game.heroPlayer->getLocation()->RemoveVillager(v);
+                                game.PerkDeck.pop_back();
+                            }
             }
         }
         game.MyTerminal.StylizeTextBoard(OnTheMove + " Card Event Applyed  :"  + Event);

@@ -155,42 +155,38 @@ void Hero::DefeatAction(std ::shared_ptr<Monster> monster, Game &game)
     // Invisible man
     else
     {
-        auto invisibleMan = game.GetInvisibleMan();
-        if(invisibleMan){
-        if (monster->GetLocation()->GetCityName() == currentLocation->GetCityName())
+         total = 0;
+        requiredPower =9 ;
+        auto invisible = game.GetInvisibleMan();
+        if (invisible)
         {
-            requiredPower = 9;
-            std::vector<std ::shared_ptr<Item>> RedItems;
-            for (const auto &item : inventory)
-                if (item->getColor() == ItemColor::Red)
-                    RedItems.push_back(item);
-
-            std::sort(RedItems.begin(), RedItems.end(), [](const std ::shared_ptr<Item> &a, const std ::shared_ptr<Item> &b)
-                      { return a->getPower() < b->getPower(); });
-
-            int total = 0;
-            for (const auto &item : RedItems)
+            if (monster->GetLocation()->GetCityName() == currentLocation->GetCityName())
             {
-                if (total >= requiredPower)
+                std::vector<std ::shared_ptr<Item>> RedItems;
+                for (const auto &item : inventory)
+                    if (item->getColor() == ItemColor::Red)
+                        RedItems.push_back(item);
+
+                std::sort(RedItems.begin(), RedItems.end(), [](const std ::shared_ptr<Item> &a, const std ::shared_ptr<Item> &b)
+                          { return a->getPower() < b->getPower(); });
+
+                for (const auto &item : RedItems)
                 {
-                    break;
-                }
-                else
-                {
+                    if (total >= requiredPower)
+                        break;
                     total += item->getPower();
                     usedItems.push_back(item);
                 }
             }
-        }
-        else
-        {
-
-            game.MyTerminal.StylizeTextBoard("You are not in the same place as monster!");
-            game.MyTerminal.ShowPause();
-            return;
+            else
+            {
+                game.MyTerminal.StylizeTextBoard("You are not in the same place as monster!");
+                game.MyTerminal.ShowPause();
+                return;
+            }
         }
     }
-    }
+    
     if (total >= requiredPower)
     {
         for (const auto &item : usedItems)

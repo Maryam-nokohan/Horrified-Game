@@ -8,7 +8,9 @@ Archaeologist::Archaeologist(std::shared_ptr<Location> startLocation)
 
 std::string Archaeologist::specialAction() {
     std::vector<std :: shared_ptr<Location>> neighbors = currentLocation->GetNeighbors();
-        std::vector<std :: shared_ptr<Item>> itemsThere = neighbors[0]->GetItems();
+    for(auto loc : neighbors){
+    std::vector<std :: shared_ptr<Item>> itemsThere = loc->GetItems();
+
         if(!itemsThere.empty()){
             std::string output;
         for(auto item : itemsThere){
@@ -20,6 +22,6 @@ std::string Archaeologist::specialAction() {
         DecreaseAction();
         return output;
     }
-    else
+}
     return "Not any item in the nearby locations!";
 }
