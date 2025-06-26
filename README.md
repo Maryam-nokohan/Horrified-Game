@@ -52,5 +52,14 @@ target_link_libraries(HorrifiedGame PRIVATE
 set_target_properties(HorrifiedGame PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
 )
+```
+### 2️⃣ Build the project  
+Run the following commands in your build directory:
 ```bash
-    run with : ./bin/HorrifiedGame
+cmake -S . -B build
+```
+### 3️⃣ Run the game
+```bash
+cd build/
+./bin/HorrifiedGame
+```
