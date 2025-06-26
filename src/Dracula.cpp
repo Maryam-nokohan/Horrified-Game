@@ -19,7 +19,7 @@ if(game.heroPlayer->getLocation()->GetCityName() == CurrentLocation->GetCityName
 }
 auto HeroLocation = game.heroPlayer->getLocation();
 HeroLocation->RemoveHero(game.heroPlayer);
-CurrentLocation->AddHero(game.heroPlayer);
+game.heroPlayer->moveTo(CurrentLocation);
 game.MyTerminal.StylizeTextBoard(game.heroPlayer->getName() + " moved to dracula spot!");
 game.MyTerminal.ShowPause();
 }

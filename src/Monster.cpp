@@ -146,13 +146,13 @@ bool Monster ::Attack(Game& game)
     if(herosNear.empty())
     {
         if(!VillagersNear.empty()){
+        game.RemoveVillagerFromGame(VillagersNear.back());
+        VillagersNear.back()->kill();
         CurrentLocation->RemoveVillager(VillagersNear.back());
         game.MyTerminal.StylizeTextBoard(Name + " killed " + VillagersNear.back()->getName());
-        VillagersNear.back()->kill();
-        game.RemoveVillagerFromGame(VillagersNear.back());
-        game.MyTerminal.ShowPause();
         successe = true;
         game.increaseTerrorLevel();
+        game.MyTerminal.ShowPause();
         return successe;
         }
         else
