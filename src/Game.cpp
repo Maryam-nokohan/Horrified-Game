@@ -622,54 +622,66 @@ std::shared_ptr<InvisibleMan> Game::GetInvisibleMan() {
 Map &Game::getMapPlan() { return mapPlan; }
 void Game::GameStart()
 {
-    // // Start Logo:
-    // MyTerminal.StylizeTextBoard("===========Welcome to HORRIFIED===========");
-    // // Start menue:
-    // int StartMenuSelected = MyTerminal.MenuGenerator(std::vector<std::string>{"Start", "Help", "Exit"});
-    // std::string p1, p2;
-    // int lastTime1, lastTime2;
+    int StartMenuSelected = -1;
+    while (StartMenuSelected != 0)
+    {
+        
+        
+        
+        // Start Logo:
+        MyTerminal.StylizeTextBoard("===========Welcome to HORRIFIED===========");
+        // Start menue:
+    int StartMenuSelected = MyTerminal.MenuGenerator(std::vector<std::string>{"Start", "Help", "Exit"});
+    std::string p1, p2;
+    int lastTime1, lastTime2;
+    
+    switch (StartMenuSelected)
+    {
+    case 0:
+    {
+        // Garlic questions :
+        p1 = MyTerminal.GetInput("What's Your Name Player 1? ", String);
+        lastTime1 = stoi(MyTerminal.GetInput("When was the last time that you ate garlic " + p1 + "? (Ex: 2 days): ", Int));
+        p2 = MyTerminal.GetInput("What's Your Name Player 2? ", String);
+        lastTime2 = stoi(MyTerminal.GetInput("When was the last time that you ate garlic " + p2 + "? (Ex: 2 days): ", Int));
+        MyTerminal.Refresh();
+        if (lastTime1 >= lastTime2)
+            MyTerminal.StylizeTextBoard(p2 + " You can choose a hero: \n");
+        else
+            MyTerminal.StylizeTextBoard(p1 + " You can choose a hero: \n");
 
-    // switch (StartMenuSelected)
-    // {
-    // case 0:
-    // {
-    //     // Garlic questions :
-    //     p1 = MyTerminal.GetInput("What's Your Name Player 1? ", String);
-    //     lastTime1 = stoi(MyTerminal.GetInput("When was the last time that you ate garlic " + p1 + "? (Ex: 2 days): ", Int));
-    //     p2 = MyTerminal.GetInput("What's Your Name Player 2? ", String);
-    //     lastTime2 = stoi(MyTerminal.GetInput("When was the last time that you ate garlic " + p2 + "? (Ex: 2 days): ", Int));
-    //     MyTerminal.Refresh();
-    //     if (lastTime1 >= lastTime2)
-    //         MyTerminal.StylizeTextBoard(p2 + " You can choose a hero: \n");
-    //     else
-    //         MyTerminal.StylizeTextBoard(p1 + " You can choose a hero: \n");
-
-    //     int HeroChoose = MyTerminal.MenuGenerator(std::vector<std::string>{"Mayor", "Archaeologist"});
-    //     switch (HeroChoose)
-    //     {
-    //     case 0:
+        int HeroChoose = MyTerminal.MenuGenerator(std::vector<std::string>{"Mayor", "Archaeologist"});
+        switch (HeroChoose)
+        {
+        case 0:{
             heroPlayer = heroes[1];
-    //         break;
-    //     case 1:
-    //         heroPlayer = heroes[1];
-    //         break;
-    //     default:
-    //         break;
-    //     }
-    //     break;
-    // }
-    // case 1:
-    //     Help();
-    //     break;
-    // case 2:
-    //     MyTerminal.StylizeTextBoard("Logging Out ...");
-    //     exit(0);
-    //     break;
-    // default:
-    //     MyTerminal.StylizeTextBoard("Not an option!!!");
-    //     break;
-    // }
-    // MyTerminal.Refresh();
+            break;
+            case 1:
+            heroPlayer = heroes[1];
+            break;
+        default:
+            break;
+        }
+    }
+    break;
+    }
+    case 1:
+        Help();
+        break;
+    case 2:
+        MyTerminal.StylizeTextBoard("Logging Out ...");
+        exit(0);
+        break;
+    default:
+        MyTerminal.StylizeTextBoard("Not an option!!!");
+        break;
+    }
+      if (StartMenuSelected == 0) {
+            break;
+        }
+
+        MyTerminal.Refresh();
+    }
     while (!CheckGameEnd())
     {
         HeroPhase();
@@ -683,10 +695,52 @@ void Game::GameStart()
         }
     }
 }
-// fix it
 void Game::Help()
 {
-    MyTerminal.StylizeTextBoard("=============instruction for horrifid game : ");
+    MyTerminal.StylizeTextBoard(
+        R"(======================== HORRIFIED GAME INSTRUCTIONS ========================"
+        "Welcome to the Horrified Game! Here are the basics you need to know:"
+
+        "1. Goal:"
+        "   - Work with the other heroes to defeat the monsters (Dracula, Invisible Man, etc.) by"
+        "     completing their objectives (destroying coffins, collecting evidence, defeating monsters, etc.)."
+        "   - Protect the villagers by guiding or moving them to their safe locations."
+        "   - Prevent the terror level from reaching its maximum."
+
+        "2. Hero Actions:"
+        "   - Move: Travel between connected locations."
+        "   - Guide: Move villagers from adjacent locations to your location."
+        "   - Pick Up: Collect available items at your current location."
+        "   - Advance: Perform special tasks like destroying Dracula's coffin or collecting evidence for the Invisible Man."
+        "   - Defeat: Attempt to defeat a monster when in the same location."
+        "   - Use Perks: Play a perk card for special bonuses."
+        "   - Special Action: Perform unique character abilities."
+        "   - End Turn: Finish your hero phase."
+
+        "3. Monsters:"
+        "   - Each monster has unique abilities and special tasks required to defeat them."
+        "   - Monsters move and attack every monster phase, causing terror and defeating heroes and villagers."
+
+        "4. Terror Level:"
+        "   - The terror level increases when monsters kill heroes or villagers."
+        "   - If the terror level reaches the maximum, you lose the game."
+
+        "5. Win the Game:"
+        "   - Complete the objectives for all monsters."
+        "   - Maintain a low terror level."
+
+        "Remember:"
+        "   - Plan your moves strategically."
+        "   - Protect the villagers."
+        "   - Use your perk cards wisely."
+        "   - Defeat the monsters and save the town!"
+
+        "Good luck, hero!"
+        "==========================================================================)"
+    );
+    MyTerminal.ShowPauseWithRefresh();
+    return;
+
 }
 bool Game::CheckGameEnd()
 {
