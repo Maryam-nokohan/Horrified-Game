@@ -1,4 +1,3 @@
-##instruction to run the game : ##
 # Horrified Game
 
 A terminal-based cooperative adventure inspired by the classic **Horrified** tabletop game, built in C++ using the [FTXUI](https://github.com/ArthurSonzogni/FTXUI) library.
