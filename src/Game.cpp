@@ -698,46 +698,47 @@ void Game::GameStart()
 void Game::Help()
 {
     MyTerminal.StylizeTextBoard(
-        R"(======================== HORRIFIED GAME INSTRUCTIONS ========================"
-        "Welcome to the Horrified Game! Here are the basics you need to know:"
+    "======================== HORRIFIED GAME INSTRUCTIONS ========================\n"
+    "Welcome to the Horrified Game! Here are the basics you need to know:\n\n"
 
-        "1. Goal:"
-        "   - Work with the other heroes to defeat the monsters (Dracula, Invisible Man, etc.) by"
-        "     completing their objectives (destroying coffins, collecting evidence, defeating monsters, etc.)."
-        "   - Protect the villagers by guiding or moving them to their safe locations."
-        "   - Prevent the terror level from reaching its maximum."
+    "1. Goal:\n"
+    "   - Work with the other heroes to defeat the monsters (Dracula, Invisible Man, etc.) by\n"
+    "     completing their objectives (destroying coffins, collecting evidence, defeating monsters, etc.).\n"
+    "   - Protect the villagers by guiding or moving them to their safe locations.\n"
+    "   - Prevent the terror level from reaching its maximum.\n\n"
 
-        "2. Hero Actions:"
-        "   - Move: Travel between connected locations."
-        "   - Guide: Move villagers from adjacent locations to your location."
-        "   - Pick Up: Collect available items at your current location."
-        "   - Advance: Perform special tasks like destroying Dracula's coffin or collecting evidence for the Invisible Man."
-        "   - Defeat: Attempt to defeat a monster when in the same location."
-        "   - Use Perks: Play a perk card for special bonuses."
-        "   - Special Action: Perform unique character abilities."
-        "   - End Turn: Finish your hero phase."
+    "2. Hero Actions:\n"
+    "   - Move: Travel between connected locations.\n"
+    "   - Guide: Move villagers from adjacent locations to your location.\n"
+    "   - Pick Up: Collect available items at your current location.\n"
+    "   - Advance: Perform special tasks like destroying Dracula's coffin or collecting evidence for the Invisible Man.\n"
+    "   - Defeat: Attempt to defeat a monster when in the same location.\n"
+    "   - Use Perks: Play a perk card for special bonuses.\n"
+    "   - Special Action: Perform unique character abilities.\n"
+    "   - End Turn: Finish your hero phase.\n\n"
 
-        "3. Monsters:"
-        "   - Each monster has unique abilities and special tasks required to defeat them."
-        "   - Monsters move and attack every monster phase, causing terror and defeating heroes and villagers."
+    "3. Monsters:\n"
+    "   - Each monster has unique abilities and special tasks required to defeat them.\n"
+    "   - Monsters move and attack every monster phase, causing terror and defeating heroes and villagers.\n\n"
 
-        "4. Terror Level:"
-        "   - The terror level increases when monsters kill heroes or villagers."
-        "   - If the terror level reaches the maximum, you lose the game."
+    "4. Terror Level:\n"
+    "   - The terror level increases when monsters kill heroes or villagers.\n"
+    "   - If the terror level reaches the maximum, you lose the game.\n\n"
 
-        "5. Win the Game:"
-        "   - Complete the objectives for all monsters."
-        "   - Maintain a low terror level."
+    "5. Win the Game:\n"
+    "   - Complete the objectives for all monsters.\n"
+    "   - Maintain a low terror level.\n\n"
 
-        "Remember:"
-        "   - Plan your moves strategically."
-        "   - Protect the villagers."
-        "   - Use your perk cards wisely."
-        "   - Defeat the monsters and save the town!"
+    "Remember:\n"
+    "   - Plan your moves strategically.\n"
+    "   - Protect the villagers.\n"
+    "   - Use your perk cards wisely.\n"
+    "   - Defeat the monsters and save the town!\n\n"
 
-        "Good luck, hero!"
-        "==========================================================================)"
-    );
+    "Good luck, hero!\n"
+    "==========================================================================\n"
+);
+
     MyTerminal.ShowPauseWithRefresh();
     return;
 

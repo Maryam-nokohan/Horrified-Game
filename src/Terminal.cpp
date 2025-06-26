@@ -19,16 +19,15 @@ int ShowInTerminal ::MenuGenerator(const std::vector<std::string> Options)
 {
     int selected = 0;
 
-    auto screen = ScreenInteractive::FitComponent();
-
-    auto menu = ftxui::Menu(Options, &selected) | color(Color ::LightGreen) | bgcolor(Color::Black);
-    auto renderer = Renderer(menu, [&]
-                             { return vbox({
-                                          hbox(text("selected = "), text(std::to_string(selected))) | color(Color::LightGreen),
-                                          separator(),
-                                          menu->Render() | frame,
-                                      }) |
-                                      border | bgcolor(Color::Black); });
+     auto screen = ScreenInteractive::FitComponent();
+    auto menu = Menu(&Options, &selected) | color(Color::LightGreen) | bgcolor(Color::Black);
+    auto renderer = Renderer(menu, [&] {
+        return vbox({
+            hbox({ text("selected = "), text(std::to_string(selected)) }) | color(Color::LightGreen),
+            separator(),
+            menu->Render() | frame,
+        }) | border | bgcolor(Color::Black);
+    });
     screen.Loop(renderer);
     return selected;
 }
@@ -186,9 +185,6 @@ Table ShowInTerminal::RenderLocationOverview(
     const std::vector<std::shared_ptr<Item>> &items,
     const std ::vector<std ::shared_ptr<Hero>> &heros)
 {
-    // std::vector<std::vector<Element>> t;
-    // t.push_back({text("Location"), text("Item"), text("Monsters"), text("Villagers"), text("Heros")});
-
  std::vector<std::vector<Element>> t;
 t.push_back({text("Location"), text("Item"), text("Monsters"), text("Villagers"), text("Heros")});
 
@@ -276,48 +272,59 @@ for (const auto &[name, loc] : locations) {
 
 int ShowInTerminal::ShowHeroPhase(Game &game, const std::vector<std::string> options)
 {
- // Print
-    StylizeTextBoard("========================================HeroPhase ========================================");
-    std::cout << "\n";
+    // Print
+    StylizeTextBoard("========================================HeroPhase========================================");
+    std::cout << '\n';
     int selectedIndex = -1;
-    std::shared_ptr<MonsterCard> monsterCardView =std ::make_shared<MonsterCard>("MonsterCards",0, "", MonsterStrike("", 0, 0));
-    auto mapView = RenderMap();                            //
-    auto terrorView = RenderTerrorLevel(game.terrorLevel); //
+    // Initial Setup
+
+    auto monsterCardView = std::make_shared<MonsterCard>("MonsterCards", 0, "", MonsterStrike("", 0, 0));
+    auto mapView = RenderMap();
+    auto terrorView = RenderTerrorLevel(game.terrorLevel);
 
     auto dracula = game.GetDracula();
-    Element DraculaMat = text("Task Done!");
-    if(dracula)
-    DraculaMat = RenderDraculaMat(dracula->GetCoffinsDestroyed()); //
+    Element draculaMat = text("Task Done!");
+    if (dracula) {
+        draculaMat = RenderDraculaMat(dracula->GetCoffinsDestroyed());
+    }
+
     auto invisibleMan = game.GetInvisibleMan();
-    auto InvisibleManMat = text("Task Done!");
-    if(invisibleMan)
-    InvisibleManMat = RenderInvisibleManMat(invisibleMan->GetEvidences());//
+    Element invisibleManMat = text("Task Done!");
+    if (invisibleMan) {
+        invisibleManMat = RenderInvisibleManMat(invisibleMan->GetEvidences());
+    }
+
     Element heroInfo = text("No hero");
-    if(game.heroPlayer)
-    heroInfo = RenderHeroInfo(game.heroPlayer);//
+    if (game.heroPlayer) {
+        heroInfo = RenderHeroInfo(game.heroPlayer);
+    }
+
     Element perkCard = text("No Perk Card");
-    if (game.heroPlayer && game.heroPlayer->PeekPerkCard())
-    { perkCard = RenderPerkCard(game.heroPlayer->PeekPerkCard());
-        }
-    auto monsterCard = RenderMonsterCard(monsterCardView);//     
+    if (game.heroPlayer && game.heroPlayer->PeekPerkCard()) {
+        perkCard = RenderPerkCard(game.heroPlayer->PeekPerkCard());
+    }
+
+    auto monsterCard = RenderMonsterCard(monsterCardView);
     auto locOverview = RenderLocationOverview(
-            game.getMapPlan().getLocations(),
-            game.Monsters,
-            game.villagers,
-            game.GetItemsInGame(),
-            game.heroes);  
+        game.getMapPlan().getLocations(),
+        game.Monsters,
+        game.villagers,
+        game.GetItemsInGame(),
+        game.heroes);
     auto doc = locOverview.Render();
 
-    auto menuComponent = ftxui::Menu(options, &selectedIndex) | color(Color ::LightGreen) | bgcolor(Color::Black);
-    auto Menurenderer = Renderer(menuComponent, [&]
-                             { return vbox({
-                                          hbox(text("selected = "), text(std::to_string(selectedIndex))) | color(Color::LightGreen),
-                                          separator(),
-                                          menuComponent->Render() | frame,
-                                      }) |
-                                      border | bgcolor(Color::Black); });
+    // Menu component
+    auto menuComponent = Menu(&options, &selectedIndex);
+    auto menuRenderer = Renderer(menuComponent, [&] {
+        return vbox({
+            hbox({text("selected = "), text(std::to_string(selectedIndex)) | color(Color::LightGreen)}),
+            separator(),
+            menuComponent->Render() | frame
+        }) | border | bgcolor(Color::Black);
+    });
+    auto menuContainer = Container::Vertical({menuComponent});
 
-    // layout
+    // Main layout
     auto layout = Renderer([&] {
         return vbox({
             hbox({ftxui::separator(), terrorView, ftxui::separator()}),
@@ -326,22 +333,24 @@ int ShowInTerminal::ShowHeroPhase(Game &game, const std::vector<std::string> opt
             hbox({ftxui::separator(), heroInfo, ftxui::separator(),
                   perkCard, ftxui::separator(),
                   monsterCard, ftxui::separator(),
-                  DraculaMat, ftxui::separator(),
-                  InvisibleManMat, ftxui::separator()}),
+                  draculaMat, ftxui::separator(),
+                  invisibleManMat, ftxui::separator()}),
             ftxui::separator(),
             text("Choose your action:"),
         });
     });
+    auto layoutContainer = Container::Horizontal({});
 
-    // Combine layout and menu
-    auto combined = Container::Vertical({ layout, Menurenderer });
+    // Final combined layout
+    auto combined = Container::Vertical({menuContainer});
     auto final_renderer = Renderer(combined, [&] {
         return vbox({
             layout->Render(),
-            Menurenderer->Render() | frame | border | bgcolor(Color::Black),
+            menuRenderer->Render() | frame | border | bgcolor(Color::Black) | color(Color::LightGreen)
         });
     });
 
+    // Main Screen
     auto screen = ScreenInteractive::FitComponent();
     screen.Loop(final_renderer);
 
