@@ -38,8 +38,10 @@ void InvisibleMan::StalkUnseen(Game& game, int moves) {
     auto locals = CurrentLocation->GetVillager();
     if (!locals.empty()) {
         auto target = locals.back();
-        game.MyTerminal.StylizeTextBoard("Invisible Man is already in "+target->getCurrentLocation()->GetCityName()+ " uses Stalk Unseen and attacks " + target->getName());
-        CurrentLocation->RemoveVillager(target);
+        game.MyTerminal.StylizeTextBoard("Invisible Man is already in "+target->getCurrentLocation()->GetCityName()+ " uses Stalk Unseen and kills " + target->getName());
+        target->kill();
+        game.RemoveVillagerFromGame(target);
+        game.MyTerminal.ShowPause();
         return;
     }
 
@@ -94,7 +96,7 @@ void InvisibleMan::StalkUnseen(Game& game, int moves) {
     auto afterMove = CurrentLocation->GetVillager();
     if (!afterMove.empty()) {
         auto target = afterMove.back();
-        game.MyTerminal.StylizeTextBoard("Invisible Man moved and attacked " + target->getName());
+        game.MyTerminal.StylizeTextBoard("Invisible Man moved Toward " + target->getName());
         CurrentLocation->RemoveVillager(target);
     } else {
         game.MyTerminal.StylizeTextBoard("Invisible Man moved to " + CurrentLocation->GetCityName() + " but found no one to attack.");

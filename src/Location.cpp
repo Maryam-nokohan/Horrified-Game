@@ -11,7 +11,7 @@ Location ::Location(const std ::string &name)
     this->Name = name;
 }
 // Neighbor for that location
-void Location ::AddNeighbor(const std ::shared_ptr<Location>& neighbor)
+void Location ::AddNeighbor(const std ::shared_ptr<Location> &neighbor)
 {
     neighbors.push_back(neighbor);
 }
@@ -20,11 +20,11 @@ const std::vector<std ::shared_ptr<Location>> &Location ::GetNeighbors() const
     return neighbors;
 }
 // Monsters in that location :
-void Location ::AddMonster(const std ::shared_ptr<Monster>& monsterName)
+void Location ::AddMonster(const std ::shared_ptr<Monster> &monsterName)
 {
     Monsters.push_back(monsterName);
 }
-void Location ::RemoveMonster(const std ::shared_ptr<Monster>& monsterName)
+void Location ::RemoveMonster(const std ::shared_ptr<Monster> &monsterName)
 {
     auto it = std ::find(Monsters.begin(), Monsters.end(), monsterName);
     if (it != Monsters.end())
@@ -35,16 +35,17 @@ const std ::vector<std ::shared_ptr<Monster>> &Location ::GetMonsters() const
     return Monsters;
 }
 // villager in that location :
-void Location ::AddVillager(const std ::shared_ptr<Villager>& villagerName)
+void Location ::AddVillager(const std ::shared_ptr<Villager> &villagerName)
 {
     Villagers.push_back(villagerName);
 }
-void Location ::RemoveVillager( const std ::shared_ptr<Villager> &villagerName)
+void Location ::RemoveVillager(const std ::shared_ptr<Villager> &villagerName)
 {
     auto it = std ::remove(Villagers.begin(), Villagers.end(), villagerName);
     if (it != Villagers.end())
     {
-        Villagers.erase(it , Villagers.end());
+        Villagers.erase(it, Villagers.end());
+        Villagers.shrink_to_fit();
     }
 }
 const std ::vector<std ::shared_ptr<Villager>> &Location ::GetVillager()
@@ -53,12 +54,12 @@ const std ::vector<std ::shared_ptr<Villager>> &Location ::GetVillager()
 }
 
 // Item in that location :
-void Location::AddItem(const std ::shared_ptr<Item>& ItemName)
+void Location::AddItem(const std ::shared_ptr<Item> &ItemName)
 {
     itemes.push_back(ItemName);
 }
 
-void Location::RemoveItem( const std ::shared_ptr<Item> &ItemName)
+void Location::RemoveItem(const std ::shared_ptr<Item> &ItemName)
 {
     auto it = std ::find(itemes.begin(), itemes.end(), ItemName);
     if (it != itemes.end())
@@ -72,19 +73,19 @@ const std::vector<std ::shared_ptr<Item>> &Location::GetItems()
 }
 // Heros in that location :
 
-void Location ::AddHero(const std ::shared_ptr<Hero>& HeroName)
+void Location ::AddHero(const std ::shared_ptr<Hero> &HeroName)
 {
     Heros.push_back(HeroName);
 }
-void Location ::RemoveHero( const std ::shared_ptr<Hero> &HeroName)
+void Location ::RemoveHero(const std ::shared_ptr<Hero> &HeroName)
 {
     auto it = std ::find(Heros.begin(), Heros.end(), HeroName);
     if (it != Heros.end())
-    Heros.erase(it);
+        Heros.erase(it);
 }
 void Location::ClearItems()
 {
-    for(int i = 0 ;i <itemes.size() ; ++i)
+    for (int i = 0; i < itemes.size(); ++i)
     {
         RemoveItem(itemes[i]);
     }
@@ -93,6 +94,6 @@ void Location::ClearItems()
 }
 const std ::vector<std ::shared_ptr<Hero>> &Location ::GetHero() { return Heros; }
 // Get City Info
-const std ::string& Location ::GetCityName(){ return Name; };
-const int& Location ::GetX() { return x; }
-const int& Location ::GetY() { return y; }
+const std ::string &Location ::GetCityName() { return Name; };
+const int &Location ::GetX() { return x; }
+const int &Location ::GetY() { return y; }
