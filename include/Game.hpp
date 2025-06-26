@@ -53,9 +53,12 @@ class Game{
     void Help();
     bool CheckGameEnd();
     void increaseTerrorLevel();
+    void RemoveVillagerFromGame(std::shared_ptr<Villager>);
     std::vector<std::shared_ptr<Villager>>& getVillagers();
     Map& getMapPlan();
     std::vector<std::shared_ptr<Item>> GetItemsInGame();
+    std::shared_ptr<Dracula> GetDracula();
+    std::shared_ptr<InvisibleMan> GetInvisibleMan();
 
 };
 #endif
