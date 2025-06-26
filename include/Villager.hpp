@@ -3,15 +3,19 @@
 #include <string>
 #include <memory>
 class Location;
+enum class State{
+    Alive ,
+    Rescued,
+    Killed
+};
 class Villager :public std :: enable_shared_from_this<Villager>
 {
 
     private:
       std::string name;
+      State state;
       std :: shared_ptr<Location> currentLocation;
       std :: shared_ptr<Location> safeLocation;
-      bool alive;
-
     public:
        Villager(const std :: string Name , std :: shared_ptr<Location> SafeLoc); 
       const std::string& getName() const;
@@ -19,7 +23,7 @@ class Villager :public std :: enable_shared_from_this<Villager>
       const std :: shared_ptr<Location>& getCurrentLocation() const;
       const std :: shared_ptr<Location>& getSafeLocation() const;
       const std :: string  getCurrentLocationName() const;
-      bool isAlive() const;
+      State isAlive() const;
       void moveTo(std :: shared_ptr<Location>);
       void kill();
       void rescue();
