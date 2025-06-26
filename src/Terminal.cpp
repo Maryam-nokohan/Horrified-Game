@@ -34,7 +34,7 @@ int ShowInTerminal ::MenuGenerator(const std::vector<std::string> Options)
 }
 void ShowInTerminal ::StylizeTextBoard(const std ::string txt)
 {
-    auto element = text(txt) | borderHeavy | color(Color ::LightGreen);
+    auto element = text(txt) | borderHeavy | color(Color ::BlueViolet) | bgcolor(Color::Black);
     auto screen = Screen ::Create(Dimension ::Fit(element));
     Render(screen, element);
     std ::cout << screen.ToString() << '\n';
@@ -283,10 +283,15 @@ int ShowInTerminal::ShowHeroPhase(Game &game, const std::vector<std::string> opt
     std::shared_ptr<MonsterCard> monsterCardView =std ::make_shared<MonsterCard>("MonsterCards",0, "", MonsterStrike("", 0, 0));
     auto mapView = RenderMap();                            //
     auto terrorView = RenderTerrorLevel(game.terrorLevel); //
-    auto dracula = std::dynamic_pointer_cast<Dracula>(game.Monsters[0]);
-    auto DraculaMat = RenderDraculaMat(dracula->GetCoffinsDestroyed()); //
-    auto invisibleMan = std::dynamic_pointer_cast<InvisibleMan>(game.Monsters[1]);
-    auto InvisibleManMat = RenderInvisibleManMat(invisibleMan->GetEvidences());//
+
+    auto dracula = game.GetDracula();
+    Element DraculaMat = text("Task Done!");
+    if(dracula)
+    DraculaMat = RenderDraculaMat(dracula->GetCoffinsDestroyed()); //
+    auto invisibleMan = game.GetInvisibleMan();
+    auto InvisibleManMat = text("Task Done!");
+    if(invisibleMan)
+    InvisibleManMat = RenderInvisibleManMat(invisibleMan->GetEvidences());//
     Element heroInfo = text("No hero");
     if(game.heroPlayer)
     heroInfo = RenderHeroInfo(game.heroPlayer);//
