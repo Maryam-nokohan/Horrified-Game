@@ -417,13 +417,14 @@ void Game::HeroPhase()
                 heroPlayer->pickUpItems();
                 MyTerminal.StylizeTextBoard(heroPlayer->getName() + " Pick up all the Items!");
                 auto invisible = GetInvisibleMan();
-                if(invisible){
-                if (invisible->IsTasksLocation(heroPlayer->getLocation()->GetCityName()))
+                if (invisible)
                 {
-                    MyTerminal.StylizeTextBoard("You pick up one of the evidences in city " + heroPlayer->getLocation()->GetCityName());
-                }}
+                    if (invisible->IsTasksLocation(heroPlayer->getLocation()->GetCityName()))
+                    {
+                        MyTerminal.StylizeTextBoard("You pick up one of the evidences in city " + heroPlayer->getLocation()->GetCityName());
+                    }
+                }
                 MyTerminal.ShowPauseWithRefresh();
-                
             }
             else
             {
@@ -465,13 +466,21 @@ void Game::HeroPhase()
 
                     int total = 0;
                     std::vector<std::shared_ptr<Item>> usedItems;
+                    //if we have a red item with power 6:
+                    if (redItems.back()->getPower() == 6)
+                    {
+                        total = 6;
+                        usedItems.push_back(redItems.back());
+                    }
+                    // else use greedy
+                    else{
                     for (const auto &item : redItems)
                     {
                         if (total >= requiredPower)
                             break;
                         total += item->getPower();
                         usedItems.push_back(item);
-                    }
+                    }}
 
                     if (total >= requiredPower)
                     {
@@ -540,10 +549,11 @@ void Game::HeroPhase()
             auto monster = heroPlayer->getLocation()->GetMonsters();
             if (!monster.empty())
             {
-                for(auto & m : monster)
+                for (auto &m : monster)
                 {
-                    if(m->CanBeDefeated()){
-                        heroPlayer->DefeatAction(m , * this);
+                    if (m->CanBeDefeated())
+                    {
+                        heroPlayer->DefeatAction(m, *this);
                     }
                 }
             }
