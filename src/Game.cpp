@@ -309,7 +309,7 @@ void Game::HeroPhase()
     int selected = -1;
     while (selected != 8)
     {
-        selected = MyTerminal.ShowHeroPhase(*this, {"Move", "Guid", "Pick up", "Advance", "Defeat", "Special Action", "Use Perks", "Help", "Exit"});
+        selected = MyTerminal.ShowHeroPhase(*this, {"Move", "Guid", "Pick up", "Advance", "Defeat", "Special Action", "Use Perks", "Help", "Exit Hero Phase", "Exit Game"});
         // check if actions left :
         if (heroPlayer->getRemainingActions() == 0)
         {
@@ -467,21 +467,23 @@ void Game::HeroPhase()
 
                     int total = 0;
                     std::vector<std::shared_ptr<Item>> usedItems;
-                    //if we have a red item with power 6:
+                    // if we have a red item with power 6:
                     if (redItems.back()->getPower() == 6)
                     {
                         total = 6;
                         usedItems.push_back(redItems.back());
                     }
                     // else use greedy
-                    else{
-                    for (const auto &item : redItems)
+                    else
                     {
-                        if (total >= requiredPower)
-                            break;
-                        total += item->getPower();
-                        usedItems.push_back(item);
-                    }}
+                        for (const auto &item : redItems)
+                        {
+                            if (total >= requiredPower)
+                                break;
+                            total += item->getPower();
+                            usedItems.push_back(item);
+                        }
+                    }
 
                     if (total >= requiredPower)
                     {
@@ -550,26 +552,24 @@ void Game::HeroPhase()
             auto monster = heroPlayer->getLocation()->GetMonsters();
             if (!monster.empty())
             {
-                if(monster.size() == 2)
+                if (monster.size() == 2)
                 {
                     MyTerminal.StylizeTextBoard("There are two Monsters in Your Location choose one to defeat:");
                     MyTerminal.ShowPause();
-                   int selection = MyTerminal.MenuGenerator({"Dracula" , "Invisible Man"});
-                   if(selection == 0)
-                   {
-                    heroPlayer->DefeatAction(GetDracula() , *this);
-                   }
-                   else if(selection == 1)
-                   {
-                    heroPlayer->DefeatAction(GetInvisibleMan() , *this);
-                   }
-
+                    int selection = MyTerminal.MenuGenerator({"Dracula", "Invisible Man"});
+                    if (selection == 0)
+                    {
+                        heroPlayer->DefeatAction(GetDracula(), *this);
+                    }
+                    else if (selection == 1)
+                    {
+                        heroPlayer->DefeatAction(GetInvisibleMan(), *this);
+                    }
                 }
-                else 
+                else
                 {
-                    heroPlayer->DefeatAction(monster.back() , * this);
+                    heroPlayer->DefeatAction(monster.back(), *this);
                 }
-               
             }
             else
                 MyTerminal.StylizeTextBoard("No monster in your location to defeat!");
@@ -601,6 +601,14 @@ void Game::HeroPhase()
             MyTerminal.ShowPause();
             break;
         }
+        // exit Game Button
+        else if (selected == 9)
+        {
+            MyTerminal.StylizeTextBoard("Logging Out ...");
+            exit(0);
+        }
+        if (CheckGameEnd())
+            return;
     }
     MyTerminal.Refresh();
     heroPlayer->resetActions();
@@ -710,7 +718,7 @@ void Game::GameStart()
     while (!CheckGameEnd())
     {
         HeroPhase();
-        if (!skipMonsterPhase)
+        if (!skipMonsterPhase && !CheckGameEnd())
         {
             MonsterPhase();
         }
@@ -783,5 +791,7 @@ bool Game::CheckGameEnd()
         MyTerminal.StylizeTextBoard("🎉 Victory! The Heroes have vanquished all the monsters!\n");
         GameOver = true;
     }
+    if (GameOver)
+        exit(0);
     return GameOver;
 }
