@@ -4,12 +4,12 @@
 #include <iostream>
 using namespace std;
 Dice ::Dice(){SetFaces();}
-string Dice ::DiceRoll()
-{
-    srand(time(0));
-    int random = rand() % 6;
-    return DiceFaces[random];
+std::string Dice::DiceRoll() {
+    static std::random_device rd;
+    static std::mt19937 gen(rd()); 
+    static std::uniform_int_distribution<> dist(0, 5);  // 6 faces
 
+    return DiceFaces[dist(gen)];
 }
 void Dice::SetFaces()
 {
