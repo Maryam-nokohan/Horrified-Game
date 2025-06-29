@@ -336,6 +336,7 @@ void Game::HeroPhase()
                 if (!villagersInNeighbor.empty())
                 {
                     MyTerminal.StylizeTextBoard("Would you like to move all the villagers with you?");
+                    MyTerminal.ShowPause();
                     int choice = MyTerminal.ShowHeroPhase(*this, {"Yes", "No"});
                     if (choice == 0)
                     {
@@ -549,17 +550,30 @@ void Game::HeroPhase()
             auto monster = heroPlayer->getLocation()->GetMonsters();
             if (!monster.empty())
             {
-                for (auto &m : monster)
+                if(monster.size() == 2)
                 {
-                    if (m->CanBeDefeated())
-                    {
-                        heroPlayer->DefeatAction(m, *this);
-                    }
+                    MyTerminal.StylizeTextBoard("There are two Monsters in Your Location choose one to defeat:");
+                    MyTerminal.ShowPause();
+                   int selection = MyTerminal.MenuGenerator({"Dracula" , "Invisible Man"});
+                   if(selection == 0)
+                   {
+                    heroPlayer->DefeatAction(GetDracula() , *this);
+                   }
+                   else if(selection == 1)
+                   {
+                    heroPlayer->DefeatAction(GetInvisibleMan() , *this);
+                   }
+
                 }
+                else 
+                {
+                    heroPlayer->DefeatAction(monster.back() , * this);
+                }
+               
             }
             else
                 MyTerminal.StylizeTextBoard("No monster in your location to defeat!");
-            MyTerminal.ShowPauseWithRefresh();
+            MyTerminal.ShowPause();
         }
 
         // Special Action
