@@ -20,10 +20,10 @@ int ShowInTerminal ::MenuGenerator(const std::vector<std::string> Options)
     int selected = 0;
 
      auto screen = ScreenInteractive::FitComponent();
-    auto menu = Menu(&Options, &selected) | color(Color::LightGreen) | bgcolor(Color::Black);
+    auto menu = Menu(&Options, &selected) | color(Color::BlueViolet) | bgcolor(Color::Black);
     auto renderer = Renderer(menu, [&] {
         return vbox({
-            hbox({ text("selected = "), text(std::to_string(selected)) }) | color(Color::LightGreen),
+            hbox({ text("selected = "), text(std::to_string(selected)) }) | color(Color::BlueViolet),
             separator(),
             menu->Render() | frame,
         }) | border | bgcolor(Color::Black);
@@ -33,7 +33,7 @@ int ShowInTerminal ::MenuGenerator(const std::vector<std::string> Options)
 }
 void ShowInTerminal ::StylizeTextBoard(const std ::string txt)
 {
-    auto element = paragraph(txt) | borderHeavy | color(Color ::BlueViolet) | bgcolor(Color::Black);
+    auto element = paragraph(txt) | border | color(Color ::BlueViolet) | bgcolor(Color::Black);
     auto screen = Screen ::Create(Dimension ::Fit(element));
     Render(screen, element);
     std ::cout << screen.ToString() << '\n';
@@ -317,7 +317,7 @@ int ShowInTerminal::ShowHeroPhase(Game &game, const std::vector<std::string> opt
     auto menuComponent = Menu(&options, &selectedIndex);
     auto menuRenderer = Renderer(menuComponent, [&] {
         return vbox({
-            hbox({text("selected = "), text(std::to_string(selectedIndex)) | color(Color::LightGreen)}),
+            hbox({text("selected = "), text(std::to_string(selectedIndex)) | color(Color::BlueViolet)}),
             separator(),
             menuComponent->Render() | frame
         }) | border | bgcolor(Color::Black);
@@ -346,7 +346,7 @@ int ShowInTerminal::ShowHeroPhase(Game &game, const std::vector<std::string> opt
     auto final_renderer = Renderer(combined, [&] {
         return vbox({
             layout->Render(),
-            menuRenderer->Render() | frame | border | bgcolor(Color::Black) | color(Color::LightGreen)
+            menuRenderer->Render() | frame | border | bgcolor(Color::Black) | color(Color::BlueViolet)
         });
     });
 
@@ -360,14 +360,22 @@ void ShowInTerminal:: ShowMonsterPhase( Game & game){
     //print
     StylizeTextBoard("===============================================MonsterPhase===============================================");
       // Monster Card
-    if (!game.MonsterDeck.empty())
-    {
+    if (!game.MonsterDeck.empty()) {
         auto monsterCard = RenderMonsterCard(game.MonsterDeck.back());
-        auto monsterScreen = Screen::Create(Dimension::Fit(monsterCard));
-        Render(monsterScreen, monsterCard);
-        std::cout << monsterScreen.ToString() << "\n";
+
+        auto locOverview = RenderLocationOverview(
+            game.getMapPlan().getLocations(),
+            game.Monsters,
+            game.villagers,
+            game.GetItemsInGame(),
+            game.heroes);
+
+        auto layout = hbox(monsterCard, locOverview.Render()) | border;
+        auto screen = Screen::Create(Dimension::Fit(layout));
+        Render(screen, layout); 
+        std::cout << screen.ToString() << '\n';
     }
-    ShowPause();
+    ShowPauseWithRefresh();
 
   }
 
