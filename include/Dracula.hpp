@@ -19,5 +19,6 @@ class Dracula : public Monster{
     bool CanBeDefeated() override;
     bool IsTasksLocation(std :: string);
     std :: vector<bool> GetCoffinsDestroyed();    
+    std :: vector<std:: pair<bool , std :: string>> GetCoffins() const;
 };
 #endif

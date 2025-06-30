@@ -38,6 +38,10 @@ void CheckInt(std ::string test)
     {
         throw std ::invalid_argument("Error : empty string is invalid input !!\n");
     }
+    else if(test.find('.') != std::string::npos)
+    {
+        throw std::invalid_argument("Error : Float point is not valid!!\n");
+    }
     try
     {
         stoi(test);

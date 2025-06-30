@@ -82,5 +82,9 @@ std :: vector<bool> Dracula::GetCoffinsDestroyed()
     }
     return coffins;
 }
+std :: vector<std:: pair<bool , std::string>> Dracula::GetCoffins() const
+{
+    return Table;
+}
 
 

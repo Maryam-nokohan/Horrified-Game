@@ -16,8 +16,8 @@ class Game;
 class ShowInTerminal{
   private :
     ftxui::Element RenderTerrorLevel(int terrorLevel);
-    ftxui::Element RenderDraculaMat(std ::vector<bool>);
-    ftxui::Element RenderInvisibleManMat(std ::vector<bool>);
+    ftxui::Element RenderDraculaMat(std ::vector<std::pair<bool , std::string>>);
+    ftxui::Element RenderInvisibleManMat(std ::vector<std::pair<bool , std::string>>);
     ftxui::Element RenderMap();
     ftxui::Element RenderItems(const std::vector< std::shared_ptr<Item>>& items);
     ftxui::Element RenderHeroInfo(const std::shared_ptr<Hero>& hero);
@@ -41,7 +41,6 @@ class ShowInTerminal{
   void ShowMonsterPhase( Game & game);
   void ShowPause();
   void ShowPauseWithRefresh();
-  ftxui::Component CreateMenu(const std::vector<std::string> &options, int &selected);
 
 };
 #endif

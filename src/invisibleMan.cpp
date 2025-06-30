@@ -145,3 +145,6 @@ std :: vector<bool> InvisibleMan::GetEvidences()
     }
     return Evidenc;
 }
+std :: vector<std::pair<bool , std::string>> InvisibleMan :: GetEvidence() const{
+    return Evidences;
+}
