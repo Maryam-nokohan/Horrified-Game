@@ -79,6 +79,7 @@ void ShowInTerminal::ShowPause()
 void ShowInTerminal::ShowPauseWithRefresh()
 {
     StylizeTextBoard("Press Enter to continue...");
+    Refresh();
     std ::cin.get();
 }
 //Render function
@@ -375,7 +376,7 @@ void ShowInTerminal:: ShowMonsterPhase( Game & game){
         Render(screen, layout); 
         std::cout << screen.ToString() << '\n';
     }
-    ShowPauseWithRefresh();
+    ShowPause();
 
   }
 

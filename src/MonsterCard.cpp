@@ -495,8 +495,9 @@ void MonsterCard:: ApplyMonsterStrike(Game & game , std ::shared_ptr<Monster> mo
     auto nearVillagers = monsterName->GetLocation()->GetVillager();
     if (nearHeros.empty() && nearVillagers.empty() )
     {
-        monsterName->Move(monsterName->FindNearestOpponent(game.mapPlan, monsterName->GetLocation(), Strikes.MoveNum));
-        game.MyTerminal.StylizeTextBoard(monsterName->GetName() + " moved toward the nearest opponent!");
+        auto nearestOp = monsterName->FindNearestOpponent(game.mapPlan , monsterName->GetLocation(),Strikes.MoveNum);
+        monsterName->Move(nearestOp);
+        game.MyTerminal.StylizeTextBoard(monsterName->GetName() + " moved toward the nearest opponent at " + nearestOp->GetCityName());
         game.MyTerminal.ShowPause();
     }
     else
@@ -534,8 +535,7 @@ void MonsterCard:: ApplyMonsterStrike(Game & game , std ::shared_ptr<Monster> mo
             else
             {
                 InvisibleManPowerDices++;
-                // std ::shared_ptr<InvisibleMan> invisibleMan = std ::dynamic_pointer_cast<InvisibleMan>(monsterName);
-                // invisibleMan->StalkUnseen(game, 2);
+             
             }
         }
         else if (face == " ")

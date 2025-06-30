@@ -317,7 +317,7 @@ void Game::HeroPhase()
         // check if actions left :
         if (heroPlayer->getRemainingActions() == 0)
         {
-            if (!(selected == 6 || selected == 7 || selected == 8))
+            if (!(selected == 6 || selected == 7 || selected == 8 || selected == 9))
             {
                 MyTerminal.StylizeTextBoard("No more actions choose your perk cards or exit!");
                 MyTerminal.ShowPauseWithRefresh();
@@ -327,12 +327,12 @@ void Game::HeroPhase()
         // Move
         if (selected == 0)
         {
-            MyTerminal.ShowPauseWithRefresh();
             auto neighbors = heroPlayer->getLocation()->GetNeighbors();
             std::vector<std::string> neighborNames;
             for (const auto &loc : neighbors)
                 neighborNames.push_back(loc->GetCityName());
-            int select = MyTerminal.ShowHeroPhase(*this, neighborNames);
+                MyTerminal.StylizeTextBoard("Choose a neighbor to move :");
+                int select = MyTerminal.MenuGenerator(neighborNames);
             if (select >= 0 && select < neighbors.size())
             {
                 auto nextLocation = neighbors[select];
@@ -341,7 +341,7 @@ void Game::HeroPhase()
                 {
                     MyTerminal.StylizeTextBoard("Would you like to move all the villagers with you?");
                     MyTerminal.ShowPause();
-                    int choice = MyTerminal.ShowHeroPhase(*this, {"Yes", "No"});
+                    int choice = MyTerminal.MenuGenerator({"Yes", "No"});
                     if (choice == 0)
                     {
                         for (auto &v : villagersInNeighbor)
@@ -355,7 +355,6 @@ void Game::HeroPhase()
                                 heroPlayer->GetPerkCard(PerkDeck.back());
                                 heroPlayer->getLocation()->RemoveVillager(v);
                                 PerkDeck.pop_back();
-                                MyTerminal.ShowPauseWithRefresh();
                             }
                         }
                     }
@@ -365,7 +364,7 @@ void Game::HeroPhase()
                 heroPlayer->moveTo(nextLocation);
             }
             MyTerminal.StylizeTextBoard(heroPlayer->getName() + " moved to " + heroPlayer->getLocation()->GetCityName());
-            MyTerminal.ShowPauseWithRefresh();
+            MyTerminal.ShowPause();
         }
 
         // Guide
@@ -388,7 +387,8 @@ void Game::HeroPhase()
 
             if (!guideOptions.empty())
             {
-                int choice = MyTerminal.ShowHeroPhase(*this, guideOptions);
+                MyTerminal.StylizeTextBoard("Select a Villager To Guide :");
+                int choice = MyTerminal.MenuGenerator(guideOptions);
                 if (choice >= 0 && choice < guideable.size())
                 {
                     auto villager = guideable[choice].first;
@@ -404,13 +404,13 @@ void Game::HeroPhase()
                         heroPlayer->GetPerkCard(PerkDeck.back());
                         PerkDeck.pop_back();
                     }
-                    MyTerminal.ShowPauseWithRefresh();
+                    MyTerminal.ShowPause();
                 }
             }
             else
             {
                 MyTerminal.StylizeTextBoard("No villagers in nearby locations to guide.\n");
-                MyTerminal.ShowPauseWithRefresh();
+                MyTerminal.ShowPause();
             }
         }
 
@@ -429,12 +429,12 @@ void Game::HeroPhase()
                         MyTerminal.StylizeTextBoard("You pick up one of the evidences in city " + heroPlayer->getLocation()->GetCityName());
                     }
                 }
-                MyTerminal.ShowPauseWithRefresh();
+                MyTerminal.ShowPause();
             }
             else
             {
                 MyTerminal.StylizeTextBoard("Not any Items to pick up");
-                MyTerminal.ShowPauseWithRefresh();
+                MyTerminal.ShowPause();
             }
         }
 
@@ -456,7 +456,7 @@ void Game::HeroPhase()
                 if (dracula->IsCoffinDestroyed(city))
                 {
                     MyTerminal.StylizeTextBoard("You already destroyed the coffin at " + city + ".");
-                    MyTerminal.ShowPauseWithRefresh();
+                    MyTerminal.ShowPause();
                 }
                 else
                 {
@@ -496,12 +496,12 @@ void Game::HeroPhase()
                             heroPlayer->RemoveItem(item);
                         heroPlayer->DecreaseAction();
                         MyTerminal.StylizeTextBoard("You smashed a Dracula coffin at " + city + "!");
-                        MyTerminal.ShowPauseWithRefresh();
+                        MyTerminal.ShowPause();
                     }
                     else
                     {
                         MyTerminal.StylizeTextBoard("Not enough red item power.");
-                        MyTerminal.ShowPauseWithRefresh();
+                        MyTerminal.ShowPause();
                     }
                 }
                 actionTaken = true;
@@ -538,7 +538,7 @@ void Game::HeroPhase()
                 if (!found)
                 {
                     MyTerminal.StylizeTextBoard("You don't have any item to put in " + Precinct);
-                    MyTerminal.ShowPauseWithRefresh();
+                    MyTerminal.ShowPause();
                 }
                 actionTaken = true;
             }
@@ -546,7 +546,7 @@ void Game::HeroPhase()
             if (!actionTaken)
             {
                 MyTerminal.StylizeTextBoard("Nothing can be advanced at this location.");
-                MyTerminal.ShowPauseWithRefresh();
+                MyTerminal.ShowPause();
             }
         }
 
@@ -559,7 +559,6 @@ void Game::HeroPhase()
                 if (monster.size() == 2)
                 {
                     MyTerminal.StylizeTextBoard("There are two Monsters in Your Location choose one to defeat:");
-                    MyTerminal.ShowPause();
                     int selection = MyTerminal.MenuGenerator({"Dracula", "Invisible Man"});
                     if (selection == 0)
                     {
@@ -613,6 +612,7 @@ void Game::HeroPhase()
         }
         if (CheckGameEnd())
             return;
+            MyTerminal.Refresh();
     }
     MyTerminal.Refresh();
     heroPlayer->resetActions();
