@@ -495,8 +495,9 @@ void MonsterCard:: ApplyMonsterStrike(Game & game , std ::shared_ptr<Monster> mo
     auto nearVillagers = monsterName->GetLocation()->GetVillager();
     if (nearHeros.empty() && nearVillagers.empty() )
     {
-        monsterName->Move(monsterName->FindNearestOpponent(game.mapPlan, monsterName->GetLocation(), Strikes.MoveNum));
-        game.MyTerminal.StylizeTextBoard(monsterName->GetName() + " moved toward the nearest opponent!");
+        auto nearestOp = monsterName->FindNearestOpponent(game.mapPlan , monsterName->GetLocation(),Strikes.MoveNum);
+        monsterName->Move(nearestOp);
+        game.MyTerminal.StylizeTextBoard(monsterName->GetName() + " moved toward the nearest opponent at " + nearestOp->GetCityName());
         game.MyTerminal.ShowPause();
     }
     else
@@ -504,10 +505,17 @@ void MonsterCard:: ApplyMonsterStrike(Game & game , std ::shared_ptr<Monster> mo
         game.MyTerminal.StylizeTextBoard(monsterName->GetName() + " already in the opponent location");
         game.MyTerminal.ShowPause();
     }
+    int InvisibleManPowerDices = 0;
     for (int i = 0; i < Strikes.DiceRolls; ++i)
     {
-        std ::string face = game.GameDice.DiceRoll();
-        game.MyTerminal.StylizeTextBoard("Dice rolled : <" + face + ">");
+        // Faces
+       std::vector<std::string> faces;
+       for(int j = 0 ; j < 3 ;++j)
+       {
+        faces.push_back(game.GameDice.DiceRoll());
+       }
+        game.MyTerminal.StylizeTextBoard("=============================\nDice rolled : <" + faces[0] + "> " +" <" + faces[1] + "> " + " <" + faces[2] + ">\n=============================" );
+        for(const auto & face : faces){
         if (face == "*")
         {
             if(monsterName->Attack(game))
@@ -521,19 +529,31 @@ void MonsterCard:: ApplyMonsterStrike(Game & game , std ::shared_ptr<Monster> mo
             std ::string name = monsterName->GetName();
             if (name == "Dracula")
             {
-                std ::shared_ptr<Dracula> dracula = std ::dynamic_pointer_cast<Dracula>(monsterName);
+                auto dracula = game.GetDracula();
                 dracula->DarkCharm(game);
             }
             else
             {
-                std ::shared_ptr<InvisibleMan> invisibleMan = std ::dynamic_pointer_cast<InvisibleMan>(monsterName);
-                invisibleMan->StalkUnseen(game, 2);
+                InvisibleManPowerDices++;
+             
             }
         }
         else if (face == " ")
         {
             
         }
-        game.MyTerminal.ShowPause();
+      
     }
+}
+  if(InvisibleManPowerDices)
+        {
+            auto Invisible = game.GetInvisibleMan();
+            for(int k = 0 ; k < InvisibleManPowerDices ;++k)
+            {
+                Invisible->StalkUnseen(game , 2);
+            
+            }
+            
+        }
+game.MyTerminal.ShowPause();
 }

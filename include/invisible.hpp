@@ -17,5 +17,6 @@ public:
     bool CanBeDefeated() override;
     bool IsTasksLocation(std ::string) override;
     std :: vector<bool> GetEvidences();
+    std :: vector<std::pair<bool , std::string>> GetEvidence() const;
 };
 #endif

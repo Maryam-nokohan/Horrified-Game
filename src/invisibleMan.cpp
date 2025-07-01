@@ -28,6 +28,7 @@ return false;
 }
 //Power
 void InvisibleMan::StalkUnseen(Game& game, int moves) {
+    game.MyTerminal.StylizeTextBoard("Stalk Unseen Activated : ");
     auto& villagers = game.getVillagers();
     auto& map = game.getMapPlan(); 
     if(villagers.empty())
@@ -99,7 +100,7 @@ void InvisibleMan::StalkUnseen(Game& game, int moves) {
         game.MyTerminal.StylizeTextBoard("Invisible Man moved Toward " + target->getName());
         CurrentLocation->RemoveVillager(target);
     } else {
-        game.MyTerminal.StylizeTextBoard("Invisible Man moved to " + CurrentLocation->GetCityName() + " but found no one to attack.");
+        game.MyTerminal.StylizeTextBoard("Invisible Man moved to " + CurrentLocation->GetCityName());
     }
 }
 //Check if evidence already destroyed
@@ -143,4 +144,7 @@ std :: vector<bool> InvisibleMan::GetEvidences()
         Evidenc.push_back(e.first);
     }
     return Evidenc;
+}
+std :: vector<std::pair<bool , std::string>> InvisibleMan :: GetEvidence() const{
+    return Evidences;
 }

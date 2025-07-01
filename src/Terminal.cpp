@@ -20,10 +20,10 @@ int ShowInTerminal ::MenuGenerator(const std::vector<std::string> Options)
     int selected = 0;
 
      auto screen = ScreenInteractive::FitComponent();
-    auto menu = Menu(&Options, &selected) | color(Color::LightGreen) | bgcolor(Color::Black);
+    auto menu = Menu(&Options, &selected) | color(Color::BlueViolet) | bgcolor(Color::Black);
     auto renderer = Renderer(menu, [&] {
         return vbox({
-            hbox({ text("selected = "), text(std::to_string(selected)) }) | color(Color::LightGreen),
+            hbox({ text("selected = "), text(std::to_string(selected)) }) | color(Color::BlueViolet),
             separator(),
             menu->Render() | frame,
         }) | border | bgcolor(Color::Black);
@@ -33,7 +33,7 @@ int ShowInTerminal ::MenuGenerator(const std::vector<std::string> Options)
 }
 void ShowInTerminal ::StylizeTextBoard(const std ::string txt)
 {
-    auto element = paragraph(txt) | borderHeavy | color(Color ::BlueViolet) | bgcolor(Color::Black);
+    auto element = paragraph(txt) | border | color(Color ::BlueViolet) | bgcolor(Color::Black);
     auto screen = Screen ::Create(Dimension ::Fit(element));
     Render(screen, element);
     std ::cout << screen.ToString() << '\n';
@@ -79,6 +79,7 @@ void ShowInTerminal::ShowPause()
 void ShowInTerminal::ShowPauseWithRefresh()
 {
     StylizeTextBoard("Press Enter to continue...");
+    Refresh();
     std ::cin.get();
 }
 //Render function
@@ -106,27 +107,33 @@ Abbey____│        │                                │
   Crypt           │                                │
                   Shop_____________________________│
 Institute____Lab__│
-)") | border | bgcolor(Color::DarkKhaki) | color(Color::Black);
+)") | border | bgcolor(Color::DarkGoldenrod) | color(Color::Black);
 }
-Element ShowInTerminal::RenderDraculaMat(std ::vector<bool> coffins)
+Element ShowInTerminal::RenderDraculaMat(std ::vector<std::pair<bool , std::string>> coffins)
 {
     std::string ShowCoffins = "";
     for (const auto &c : coffins)
     {
-        ShowCoffins += (c ?  u8"\u2713" : u8"\u2717");
+        ShowCoffins += c.second;
+        ShowCoffins +=" : " ;
+        ShowCoffins += (c.first ? u8"\u2713" : u8"\u2717");
+        ShowCoffins += "\n";
     }
     return hbox({text("Dracula Mat : ") | bold | color(Color::Red),
-                 text(ShowCoffins) | bold | color(Color::Black) | bgcolor(Color::SandyBrown)});
+                 paragraph(ShowCoffins) | bold | color(Color::Black) | bgcolor(Color::SandyBrown)});
 }
-Element ShowInTerminal::RenderInvisibleManMat(std::vector<bool> evidences)
+Element ShowInTerminal::RenderInvisibleManMat(std::vector<std::pair<bool , std::string>> evidences)
 {
     std::string ShowCollected = "";
     for (const auto &e : evidences)
     {
-        ShowCollected += (e ? u8"\u2713" : u8"\u2717");
+        ShowCollected += e.second;
+        ShowCollected +=" : " ;
+        ShowCollected += (e .first? u8"\u2713" : u8"\u2717");
+        ShowCollected += "\n" ;
     }
     return hbox({text("Invisible Man Mat : ") | bold | color(Color::YellowLight),
-                 text(ShowCollected) | bold | color(Color::BlueViolet) | bgcolor(Color::SandyBrown)});
+                 paragraph(ShowCollected) | bold | color(Color::BlueViolet) | bgcolor(Color::SandyBrown)});
 }
 Element ShowInTerminal::RenderItems(const std::vector<std::shared_ptr<Item>> &items)
 {
@@ -198,13 +205,13 @@ for (const auto &[name, loc] : locations) {
     for (auto &i : items) {
         if (i->getLocation() == loc) {
             if (i->getColor() == ItemColor::Red) {
-                itemElements.push_back(text(i->getName()) | color(Color::Red));
+                itemElements.push_back(text(i->getName() + "(" + std ::to_string(i->getPower()) + ")") | color(Color::Red));
                 itemElements.push_back(text(","));
             } else if (i->getColor() == ItemColor::Yellow) {
-                itemElements.push_back(text(i->getName()) | color(Color::Yellow));
+                itemElements.push_back(text(i->getName()+ "(" + std::to_string(i->getPower()) + ")") | color(Color::Yellow));
                 itemElements.push_back(text(","));
             } else if (i->getColor() == ItemColor::Blue) {
-                itemElements.push_back(text(i->getName()) | color(Color::Blue));
+                itemElements.push_back(text(i->getName() + "(" + std::to_string(i->getPower()) + ")")| color(Color::Blue));
                 itemElements.push_back(text(","));
             }
         }
@@ -221,7 +228,7 @@ for (const auto &[name, loc] : locations) {
     // Villagers
     for (auto &v : villagers) {
         if (v->getCurrentLocation() == loc) {
-            villagerElements.push_back(text(v->getName()) | color(Color::GreenYellow));
+            villagerElements.push_back(text(v->getName() + "(" + v->getSafeLocation()->GetCityName() + ")") | color(Color::GreenYellow));
         }
     }
 
@@ -285,13 +292,13 @@ int ShowInTerminal::ShowHeroPhase(Game &game, const std::vector<std::string> opt
     auto dracula = game.GetDracula();
     Element draculaMat = text("Task Done!");
     if (dracula) {
-        draculaMat = RenderDraculaMat(dracula->GetCoffinsDestroyed());
+        draculaMat = RenderDraculaMat(dracula->GetCoffins());
     }
 
     auto invisibleMan = game.GetInvisibleMan();
     Element invisibleManMat = text("Task Done!");
     if (invisibleMan) {
-        invisibleManMat = RenderInvisibleManMat(invisibleMan->GetEvidences());
+        invisibleManMat = RenderInvisibleManMat(invisibleMan->GetEvidence());
     }
 
     Element heroInfo = text("No hero");
@@ -317,7 +324,7 @@ int ShowInTerminal::ShowHeroPhase(Game &game, const std::vector<std::string> opt
     auto menuComponent = Menu(&options, &selectedIndex);
     auto menuRenderer = Renderer(menuComponent, [&] {
         return vbox({
-            hbox({text("selected = "), text(std::to_string(selectedIndex)) | color(Color::LightGreen)}),
+            hbox({text("selected = "), text(std::to_string(selectedIndex)) | color(Color::BlueViolet)}),
             separator(),
             menuComponent->Render() | frame
         }) | border | bgcolor(Color::Black);
@@ -346,7 +353,7 @@ int ShowInTerminal::ShowHeroPhase(Game &game, const std::vector<std::string> opt
     auto final_renderer = Renderer(combined, [&] {
         return vbox({
             layout->Render(),
-            menuRenderer->Render() | frame | border | bgcolor(Color::Black) | color(Color::LightGreen)
+            menuRenderer->Render() | frame | border | bgcolor(Color::Black) | color(Color::BlueViolet)
         });
     });
 
@@ -360,12 +367,20 @@ void ShowInTerminal:: ShowMonsterPhase( Game & game){
     //print
     StylizeTextBoard("===============================================MonsterPhase===============================================");
       // Monster Card
-    if (!game.MonsterDeck.empty())
-    {
+    if (!game.MonsterDeck.empty()) {
         auto monsterCard = RenderMonsterCard(game.MonsterDeck.back());
-        auto monsterScreen = Screen::Create(Dimension::Fit(monsterCard));
-        Render(monsterScreen, monsterCard);
-        std::cout << monsterScreen.ToString() << "\n";
+
+        auto locOverview = RenderLocationOverview(
+            game.getMapPlan().getLocations(),
+            game.Monsters,
+            game.villagers,
+            game.GetItemsInGame(),
+            game.heroes);
+
+        auto layout = hbox(monsterCard, locOverview.Render()) | border;
+        auto screen = Screen::Create(Dimension::Fit(layout));
+        Render(screen, layout); 
+        std::cout << screen.ToString() << '\n';
     }
     ShowPause();
 
