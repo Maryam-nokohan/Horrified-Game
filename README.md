@@ -16,8 +16,8 @@ Play as one of the available heroes (Mayor or Archaeologist), move across locati
 ## 🚀 Instructions to Run the Game
 
 ### 1️⃣ Install FTXUI
-This game uses the **FTXUI** library for its user interface. Install it from the official [FTXUI GitHub](https://github.com/ArthurSonzogni/FTXUI) page.
-it's best to zoom out your Terminal for a Cleaner gamePlay.
+This game uses the **FTXUI** library for its user interface. Install it from the official [FTXUI GitHub](https://github.com/ArthurSonzogni/FTXUI) page or use the CMakeList.txt below.
+it's best to zoom out your Terminal and set it to the full screen for a Cleaner gamePlay.
 
 #### Install via CMake
 Add this to your `CMakeLists.txt`:
