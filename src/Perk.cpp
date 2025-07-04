@@ -20,7 +20,7 @@ void PerkCard ::ApplyEffect(Game & game)
                 for (const auto& [name, loc] : game.mapPlan.getLocations())
                     cities.push_back(name);
                 game.MyTerminal.StylizeTextBoard("Choose a City to put invisible man:");
-                int idx = game.MyTerminal.ShowHeroPhase(game ,cities);
+                int idx = game.MyTerminal.MenuGenerator(cities);
                 invisible->SetLocation(game.mapPlan.GetLocationptr(cities[idx]));
                 }
                 else 

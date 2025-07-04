@@ -58,8 +58,8 @@ bool Hero::PlayerGetHit(Game &game)
 
     if (!inventory.empty())
     {
-        game.MyTerminal.StylizeTextBoard("Would You Like to use an Items ?");
-        int selected = game.MyTerminal.ShowHeroPhase(game, std ::vector<std ::string>{"Yes", "No"});
+        game.MyTerminal.StylizeTextBoard("Would You Like to use an Items " + name + " ?");
+        int selected = game.MyTerminal.MenuGenerator(std ::vector<std ::string>{"Yes", "No"});
         switch (selected)
         {
         case 0:
@@ -70,9 +70,8 @@ bool Hero::PlayerGetHit(Game &game)
                 ItemNames.push_back(item->getName());
             }
             game.MyTerminal.StylizeTextBoard("Choose an Item to discard :");
-            int index = game.MyTerminal.ShowHeroPhase(game, ItemNames);
+            int index = game.MyTerminal.MenuGenerator(ItemNames);
             RemoveItem(inventory[index]);
-            DecreaseAction();
             return successe;
         }
         case 1:
@@ -189,13 +188,13 @@ void Hero::DefeatAction(std::shared_ptr<Monster> monster, Game &game)
         monsters.erase(std::remove(monsters.begin(), monsters.end(), monster), monsters.end());
 
         game.MyTerminal.StylizeTextBoard("You defeated " + monsterName);
-        game.MyTerminal.ShowPauseWithRefresh();
+        game.MyTerminal.ShowPause();
     }
     else
     {
         game.MyTerminal.StylizeTextBoard("Total power: " + std::to_string(total) + " , Requierd Power : " + std::to_string(requiredPower)) ;
         game.MyTerminal.StylizeTextBoard("Not enough item power to defeat the monster!");
-        game.MyTerminal.ShowPauseWithRefresh();
+        game.MyTerminal.ShowPause();
     }
 }
 
@@ -204,7 +203,6 @@ void Hero::moveTo(std ::shared_ptr<Location> newLocation)
     if (remainingActions > 0)
     {
         SetLocation(newLocation);
-        DecreaseAction();
     }
 }
 void Hero::RemoveItem(const std ::shared_ptr<Item> item)

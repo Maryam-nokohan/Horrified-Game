@@ -320,7 +320,7 @@ void Game::HeroPhase()
             if (!(selected == 6 || selected == 7 || selected == 8 || selected == 9))
             {
                 MyTerminal.StylizeTextBoard("No more actions choose your perk cards or exit!");
-                MyTerminal.ShowPauseWithRefresh();
+                MyTerminal.ShowPause();
                 selected = -1;
             }
         }
@@ -340,7 +340,6 @@ void Game::HeroPhase()
                 if (!villagersInNeighbor.empty())
                 {
                     MyTerminal.StylizeTextBoard("Would you like to move all the villagers with you?");
-                    MyTerminal.ShowPause();
                     int choice = MyTerminal.MenuGenerator({"Yes", "No"});
                     if (choice == 0)
                     {
@@ -362,6 +361,7 @@ void Game::HeroPhase()
 
                 heroPlayer->getLocation()->RemoveHero(heroPlayer);
                 heroPlayer->moveTo(nextLocation);
+                heroPlayer->DecreaseAction();
             }
             MyTerminal.StylizeTextBoard(heroPlayer->getName() + " moved to " + heroPlayer->getLocation()->GetCityName());
             MyTerminal.ShowPause();
