@@ -3,6 +3,7 @@
 #include "../include/MonsterCard.hpp"
 #include "../include/Mayor.hpp"
 #include "../include/Archaelogist.hpp"
+#include "../include/Courier.hpp"
 #include "../include/Card.hpp"
 #include "../include/Perk.hpp"
 #include "../include/Dice.hpp"
@@ -199,6 +200,7 @@ std::vector<std::shared_ptr<Item>> Game::GetItemsInGame()
     }
     return ItemsInGame;
 }
+
 void Game ::InitializeCards()
 {
     // Perk Card
@@ -271,12 +273,22 @@ void Game ::InitializeCharacters()
     // Hero and giving the start perk Card :
     auto startArchloc = mapPlan.GetLocationptr(Docks);
     auto startMayorloc = mapPlan.GetLocationptr(Theater);
+    auto startCourierloc = mapPlan.GetLocationptr(Shop);
+    // Mayor
     heroes.push_back(std ::make_shared<Mayor>(startMayorloc));
     heroes[0]->GetPerkCard(PerkDeck.back());
     PerkDeck.pop_back();
+    // Archaeologist
     heroes.push_back(std ::make_shared<Archaeologist>(startArchloc));
     heroes[1]->GetPerkCard(PerkDeck.back());
     PerkDeck.pop_back();
+    // Courier
+    heroes.push_back(std::make_shared<Courier>(startCourierloc));
+    heroes[2]->GetPerkCard(PerkDeck.back());
+    PerkDeck.pop_back();
+    // 
+    
+
     // monster
     Monsters.push_back(std ::make_shared<Dracula>());
     Monsters.push_back(std ::make_shared<InvisibleMan>());
@@ -582,8 +594,9 @@ void Game::HeroPhase()
         // Special Action
         else if (selected == 5)
         {
-            MyTerminal.StylizeTextBoard(heroPlayer->specialAction());
+            heroPlayer->specialAction(*this);
             MyTerminal.ShowPause();
+            
         }
         // perk card
         else if (selected == 6)
@@ -685,21 +698,8 @@ void Game::GameStart()
             else
                 MyTerminal.StylizeTextBoard(p1 + " You can choose a hero: \n");
 
-            int HeroChoose = MyTerminal.MenuGenerator(std::vector<std::string>{"Mayor", "Archaeologist"});
-            switch (HeroChoose)
-            {
-            case 0:
-            {
-                heroPlayer = heroes[0];
-                break;
-            case 1:
-                heroPlayer = heroes[1];
-                break;
-            default:
-                break;
-            }
-            }
-            break;
+            int HeroChoose = MyTerminal.MenuGenerator(std::vector<std::string>{"Mayor", "Archaeologist" , "Courier"});
+            heroPlayer = heroes[HeroChoose];
         }
         case 1:
             Help();

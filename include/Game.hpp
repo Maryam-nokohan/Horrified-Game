@@ -12,6 +12,7 @@
 #include "../include/Location.hpp"
 #include "../include/Terminal.hpp"
 #include "../include/Dice.hpp"
+#include "../include/Courier.hpp"
 #include <vector>
 #include <memory>
 class Game{
@@ -20,6 +21,7 @@ class Game{
     friend class PerkCard;
     friend class MonsterCard;
     friend class Dracula;
+    friend class Courier;
     private :
     Map mapPlan;
     int terrorLevel;
@@ -59,6 +61,5 @@ class Game{
     std::vector<std::shared_ptr<Item>> GetItemsInGame();
     std::shared_ptr<Dracula> GetDracula();
     std::shared_ptr<InvisibleMan> GetInvisibleMan();
-
 };
 #endif

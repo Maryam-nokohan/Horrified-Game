@@ -8,7 +8,7 @@ class Courier : public Hero
 {
 public:
     Courier(std::shared_ptr<Location>);
-    std::string specialAction(Game &);
+    void specialAction(Game &);
 };
 
 #endif

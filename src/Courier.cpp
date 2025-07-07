@@ -2,7 +2,7 @@
 #include "../include/Game.hpp"
 
 Courier ::Courier(std::shared_ptr<Location> startLocation) : Hero("Courier", 4, startLocation) {}
-std::string Courier ::specialAction(Game &game)
+void Courier ::specialAction(Game &game)
 {
     auto heros = game.heroes;
     heros.erase(heros.begin()+2);

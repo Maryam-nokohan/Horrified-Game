@@ -1,12 +1,12 @@
 #include "../include/Archaelogist.hpp"
 #include "../include/Location.hpp"
 #include "../include/Item.hpp"
-
+#include "../include/Game.hpp"
 Archaeologist::Archaeologist(std::shared_ptr<Location> startLocation)
     : Hero("Archaeologist", 4, startLocation) {
     }
 
-std::string Archaeologist::specialAction() {
+void Archaeologist::specialAction(Game& game) {
     std::vector<std :: shared_ptr<Location>> neighbors = currentLocation->GetNeighbors();
     for(auto loc : neighbors){
     std::vector<std :: shared_ptr<Item>> itemsThere = loc->GetItems();
@@ -20,8 +20,8 @@ std::string Archaeologist::specialAction() {
         }
         itemsThere.clear();
         DecreaseAction();
-        return output;
+        game.MyTerminal.StylizeTextBoard(output);
     }
 }
-    return "Not any item in the nearby locations!";
+    game.MyTerminal.StylizeTextBoard("Not any item in the nearby locations!");
 }
