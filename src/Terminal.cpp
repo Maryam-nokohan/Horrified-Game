@@ -5,32 +5,66 @@
 #include "../include/Game.hpp"
 #include "../include/Dracula.hpp"
 #include "../include/invisible.hpp"
-#include "ftxui/dom/elements.hpp"
-#include <ftxui/component/screen_interactive.hpp>
-#include <ftxui/component/component.hpp>
-#include <ftxui/dom/table.hpp>
 #include <iostream>
 #include <vector>
 #include <string>
 #include <iomanip>
-using namespace ftxui;
+#include "raylib.h"
+//using namespace ftxui;
 // Action controler
-int ShowInTerminal ::MenuGenerator(const std::vector<std::string> Options)
-{
-    int selected = 0;
+int ShowInTerminal :: MenuGenerator(const std :: vector <std :: string> &Options){
+    const int screenWidth = 800;
+    const int screenHeight = 600;
+    InitWindow(screenWidth, screenHeight, "Horrified - Menu");
 
-     auto screen = ScreenInteractive::FitComponent();
-    auto menu = Menu(&Options, &selected) | color(Color::BlueViolet) | bgcolor(Color::Black);
-    auto renderer = Renderer(menu, [&] {
-        return vbox({
-            hbox({ text("selected = "), text(std::to_string(selected)) }) | color(Color::BlueViolet),
-            separator(),
-            menu->Render() | frame,
-        }) | border | bgcolor(Color::Black);
-    });
-    screen.Loop(renderer);
-    return selected;
-}
+    Texture2D bg = LoadTexture("assets/Background.png");
+   
+    int selected = -1;
+
+    Rectangle optionRects[Options.size()];
+    for (int i = 0; i < Options.size(); i++) {
+        optionRects[i] = { 300.0f, 200.0f + i * 80.0f, 200.0f, 50.0f };
+    }
+
+    SetTargetFPS(60);
+
+    while (!WindowShouldClose()) {
+        Vector2 mouse = GetMousePosition();
+
+        BeginDrawing();
+        ClearBackground(RAYWHITE);
+
+        DrawTexturePro(
+    bg,
+    (Rectangle){ 0, 0, (float)bg.width, (float)bg.height },
+    (Rectangle){ 0, 0, (float)screenWidth, (float)screenHeight },
+    (Vector2){ 0, 0 },
+    0.0f,
+    WHITE
+);
+
+        for (int i = 0; i < Options.size(); i++) {
+            bool hovered = CheckCollisionPointRec(mouse, optionRects[i]);
+            DrawRectangleRec(optionRects[i], hovered ? LIGHTGRAY : GRAY);
+
+            int textWidth = MeasureText(Options[i].c_str(), 20);
+            DrawText(Options[i].c_str(),
+                     optionRects[i].x + (optionRects[i].width - textWidth) / 2,
+                     optionRects[i].y + 15, 20, BLACK);
+        }
+
+        EndDrawing();
+
+        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+            for (int i = 0; i < Options.size(); i++) {
+                if (CheckCollisionPointRec(mouse, optionRects[i])) {
+                    selected = i;
+                    CloseWindow();
+                    return selected;
+                }
+            }
+        }
+    }}
 void ShowInTerminal ::StylizeTextBoard(const std ::string txt)
 {
     auto element = paragraph(txt) | border | color(Color ::BlueViolet) | bgcolor(Color::Black);
