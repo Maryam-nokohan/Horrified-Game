@@ -3,11 +3,11 @@
 #include "../include/Hero.hpp"
 #include <memory>
 #include <string>
-
+class Game;
 class Mayor : public Hero {
 public:
     Mayor(std :: shared_ptr<Location>);
-    std::string specialAction() override;
+    void specialAction(Game&) override;
 };
 
 #endif

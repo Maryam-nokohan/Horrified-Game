@@ -29,7 +29,7 @@ public:
     void moveTo(std :: shared_ptr<Location>);
     bool PlayerGetHit(Game& game);
     void pickUpItems();
-    virtual std::string specialAction() = 0;
+    virtual void specialAction(Game&) = 0;
     virtual void DefeatAction(std :: shared_ptr<Monster> , Game&);
     void SetLocation(std :: shared_ptr<Location>location);
     virtual void SetAction(int);
