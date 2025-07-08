@@ -45,7 +45,7 @@ int ShowInTerminal :: MenuGenerator(const std :: vector <std :: string> &Options
 
         for (int i = 0; i < Options.size(); i++) {
             bool hovered = CheckCollisionPointRec(mouse, optionRects[i]);
-            DrawRectangleRec(optionRects[i], hovered ? LIGHTGRAY : GRAY);
+            DrawRectangleRounded(optionRects[i],0.3f,10, hovered ? LIGHTGRAY : GRAY );
 
             int textWidth = MeasureText(Options[i].c_str(), 20);
             DrawText(Options[i].c_str(),
@@ -72,30 +72,74 @@ void ShowInTerminal ::StylizeTextBoard(const std ::string txt)
     Render(screen, element);
     std ::cout << screen.ToString() << '\n';
 }
-std::string ShowInTerminal::GetInput(const std::string outputText, std ::string ErrorType)
-{
 
-    std::string content;
+std::string GetInput(const std::string& prompt, const std::string& errorType) {
+    const int screenWidth = 800;
+    const int screenHeight = 400;
+    InitWindow(screenWidth, screenHeight, "Player Info");
+    SetTargetFPS(60);
+
+    Font customFont = LoadFont("assets/Fonts/Bungee-Regular.ttf");
+
+    std::string input;
+    std::string errorMessage = "";
     std::string placeholder = "Type here...";
+    bool enterPressed = false;
 
-    auto screen = ScreenInteractive::TerminalOutput();
+    Rectangle inputBox = { 150, 150, 500, 50 };
+    Rectangle okButton = { 350, 250, 100, 40 };
 
-    Component inputBox = Input(&content, placeholder);
+    while (!WindowShouldClose() && !enterPressed) {
+        Vector2 mouse = GetMousePosition();
+        bool hoverOK = CheckCollisionPointRec(mouse, okButton);
 
-    auto layout = Renderer(inputBox, [&]
-                           { return vbox({text(outputText) | bold | color(Color::Yellow),
-                                          separator(),
-                                          inputBox->Render() | border}) |
-                                    border; });
+        BeginDrawing();
+        ClearBackground(RAYWHITE);
 
-    screen.Loop(layout);
-    if (ErrorType == "string")
-        CheckString(content);
-    if (ErrorType == "int")
-        CheckInt(content);
-    if (ErrorType == "float")
-        CheckFloat(content);
-    return content;
+        DrawTextEx(customFont, prompt.c_str(), (Vector2){ 60, 60 }, 20, 2, BLACK);
+
+        DrawRectangleRounded(inputBox, 0.2f, 10, LIGHTGRAY);
+        DrawRectangleRoundedLines(inputBox, 0.2f, 10,DARKGRAY);
+
+        const char* inputText = input.empty() ? placeholder.c_str() : input.c_str();
+        DrawTextEx(customFont, inputText, (Vector2){ inputBox.x + 10, inputBox.y + 10 }, 18, 1, input.empty() ? GRAY : BLACK);
+
+        DrawRectangleRounded(okButton, 0.3f, 10, hoverOK ? GRAY : DARKGRAY);
+        DrawRectangleRoundedLines(okButton, 0.4f, 25, BLACK);
+        DrawTextEx(customFont, "OK", (Vector2){ okButton.x + 30, okButton.y + 10 }, 20, 2, WHITE);
+
+        if (!errorMessage.empty()) {
+            DrawTextEx(customFont, errorMessage.c_str(), (Vector2){ 60, 330 }, 16, 1, RED);
+        }
+
+        EndDrawing();
+
+        int key = GetCharPressed();
+        if (key > 0 && input.length() < 30) {
+            input += (char)key;
+        }
+
+        if (IsKeyPressed(KEY_BACKSPACE) && !input.empty()) {
+            input.pop_back();
+        }
+
+        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && hoverOK) {
+            if (errorType == "int" && !CheckInt(input)) {
+                errorMessage = "Please enter a valid integer!";
+            } else if (errorType == "float" && !CheckFloat(input)) {
+                errorMessage = "Please enter a valid float!";
+            } else if (errorType == "string" && !CheckString(input)) {
+                errorMessage = "Please enter a valid string!";
+            }
+            else {
+                enterPressed = true;
+            }
+        }
+    }
+
+    UnloadFont(customFont);
+    CloseWindow();
+    return input;
 }
 void ShowInTerminal ::Refresh()
 {
