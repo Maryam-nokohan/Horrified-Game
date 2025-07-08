@@ -1,9 +1,10 @@
 #include "../include/Mayor.hpp"
+#include "../include/Game.hpp"
 #include <iostream>
 
 Mayor::Mayor(std :: shared_ptr<Location> startLocation)
     : Hero("Mayor", 5, startLocation) {}
 
-std::string Mayor::specialAction() {
-    return "Mayor has no special ability.\n";
+void Mayor::specialAction(Game & game) {
+    game.MyTerminal.StylizeTextBoard("Mayor has no special ability.\n");
 }
