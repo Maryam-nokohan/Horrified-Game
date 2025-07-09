@@ -9,68 +9,54 @@
 #include <vector>
 #include <string>
 #include <iomanip>
-#include "raylib.h"
-//using namespace ftxui;
-// Action controler
-int ShowInTerminal :: MenuGenerator(const std :: vector <std :: string> &Options){
-    const int screenWidth = 800;
-    const int screenHeight = 600;
-    InitWindow(screenWidth, screenHeight, "Horrified - Menu");
 
-    Texture2D bg = LoadTexture("assets/Background.png");
-   
+// Action controler
+int MenuGenerator(const std::vector<std::string>& options, std::string& msg, Texture2D bg, Font font) {
     int selected = -1;
 
-    Rectangle optionRects[Options.size()];
-    for (int i = 0; i < Options.size(); i++) {
-        optionRects[i] = { 300.0f, 200.0f + i * 80.0f, 200.0f, 50.0f };
-    }
+    const float buttonWidth = 160;
+    const float buttonHeight = 40;
+    const float spacing = 20;
+    const float totalHeight = options.size() * buttonHeight + (options.size() - 1) * spacing;
+    const float startY = (GetScreenHeight() - totalHeight) / 2;
 
-    SetTargetFPS(60);
+    Rectangle optionRects[options.size()];
+    for (int i = 0; i < options.size(); i++) {
+        float x = (GetScreenWidth() - buttonWidth) / 2;
+        float y = startY + i * (buttonHeight + spacing);
+        optionRects[i] = { x, y, buttonWidth, buttonHeight };
+    }
 
     while (!WindowShouldClose()) {
         Vector2 mouse = GetMousePosition();
 
         BeginDrawing();
         ClearBackground(RAYWHITE);
+        DrawTexturePro(bg, {0, 0, (float)bg.width, (float)bg.height}, {0, 0, (float)GetScreenWidth(), (float)GetScreenHeight()}, {0, 0}, 0.0f, WHITE);
 
-        DrawTexturePro(
-    bg,
-    (Rectangle){ 0, 0, (float)bg.width, (float)bg.height },
-    (Rectangle){ 0, 0, (float)screenWidth, (float)screenHeight },
-    (Vector2){ 0, 0 },
-    0.0f,
-    WHITE
-);
-
-        for (int i = 0; i < Options.size(); i++) {
+        for (int i = 0; i < options.size(); i++) {
             bool hovered = CheckCollisionPointRec(mouse, optionRects[i]);
-            DrawRectangleRounded(optionRects[i],0.3f,10, hovered ? LIGHTGRAY : GRAY );
+            DrawRectangleRounded(optionRects[i], 0.3f, 10, hovered ? LIGHTGRAY : BEIGE);
 
-            int textWidth = MeasureText(Options[i].c_str(), 20);
-            DrawText(Options[i].c_str(),
-                     optionRects[i].x + (optionRects[i].width - textWidth) / 2,
-                     optionRects[i].y + 15, 20, BLACK);
+            int textWidth = MeasureText(options[i].c_str(), 20);
+            DrawText(options[i].c_str(), optionRects[i].x + (buttonWidth - textWidth)/2, optionRects[i].y + 10, 20, BLACK);
+        }
+
+        if (!msg.empty()) {
+            DrawTextEx(font, msg.c_str(), { 270, 520 }, 20, 1, BLACK);
         }
 
         EndDrawing();
-
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-            for (int i = 0; i < Options.size(); i++) {
+            for (int i = 0; i < options.size(); i++) {
                 if (CheckCollisionPointRec(mouse, optionRects[i])) {
-                    selected = i;
-                    CloseWindow();
-                    return selected;
+                    return i;
                 }
             }
         }
-    }}
-void ShowInTerminal ::StylizeTextBoard(const std ::string txt)
-{
-    auto element = paragraph(txt) | border | color(Color ::BlueViolet) | bgcolor(Color::Black);
-    auto screen = Screen ::Create(Dimension ::Fit(element));
-    Render(screen, element);
-    std ::cout << screen.ToString() << '\n';
+    }
+
+    return -1;
 }
 
 std::string GetInput(const std::string& prompt, const std::string& errorType) {
@@ -140,14 +126,6 @@ std::string GetInput(const std::string& prompt, const std::string& errorType) {
     UnloadFont(customFont);
     CloseWindow();
     return input;
-}
-void ShowInTerminal ::Refresh()
-{
-#ifdef __WIN32
-    system("cls");
-#else
-    system("clear");
-#endif
 }
 void ShowInTerminal::ShowPause()
 {

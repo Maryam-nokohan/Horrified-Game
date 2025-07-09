@@ -625,9 +625,7 @@ void Game::HeroPhase()
         }
         if (CheckGameEnd())
             return;
-            MyTerminal.Refresh();
     }
-    MyTerminal.Refresh();
     heroPlayer->resetActions();
 }
 void Game::increaseTerrorLevel() { terrorLevel++; }
@@ -642,7 +640,6 @@ void Game::MonsterPhase()
     auto randomCard = MonsterDeck.back();
     randomCard->ApplyEffect(*this);
     MonsterDeck.pop_back();
-    MyTerminal.Refresh();
 }
 
 std::vector<std::shared_ptr<Villager>> &Game::getVillagers() { return villagers; }
@@ -676,10 +673,24 @@ void Game::GameStart()
     while (StartMenuSelected != 0)
     {
 
-        // Start Logo:
-        MyTerminal.StylizeTextBoard("===========Welcome to HORRIFIED===========");
         // Start menue:
-        int StartMenuSelected = MyTerminal.MenuGenerator(std::vector<std::string>{"Start", "Help", "Exit"});
+    const int screenWidth = 800;
+    const int screenHeight = 600;
+
+    InitWindow(screenWidth, screenHeight, "Horrified Game");
+    SetTargetFPS(60);
+
+    BeginDrawing();
+    ClearBackground(RAYWHITE);
+    DrawText("Loading...", 350, 280, 20, DARKGRAY);
+    EndDrawing();
+
+    Font font = LoadFont("assets/Fonts/Bungee-Regular.ttf");
+    Texture2D bg1 = LoadTexture("assets/Background.png");
+    Texture2D bg2 = LoadTexture("assets/Background2.png");
+
+    std::string message;
+        int StartMenuSelected = MyTerminal.MenuGenerator(std::vector<std::string>{"Start", "Help", "Exit"} , message , bg1 , font );
         std::string p1, p2;
         int lastTime1, lastTime2;
 
@@ -692,13 +703,12 @@ void Game::GameStart()
             lastTime1 = stoi(MyTerminal.GetInput("When was the last time that you ate garlic " + p1 + "? (Ex: 2 days): ", Int));
             p2 = MyTerminal.GetInput("What's Your Name Player 2? ", String);
             lastTime2 = stoi(MyTerminal.GetInput("When was the last time that you ate garlic " + p2 + "? (Ex: 2 days): ", Int));
-            MyTerminal.Refresh();
             if (lastTime1 >= lastTime2)
-                MyTerminal.StylizeTextBoard(p2 + " You can choose a hero: \n");
+                message = p2 + " You can choose a hero." ;
             else
-                MyTerminal.StylizeTextBoard(p1 + " You can choose a hero: \n");
+                message = p1 + " You can choose a hero." ;
 
-            int HeroChoose = MyTerminal.MenuGenerator(std::vector<std::string>{"Mayor", "Archaeologist" , "Courier"});
+            int HeroChoose = MyTerminal.MenuGenerator(std::vector<std::string>{"Mayor", "Archaeologist" , "Courier" , "Scientist"} , message , bg2 , font);
             heroPlayer = heroes[HeroChoose];
         }
         case 1:
@@ -717,7 +727,6 @@ void Game::GameStart()
             break;
         }
 
-        MyTerminal.Refresh();
     }
     while (!CheckGameEnd())
     {
