@@ -8,6 +8,7 @@
 #include <map>
 #include <string>
 #include <memory>
+#include "raylib.h"
 class Game;
 class ShowInTerminal{
   private :
@@ -29,10 +30,10 @@ class ShowInTerminal{
 
   public :
   ShowInTerminal()= default;
-  void Refresh();
-  int MenuGenerator(const std :: vector <std :: string> &Options);
+  int MenuGenerator(const std::vector<std::string>& options, std::string& msg, Texture2D bg, Font font);
   void StylizeTextBoard(const std :: string text);
-  std :: string GetInput(const std :: string output , std :: string ErrorType);
+  bool GetPlayerInfo(std::string& name, int& days , Font font , Texture2D bg);
+  void ShowExitScreen(Texture2D bg, Font font);
   int ShowHeroPhase( Game & game ,const std :: vector<std :: string> options);
   void ShowMonsterPhase( Game & game);
   void ShowPause();

@@ -9,9 +9,10 @@
 #include <vector>
 #include <string>
 #include <iomanip>
+#include <cstring>
 
 // Action controler
-int MenuGenerator(const std::vector<std::string>& options, std::string& msg, Texture2D bg, Font font) {
+int ShowInTerminal :: MenuGenerator(const std::vector<std::string>& options, std::string& msg, Texture2D bg, Font font) {
     int selected = -1;
 
     const float buttonWidth = 160;
@@ -59,73 +60,130 @@ int MenuGenerator(const std::vector<std::string>& options, std::string& msg, Tex
     return -1;
 }
 
-std::string GetInput(const std::string& prompt, const std::string& errorType) {
-    const int screenWidth = 800;
-    const int screenHeight = 400;
-    InitWindow(screenWidth, screenHeight, "Player Info");
-    SetTargetFPS(60);
+bool ShowInTerminal :: GetPlayerInfo(std::string& name, int& days , Font font , Texture2D bg) {
 
-    Font customFont = LoadFont("assets/Fonts/Bungee-Regular.ttf");
+    std :: string nameInput = "";
+    std :: string daysInput = "";
 
-    std::string input;
-    std::string errorMessage = "";
-    std::string placeholder = "Type here...";
-    bool enterPressed = false;
+    Rectangle nameBox = {200, 180, 400, 40};
+    Rectangle daysBox = {200, 260, 400, 40};
+    Rectangle submitBtn = {430, 350, 120, 40};
+    Rectangle backBtn = {250, 350, 120, 40};
 
-    Rectangle inputBox = { 150, 150, 500, 50 };
-    Rectangle okButton = { 350, 250, 100, 40 };
+    bool typingName = true;
+    bool typingDays = false;
+    bool submitClicked = false;
+    bool backClicked = false;
+    std::string errorMsg = "";
 
-    while (!WindowShouldClose() && !enterPressed) {
+    while (!WindowShouldClose() && !submitClicked && !backClicked) {
         Vector2 mouse = GetMousePosition();
-        bool hoverOK = CheckCollisionPointRec(mouse, okButton);
 
+        // دریافت ورودی از کیبورد
+        int key = GetCharPressed();
+       if (key > 0 && isprint(key)) {
+    if (typingName && nameInput.size() < 30) {
+        nameInput.push_back((char)key);
+    } else if (typingDays && daysInput.size() < 5 && isdigit(key)) {
+        daysInput.push_back((char)key);
+    }
+}
+
+        if (IsKeyPressed(KEY_BACKSPACE)) {
+            if (typingName && !nameInput.empty()) {
+                nameInput.pop_back();
+            } else if (typingDays && !daysInput.empty()) {
+                daysInput.pop_back();
+            }
+        }
+
+        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+            typingName = CheckCollisionPointRec(mouse, nameBox);
+            typingDays = CheckCollisionPointRec(mouse, daysBox);
+
+            if (CheckCollisionPointRec(mouse, submitBtn)) {
+                if (nameInput.empty() || daysInput.empty()) {
+                    errorMsg = "Both fields must be filled!";
+                } else if(!CheckInt(daysInput)){
+                    errorMsg ="Days must be a number!";
+                }
+                 else {
+                    name = nameInput;
+                    days = std::stoi(daysInput);
+                    submitClicked = true;
+                }
+            }
+
+            if (CheckCollisionPointRec(mouse, backBtn)) {
+                backClicked = true;
+            }
+        }
+
+        // رسم گرافیک
         BeginDrawing();
         ClearBackground(RAYWHITE);
+        DrawTexture(bg, 0, 0, WHITE);
 
-        DrawTextEx(customFont, prompt.c_str(), (Vector2){ 60, 60 }, 20, 2, BLACK);
+        DrawTextEx(font, "Enter your name:", {nameBox.x, nameBox.y - 30}, 20, 2, WHITE);
+        DrawRectangleRec(nameBox, typingName ? LIGHTGRAY : GRAY);
+        DrawText(nameInput.empty() ? "Type name..." : nameInput.c_str() , nameBox.x +5 , nameBox.y + 10, 20, BLACK);
 
-        DrawRectangleRounded(inputBox, 0.2f, 10, LIGHTGRAY);
-        DrawRectangleRoundedLines(inputBox, 0.2f, 10,DARKGRAY);
+        DrawTextEx(font, "Days since last garlic:", {daysBox.x, daysBox.y - 30}, 20, 2, WHITE);
+        DrawRectangleRec(daysBox, typingDays ? LIGHTGRAY : GRAY);
+        DrawText(daysInput.empty() ? "0" : daysInput.c_str() , daysBox.x +5 , daysBox.y + 10, 20, BLACK);
 
-        const char* inputText = input.empty() ? placeholder.c_str() : input.c_str();
-        DrawTextEx(customFont, inputText, (Vector2){ inputBox.x + 10, inputBox.y + 10 }, 18, 1, input.empty() ? GRAY : BLACK);
 
-        DrawRectangleRounded(okButton, 0.3f, 10, hoverOK ? GRAY : DARKGRAY);
-        DrawRectangleRoundedLines(okButton, 0.4f, 25, BLACK);
-        DrawTextEx(customFont, "OK", (Vector2){ okButton.x + 30, okButton.y + 10 }, 20, 2, WHITE);
+        // دکمه Submit
+        DrawRectangleRec(submitBtn, SKYBLUE);
+        DrawText("Submit", submitBtn.x + 20, submitBtn.y + 10, 20, BLACK);
 
-        if (!errorMessage.empty()) {
-            DrawTextEx(customFont, errorMessage.c_str(), (Vector2){ 60, 330 }, 16, 1, RED);
+        // دکمه Back 
+        DrawRectangleRec(backBtn, ORANGE); 
+        DrawText("Back", backBtn.x + 30, backBtn.y + 10, 20, BLACK);
+
+        // پیام خطا
+        if (!errorMsg.empty()) {
+            DrawText(errorMsg.c_str(), 200, 420, 18, RED);
         }
 
         EndDrawing();
-
-        int key = GetCharPressed();
-        if (key > 0 && input.length() < 30) {
-            input += (char)key;
-        }
-
-        if (IsKeyPressed(KEY_BACKSPACE) && !input.empty()) {
-            input.pop_back();
-        }
-
-        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && hoverOK) {
-            if (errorType == "int" && !CheckInt(input)) {
-                errorMessage = "Please enter a valid integer!";
-            } else if (errorType == "float" && !CheckFloat(input)) {
-                errorMessage = "Please enter a valid float!";
-            } else if (errorType == "string" && !CheckString(input)) {
-                errorMessage = "Please enter a valid string!";
-            }
-            else {
-                enterPressed = true;
-            }
-        }
     }
 
-    UnloadFont(customFont);
-    CloseWindow();
-    return input;
+    return submitClicked;
+}
+void ShowInTerminal:: ShowExitScreen(Texture2D bg, Font font) {
+    const int screenWidth = GetScreenWidth();
+    const int screenHeight = GetScreenHeight();
+
+    double startTime = GetTime();
+
+    while (!WindowShouldClose()) {
+        double elapsed = GetTime() - startTime;
+
+        if (elapsed >= 4.0) break; // بعد از ۳ ثانیه خروج
+
+        BeginDrawing();
+        ClearBackground(BLACK);
+
+        // 📸 بک‌گراند فول‌اسکرین
+        DrawTexturePro(bg,
+            {0, 0, (float)bg.width, (float)bg.height},
+            {0, 0, (float)screenWidth, (float)screenHeight},
+            {0, 0}, 0.0f, WHITE);
+
+    
+        std::string msg = "THE DARKNESS AWAITS YOU...";
+        Vector2 textSize = MeasureTextEx(font, msg.c_str(), 36, 2);
+        Vector2 pos = {
+            (screenWidth - textSize.x) / 2,
+            (screenHeight - textSize.y) / 2
+        };
+
+        
+            DrawTextEx(font, msg.c_str(), pos, 36, 2, RED);
+
+        EndDrawing();
+    }
 }
 void ShowInTerminal::ShowPause()
 {
