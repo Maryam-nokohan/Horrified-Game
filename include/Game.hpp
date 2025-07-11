@@ -26,6 +26,7 @@ class Game{
     Map mapPlan;
     int terrorLevel;
     std :: shared_ptr <Hero>heroPlayer;
+    std :: shared_ptr <Hero>heroPlayer2;
     bool GameOver;
     bool skipMonsterPhase;
     Dice GameDice;
@@ -48,6 +49,7 @@ class Game{
     Game(const Game &) = delete;
     Game & operator=(const Game &) = delete;
     ~Game();
+    void ChooseHero(std::string , std::string);
     void HeroPhase();
     void SetRandomItems(int);
     void MonsterPhase();

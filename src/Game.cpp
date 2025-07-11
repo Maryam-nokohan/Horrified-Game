@@ -4,6 +4,7 @@
 #include "../include/Mayor.hpp"
 #include "../include/Archaelogist.hpp"
 #include "../include/Courier.hpp"
+#include "../include/scientist.hpp"
 #include "../include/Card.hpp"
 #include "../include/Perk.hpp"
 #include "../include/Dice.hpp"
@@ -200,7 +201,6 @@ std::vector<std::shared_ptr<Item>> Game::GetItemsInGame()
     }
     return ItemsInGame;
 }
-
 void Game ::InitializeCards()
 {
     // Perk Card
@@ -270,25 +270,6 @@ void Game ::InitializeCharacters()
     villagers.push_back(std ::make_shared<Villager>(Fritz, mapPlan.GetLocationptr(Institute)));
     villagers.push_back(std ::make_shared<Villager>(WilburAndChick, mapPlan.GetLocationptr(Dungeon)));
     villagers.push_back(std ::make_shared<Villager>(Maria, mapPlan.GetLocationptr(Camp)));
-    // Hero and giving the start perk Card :
-    auto startArchloc = mapPlan.GetLocationptr(Docks);
-    auto startMayorloc = mapPlan.GetLocationptr(Theater);
-    auto startCourierloc = mapPlan.GetLocationptr(Shop);
-    // Mayor
-    heroes.push_back(std ::make_shared<Mayor>(startMayorloc));
-    heroes[0]->GetPerkCard(PerkDeck.back());
-    PerkDeck.pop_back();
-    // Archaeologist
-    heroes.push_back(std ::make_shared<Archaeologist>(startArchloc));
-    heroes[1]->GetPerkCard(PerkDeck.back());
-    PerkDeck.pop_back();
-    // Courier
-    heroes.push_back(std::make_shared<Courier>(startCourierloc));
-    heroes[2]->GetPerkCard(PerkDeck.back());
-    PerkDeck.pop_back();
-    // 
-    
-
     // monster
     Monsters.push_back(std ::make_shared<Dracula>());
     Monsters.push_back(std ::make_shared<InvisibleMan>());
@@ -343,8 +324,8 @@ void Game::HeroPhase()
             std::vector<std::string> neighborNames;
             for (const auto &loc : neighbors)
                 neighborNames.push_back(loc->GetCityName());
-                MyTerminal.StylizeTextBoard("Choose a neighbor to move :");
-                int select = MyTerminal.MenuGenerator(neighborNames);
+            MyTerminal.StylizeTextBoard("Choose a neighbor to move :");
+            int select = MyTerminal.MenuGenerator(neighborNames);
             if (select >= 0 && select < neighbors.size())
             {
                 auto nextLocation = neighbors[select];
@@ -596,7 +577,6 @@ void Game::HeroPhase()
         {
             heroPlayer->specialAction(*this);
             MyTerminal.ShowPause();
-            
         }
         // perk card
         else if (selected == 6)
@@ -625,7 +605,7 @@ void Game::HeroPhase()
         }
         if (CheckGameEnd())
             return;
-            MyTerminal.Refresh();
+        MyTerminal.Refresh();
     }
     MyTerminal.Refresh();
     heroPlayer->resetActions();
@@ -644,7 +624,6 @@ void Game::MonsterPhase()
     MonsterDeck.pop_back();
     MyTerminal.Refresh();
 }
-
 std::vector<std::shared_ptr<Villager>> &Game::getVillagers() { return villagers; }
 std::shared_ptr<Dracula> Game::GetDracula()
 {
@@ -668,8 +647,92 @@ std::shared_ptr<InvisibleMan> Game::GetInvisibleMan()
     }
     return nullptr;
 }
-
 Map &Game::getMapPlan() { return mapPlan; }
+void Game::ChooseHero(std::string player1, std::string player2)
+{
+
+    auto startArchloc = mapPlan.GetLocationptr(Docks);
+    auto startMayorloc = mapPlan.GetLocationptr(Theater);
+    auto startCourierloc = mapPlan.GetLocationptr(Shop);
+    auto startScientistloc = mapPlan.GetLocationptr(Institute);
+
+    std::vector<std::shared_ptr<Hero>> availableHeroes = {
+        std::make_shared<Mayor>(startMayorloc),
+        std::make_shared<Archaeologist>(startArchloc),
+        std::make_shared<Courier>(startCourierloc),
+        std::make_shared<Scientist>(startScientistloc)};
+
+    std::vector<std::string> heroNames;
+    for (const auto &hero : availableHeroes)
+        heroNames.push_back(hero->getName());
+
+    MyTerminal.StylizeTextBoard(player1 + " , choose your hero:");
+    int player1Choice = MyTerminal.MenuGenerator(heroNames);
+    auto player1Hero = availableHeroes[player1Choice];
+    switch (player1Choice)
+    {
+    case 0:
+        heroes.push_back(std ::make_shared<Mayor>(startMayorloc));
+        heroes[0]->GetPerkCard(PerkDeck.back());
+        PerkDeck.pop_back();
+        break;
+
+    case 1:
+        heroes.push_back(std ::make_shared<Archaeologist>(startArchloc));
+        heroes[0]->GetPerkCard(PerkDeck.back());
+        PerkDeck.pop_back();
+
+        break;
+    case 2:
+        heroes.push_back(std::make_shared<Courier>(startCourierloc));
+        heroes[0]->GetPerkCard(PerkDeck.back());
+        PerkDeck.pop_back();
+        break;
+    case 3:
+        heroes.push_back(std::make_shared<Scientist>(startScientistloc));
+        heroes[0]->GetPerkCard(PerkDeck.back());
+        PerkDeck.pop_back();
+        break;
+    default:
+        break;
+    }
+    availableHeroes.erase(availableHeroes.begin() + player1Choice);
+
+    heroNames.clear();
+    for (const auto &hero : availableHeroes)
+        heroNames.push_back(hero->getName());
+
+    MyTerminal.StylizeTextBoard(player2 + " , choose your hero:");
+    int player2Choice = MyTerminal.MenuGenerator(heroNames);
+    auto player2Hero = availableHeroes[player2Choice];
+
+    if( heroNames[player2Choice] == "Mayor" ){
+    heroes.push_back(std ::make_shared<Mayor>(startMayorloc));
+    heroes[1]->GetPerkCard(PerkDeck.back());
+    PerkDeck.pop_back();
+    }
+    else if (heroNames[player2Choice] == "Archaeologist" )
+    {
+        heroes.push_back(std ::make_shared<Archaeologist>(startArchloc));
+        heroes[1]->GetPerkCard(PerkDeck.back());
+        PerkDeck.pop_back();
+    }
+    else if (heroNames[player2Choice] == "Courier" )
+    {
+        heroes.push_back(std::make_shared<Courier>(startCourierloc));
+        heroes[1]->GetPerkCard(PerkDeck.back());
+        PerkDeck.pop_back();
+    }
+    else if (heroNames[player2Choice] == "Scientist")
+    {
+        heroes.push_back(std::make_shared<Scientist>(startScientistloc));
+        heroes[1]->GetPerkCard(PerkDeck.back());
+        PerkDeck.pop_back();
+
+    }
+    heroPlayer = heroes[0];
+}
+
 void Game::GameStart()
 {
     int StartMenuSelected = -1;
@@ -693,13 +756,15 @@ void Game::GameStart()
             p2 = MyTerminal.GetInput("What's Your Name Player 2? ", String);
             lastTime2 = stoi(MyTerminal.GetInput("When was the last time that you ate garlic " + p2 + "? (Ex: 2 days): ", Int));
             MyTerminal.Refresh();
+            std::string starter;
             if (lastTime1 >= lastTime2)
-                MyTerminal.StylizeTextBoard(p2 + " You can choose a hero: \n");
+            {
+                ChooseHero(p2, p1);
+            }
             else
-                MyTerminal.StylizeTextBoard(p1 + " You can choose a hero: \n");
-
-            int HeroChoose = MyTerminal.MenuGenerator(std::vector<std::string>{"Mayor", "Archaeologist" , "Courier"});
-            heroPlayer = heroes[HeroChoose];
+            {
+                ChooseHero(p1, p2);
+            }
         }
         case 1:
             Help();
@@ -775,7 +840,7 @@ void Game::Help()
         "Good luck, hero!\n"
         "==========================================================================\n");
 
-    MyTerminal.ShowPauseWithRefresh();
+    MyTerminal.ShowPause();
     return;
 }
 bool Game::CheckGameEnd()
