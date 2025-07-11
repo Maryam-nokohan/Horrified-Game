@@ -2,10 +2,10 @@
 #define MAYOR_HPP
 #include "../include/Hero.hpp"
 #include <memory>
-#include <string>
 class Game;
 class Mayor : public Hero {
 public:
+    Mayor() = default;
     Mayor(std :: shared_ptr<Location>);
     void specialAction(Game&) override;
 };
