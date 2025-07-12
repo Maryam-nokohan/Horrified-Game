@@ -79,7 +79,7 @@ bool ShowInTerminal :: GetPlayerInfo(std::string& name, int& days , Font font , 
     while (!WindowShouldClose() && !submitClicked && !backClicked) {
         Vector2 mouse = GetMousePosition();
 
-        // دریافت ورودی از کیبورد
+
         int key = GetCharPressed();
        if (key > 0 && isprint(key)) {
     if (typingName && nameInput.size() < 30) {
@@ -119,7 +119,6 @@ bool ShowInTerminal :: GetPlayerInfo(std::string& name, int& days , Font font , 
             }
         }
 
-        // رسم گرافیک
         BeginDrawing();
         ClearBackground(RAYWHITE);
         DrawTexture(bg, 0, 0, WHITE);
@@ -133,15 +132,12 @@ bool ShowInTerminal :: GetPlayerInfo(std::string& name, int& days , Font font , 
         DrawText(daysInput.empty() ? "0" : daysInput.c_str() , daysBox.x +5 , daysBox.y + 10, 20, BLACK);
 
 
-        // دکمه Submit
         DrawRectangleRec(submitBtn, SKYBLUE);
         DrawText("Submit", submitBtn.x + 20, submitBtn.y + 10, 20, BLACK);
 
-        // دکمه Back 
         DrawRectangleRec(backBtn, ORANGE); 
         DrawText("Back", backBtn.x + 30, backBtn.y + 10, 20, BLACK);
 
-        // پیام خطا
         if (!errorMsg.empty()) {
             DrawText(errorMsg.c_str(), 200, 420, 18, RED);
         }
@@ -160,12 +156,12 @@ void ShowInTerminal:: ShowExitScreen(Texture2D bg, Font font) {
     while (!WindowShouldClose()) {
         double elapsed = GetTime() - startTime;
 
-        if (elapsed >= 4.0) break; // بعد از ۳ ثانیه خروج
+        if (elapsed >= 4.0) break;
 
         BeginDrawing();
         ClearBackground(BLACK);
 
-        // 📸 بک‌گراند فول‌اسکرین
+
         DrawTexturePro(bg,
             {0, 0, (float)bg.width, (float)bg.height},
             {0, 0, (float)screenWidth, (float)screenHeight},
@@ -196,13 +192,24 @@ void ShowInTerminal::ShowPauseWithRefresh()
     Refresh();
     std ::cin.get();
 }
-//Render function
-Element ShowInTerminal ::RenderTerrorLevel(int terrorLevel)
-{
+
+void ShowInTerminal :: DrawTerrorLevel(int terrorLevel, Font font, Vector2 position) {
+    
+    std::string label = "Terror Level: " + std::to_string(terrorLevel);
+    DrawTextEx(font, label.c_str(), position, 20, 1, WHITE);
+
+    
     float fill = terrorLevel / 7.0f;
-    return vbox({text("Terror Level: " + std::to_string(terrorLevel)) | bold,
-                 gauge(fill) | color(Color::Red)}) |
-           border;
+
+    
+    Rectangle barBg = { position.x, position.y + 30, 200, 20 };
+    DrawRectangleRec(barBg, DARKGRAY);
+
+    Rectangle barFill = { position.x, position.y + 30, 200 * fill, 20 };
+    DrawRectangleRec(barFill, RED);
+
+
+    DrawRectangleLinesEx(barBg, 2, BLACK);
 }
 Element ShowInTerminal::RenderMap()
 {
@@ -223,18 +230,25 @@ Abbey____│        │                                │
 Institute____Lab__│
 )") | border | bgcolor(Color::DarkGoldenrod) | color(Color::Black);
 }
-Element ShowInTerminal::RenderDraculaMat(std ::vector<std::pair<bool , std::string>> coffins)
-{
-    std::string ShowCoffins = "";
-    for (const auto &c : coffins)
-    {
-        ShowCoffins += c.second;
-        ShowCoffins +=" : " ;
-        ShowCoffins += (c.first ? u8"\u2713" : u8"\u2717");
-        ShowCoffins += "\n";
+void ShowInTerminal :: DrawDraculaMat(const std::vector<std::pair<bool, std::string>>& coffins, Font font, Vector2 position) {
+    float fontSize = 18;
+    float spacing = 2;
+    float y = position.y;
+
+    DrawTextEx(font, "Dracula Mat:", {position.x, y}, fontSize, spacing, RED);
+    y += fontSize + 6;
+
+    float boxWidth = 250;
+    float boxHeight = coffins.size() * (fontSize + 4) + 10;
+    DrawRectangle(position.x - 10, y - 6, boxWidth, boxHeight, Fade(BEIGE, 0.7f));
+    DrawRectangleLinesEx({position.x - 10, y - 6, boxWidth, boxHeight}, 2, DARKBROWN);
+
+    for (const auto& c : coffins) {
+        std::string line = c.second + " : ";
+        line += (c.first ? u8"\u2713" : u8"\u2717");  // ✓ یا ✗
+        DrawTextEx(font, line.c_str(), {position.x, y}, fontSize, spacing, BLACK);
+        y += fontSize + 4;
     }
-    return hbox({text("Dracula Mat : ") | bold | color(Color::Red),
-                 paragraph(ShowCoffins) | bold | color(Color::Black) | bgcolor(Color::SandyBrown)});
 }
 Element ShowInTerminal::RenderInvisibleManMat(std::vector<std::pair<bool , std::string>> evidences)
 {
@@ -263,41 +277,86 @@ Element ShowInTerminal::RenderItems(const std::vector<std::shared_ptr<Item>> &it
     }
     return vbox(lines) | border | bgcolor(Color::DarkOliveGreen1) | color(Color::White);
 }
-Element ShowInTerminal::RenderHeroInfo(const std::shared_ptr<Hero> &hero)
-{
-    std::vector<Element> lines;
-    lines.push_back(text("Hero: " + hero->getName()) | bold);
-    lines.push_back(text("Location: " + hero->getLocation()->GetCityName()));
-    lines.push_back(text("Actions: " + std::to_string(hero->getRemainingActions())));
-    lines.push_back(text("Inventory:"));
-    for (const auto &item : hero->getInventory())
-    {
-        if (ItemColor ::Red == item->getColor())
-            lines.push_back(text("- " + item->getName() + " (" + std::to_string(item->getPower()) + ")") | color(Color ::Red));
-        if (ItemColor ::Yellow == item->getColor())
-            lines.push_back(text("- " + item->getName() + " (" + std::to_string(item->getPower()) + ")") | color(Color ::Yellow));
-        if (ItemColor ::Blue == item->getColor())
-            lines.push_back(text("- " + item->getName() + " (" + std::to_string(item->getPower()) + ")") | color(Color ::Blue));
+void ShowInTerminal :: DrawHeroInfo(std::shared_ptr<Hero> hero, Font font, Vector2 position) {
+    float fontSize = 18;
+    float spacing = 2;
+    float y = position.y;
+
+    std::string nameLine = "Hero: " + hero->getName();
+    DrawTextEx(font, nameLine.c_str(), {position.x, y}, fontSize, spacing, WHITE);
+    y += fontSize + 4;
+
+    std::string locLine = "Location: " + hero->getLocation()->GetCityName();
+    DrawTextEx(font, locLine.c_str(), {position.x, y}, fontSize, spacing, WHITE);
+    y += fontSize + 4;
+
+    std::string actLine = "Actions: " + std::to_string(hero->getRemainingActions());
+    DrawTextEx(font, actLine.c_str(), {position.x, y}, fontSize, spacing, WHITE);
+    y += fontSize + 10;
+
+    DrawTextEx(font, "Inventory:", {position.x, y}, fontSize, spacing, WHITE);
+    y += fontSize + 4;
+
+    for (const auto& item : hero->getInventory()) {
+        std::string itemLine = "- " + item->getName() + " (" + std::to_string(item->getPower()) + ")";
+        Color color = WHITE;
+        if (item->getColor() == ItemColor::Red) color = RED;
+        else if (item->getColor() == ItemColor::Yellow) color = YELLOW;
+        else if (item->getColor() == ItemColor::Blue) color = SKYBLUE;
+
+        DrawTextEx(font, itemLine.c_str(), {position.x + 10, y}, fontSize, spacing, color);
+        y += fontSize + 2;
     }
-    return vbox(lines) | border | bgcolor(Color::DarkGreen) | color(Color::White);
+
+    float boxHeight = y - position.y + 10;
+    DrawRectangleLinesEx({position.x - 10, position.y - 10, 280, boxHeight}, 2, DARKGREEN);
+    DrawRectangle(position.x - 10, position.y - 10, 280, boxHeight, Fade(DARKGREEN, 0.3f));
+
 }
-Element ShowInTerminal::RenderMonsterCard(const std::shared_ptr<MonsterCard> &card)
-{
-    return vbox({text("Monster Card") | bold | color(Color::Red),
-                 separator(),
-                 text("Name: " + card->GetName()),
-                 text("Event: " + card->GetEvent()),
-                 text("Items: " + std::to_string(card->GetItem())),
-                 text("Move: " + std::to_string(card->GetMove())),
-                 text("Dice: " + std::to_string(card->GetDiceRoll())),
-                 text("Order: " + card->GetOrderSymbold())}) |
-           border | bgcolor(Color::DarkRed) | color(Color::White);
+void ShowInTerminal :: DrawMonsterCard(const std::shared_ptr<MonsterCard>& card, Font font, Vector2 position) {
+    float fontSize = 18;
+    float spacing = 2;
+    float y = position.y;
+
+    DrawTextEx(font, "Monster Card", {position.x, y}, fontSize, spacing, RED);
+    y += fontSize + 4;
+
+    DrawLine(position.x, y, position.x + 250, y, DARKGRAY);
+    y += 6;
+
+    DrawTextEx(font, ("Name: " + card->GetName()).c_str(), {position.x, y}, fontSize, spacing, WHITE); y += fontSize + 4;
+    DrawTextEx(font, ("Event: " + card->GetEvent()).c_str(), {position.x, y}, fontSize, spacing, WHITE); y += fontSize + 4;
+    DrawTextEx(font, ("Items: " + std::to_string(card->GetItem())).c_str(), {position.x, y}, fontSize, spacing, WHITE); y += fontSize + 4;
+    DrawTextEx(font, ("Move: " + std::to_string(card->GetMove())).c_str(), {position.x, y}, fontSize, spacing, WHITE); y += fontSize + 4;
+    DrawTextEx(font, ("Dice: " + std::to_string(card->GetDiceRoll())).c_str(), {position.x, y}, fontSize, spacing, WHITE); y += fontSize + 4;
+    DrawTextEx(font, ("Order: " + card->GetOrderSymbold()).c_str(), {position.x, y}, fontSize, spacing, WHITE); y += fontSize + 6;
+
+    float boxHeight = y - position.y + 10;
+    DrawRectangle(position.x - 10, position.y - 10, 280, boxHeight, Fade(MAROON, 0.5f));
+    DrawRectangleLinesEx({position.x - 10, position.y - 10, 280, boxHeight}, 2, DARKRED);
 }
-Element ShowInTerminal::RenderPerkCard(const std::shared_ptr<PerkCard> &card){
-    return vbox({text("Perk Card") | bold | color(Color::Green),
-                 separator(),
-                 text("Name: " + (card != nullptr) ? card->GetName(): " " )}) |
-           border | bgcolor(Color::GrayLight) | color(Color::Yellow);
+void ShowInTerminal :: DrawPerkCard(const std::shared_ptr<PerkCard>& card, Font font, Vector2 position) {
+    float fontSize = 18;
+    float spacing = 2;
+    float y = position.y;
+
+    DrawTextEx(font, "Perk Card", {position.x, y}, fontSize, spacing, GREEN);
+    y += fontSize + 4;
+
+    DrawLine(position.x, y, position.x + 200, y, DARKGRAY);
+    y += 6;
+
+    std::string nameLine = "Name: ";
+    if (card != nullptr)
+        nameLine += card->GetName();
+    else
+        nameLine += "(empty)";
+    DrawTextEx(font, nameLine.c_str(), {position.x, y}, fontSize, spacing, YELLOW);
+    y += fontSize + 6;
+
+    float boxHeight = y - position.y + 10;
+    DrawRectangle(position.x - 10, position.y - 10, 220, boxHeight, Fade(LIGHTGRAY, 0.4f));
+    DrawRectangleLinesEx({position.x - 10, position.y - 10, 220, boxHeight}, 2, DARKGRAY);
 }
 Table ShowInTerminal::RenderLocationOverview(
     const std::unordered_map<std::string, std::shared_ptr<Location>> &locations,

@@ -34,6 +34,11 @@ class ShowInTerminal{
   void StylizeTextBoard(const std :: string text);
   bool GetPlayerInfo(std::string& name, int& days , Font font , Texture2D bg);
   void ShowExitScreen(Texture2D bg, Font font);
+  void DrawTerrorLevel(int terrorLevel, Font font, Vector2 position);
+  void DrawHeroInfo(std::shared_ptr<Hero> hero, Font font, Vector2 position);
+  void DrawPerkCard(const std::shared_ptr<PerkCard>& card, Font font, Vector2 position);
+  void DrawMonsterCard(const std::shared_ptr<MonsterCard>& card, Font font, Vector2 position);
+  void DrawDraculaMat(const std::vector<std::pair<bool, std::string>>& coffins, Font font, Vector2 position);
   int ShowHeroPhase( Game & game ,const std :: vector<std :: string> options);
   void ShowMonsterPhase( Game & game);
   void ShowPause();
