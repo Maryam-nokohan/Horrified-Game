@@ -1,6 +1,5 @@
 #include "../include/Mayor.hpp"
 #include "../include/Game.hpp"
-#include <iostream>
 
 Mayor::Mayor(std :: shared_ptr<Location> startLocation)
     : Hero("Mayor", 5, startLocation) {}
