@@ -15,6 +15,7 @@
 #include "../include/ErrorHandler.hpp"
 #include "../include/Villager.hpp"
 #include "../include/Names.hpp"
+#include "../include/file.hpp"
 #include <unordered_set>
 #include <queue>
 #include <iostream>
@@ -306,7 +307,7 @@ void Game::HeroPhase()
     int selected = -1;
     while (selected != 8)
     {
-        selected = MyTerminal.ShowHeroPhase(*this, {"Move", "Guid", "Pick up", "Advance", "Defeat", "Special Action", "Use Perks", "Help", "Exit Hero Phase", "Exit Game"});
+        selected = MyTerminal.ShowHeroPhase(*this, {"Move", "Guid", "Pick up", "Advance", "Defeat", "Special Action", "Use Perks", "Help", "Exit Hero Phase", "Exit Game", "Save Game"});
         // check if actions left :
         if (heroPlayer->getRemainingActions() == 0)
         {
@@ -365,6 +366,7 @@ void Game::HeroPhase()
         {
             auto currentLoc = heroPlayer->getLocation();
             auto neighbors = currentLoc->GetNeighbors();
+            auto VillagerWithYout = currentLoc->GetVillager();
             std::vector<std::string> guideOptions;
             std::vector<std::pair<std::shared_ptr<Villager>, std::shared_ptr<Location>>> guideable;
 
@@ -377,6 +379,11 @@ void Game::HeroPhase()
                     guideable.emplace_back(villager, neighbor);
                 }
             }
+            for(const auto & v : VillagerWithYout)
+            {
+                guideOptions.push_back(v->getName() + " (at " + currentLoc->GetCityName() + ")");
+                guideable.emplace_back(v, currentLoc);
+            }
 
             if (!guideOptions.empty())
             {
@@ -384,12 +391,28 @@ void Game::HeroPhase()
                 int choice = MyTerminal.MenuGenerator(guideOptions);
                 if (choice >= 0 && choice < guideable.size())
                 {
+
                     auto villager = guideable[choice].first;
                     auto from = guideable[choice].second;
+                    if(guideable[choice].second != currentLoc){
                     from->RemoveVillager(villager);
                     villager->SetLocation(currentLoc);
                     MyTerminal.StylizeTextBoard("You guided " + villager->getName() + " to " + currentLoc->GetCityName() + ".\n");
                     heroPlayer->DecreaseAction();
+                }
+                else 
+                {
+                    auto neighborsAround =  guideable[choice].second->GetNeighbors();
+                    std::vector<std::string> GuidableLocs;
+                    for(const auto & l : neighborsAround)
+                    GuidableLocs.push_back(l->GetCityName());
+                    MyTerminal.StylizeTextBoard("choose a place to guid " + villager->getName());
+                    int s = MyTerminal.MenuGenerator(GuidableLocs);
+                    from->RemoveVillager(villager);
+                    villager->SetLocation(neighborsAround[s]);
+                    MyTerminal.StylizeTextBoard("You guided " + villager->getName() + " to " + neighborsAround[s]->GetCityName() + ".\n");
+                    heroPlayer->DecreaseAction();
+                    }
                     if (villager->isAlive() == State::Rescued)
                     {
                         RemoveVillagerFromGame(villager);
@@ -603,10 +626,19 @@ void Game::HeroPhase()
             MyTerminal.StylizeTextBoard("Logging Out ...");
             exit(0);
         }
+        // Save Game
+        else if (selected == 10)
+        { 
+            int slot = MyTerminal.MenuGenerator({"Slot 1", "Slot 2", "Slot 3", "Slot 4", "Slot 5"});
+        GameFileHandler::SaveGame(*this, "file_" + std::to_string( slot + 1));
+                MyTerminal.StylizeTextBoard("Game saved to slot " + std::to_string(slot + 1));
+        }
+
         if (CheckGameEnd())
             return;
         MyTerminal.Refresh();
     }
+
     MyTerminal.Refresh();
     heroPlayer->resetActions();
 }
@@ -706,18 +738,19 @@ void Game::ChooseHero(std::string player1, std::string player2)
     int player2Choice = MyTerminal.MenuGenerator(heroNames);
     auto player2Hero = availableHeroes[player2Choice];
 
-    if( heroNames[player2Choice] == "Mayor" ){
-    heroes.push_back(std ::make_shared<Mayor>(startMayorloc));
-    heroes[1]->GetPerkCard(PerkDeck.back());
-    PerkDeck.pop_back();
+    if (heroNames[player2Choice] == "Mayor")
+    {
+        heroes.push_back(std ::make_shared<Mayor>(startMayorloc));
+        heroes[1]->GetPerkCard(PerkDeck.back());
+        PerkDeck.pop_back();
     }
-    else if (heroNames[player2Choice] == "Archaeologist" )
+    else if (heroNames[player2Choice] == "Archaeologist")
     {
         heroes.push_back(std ::make_shared<Archaeologist>(startArchloc));
         heroes[1]->GetPerkCard(PerkDeck.back());
         PerkDeck.pop_back();
     }
-    else if (heroNames[player2Choice] == "Courier" )
+    else if (heroNames[player2Choice] == "Courier")
     {
         heroes.push_back(std::make_shared<Courier>(startCourierloc));
         heroes[1]->GetPerkCard(PerkDeck.back());
@@ -728,7 +761,6 @@ void Game::ChooseHero(std::string player1, std::string player2)
         heroes.push_back(std::make_shared<Scientist>(startScientistloc));
         heroes[1]->GetPerkCard(PerkDeck.back());
         PerkDeck.pop_back();
-
     }
     heroPlayer = heroes[0];
 }
