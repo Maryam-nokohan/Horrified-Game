@@ -11,7 +11,127 @@
 #include <iomanip>
 #include <cstring>
 
-// Action controler
+void ShowInTerminal :: LoadAssets(){
+    //Heroes
+    heroTextures["Mayor"] = LoadTexture("assets/Heros/Mayor.png");
+    heroTextures["Archaeologist"] = LoadTexture("assets/Heros/Arshaeologist.png");
+    heroTextures["Courier"] = LoadTexture("assets/Heros/Courier.png");
+    heroTextures["Scientist"] = LoadTexture("assets/Heros/Scientits.png");
+
+    //Monsters
+    monsterTextures["Dracula"] = LoadTexture("assets/Monsters/Dracula.png");
+    monsterTextures["InvisibleMan"] = LoadTexture("assets/Monsters/InvisibleMan.png");
+
+    //Villagers
+    villagerTextures["DrCranley"] = LoadTexture("assets/Villager/DrCranley.png");
+    villagerTextures["DrReed"] = LoadTexture("assets/Villager/DrReed.png");
+    villagerTextures["ProfPearson"] = LoadTexture("assets/Villager/ProfPearson.png");
+    villagerTextures["Maleva"] = LoadTexture("assets/Villager/Maleva.png");
+    villagerTextures["Fritz"] = LoadTexture("assets/Villager/Fritz.png");
+    villagerTextures["WilburAndChick"] = LoadTexture("assets/Villager/WilburAndChick.png");
+    villagerTextures["Maria"] = LoadTexture("assets/Villager/Maria.png");
+
+    //Items
+    //Yellow
+    itemTextures["Flower"] = LoadTexture("assets/Items/Yellow/Flower.png");
+    itemTextures["TarotDeck"] = LoadTexture("assets/Items/Yellow/Tarot.png");
+    itemTextures["Garlic"] = LoadTexture("assets/Items/Yellow/Garlic.png");
+    itemTextures["MirroredBox"] = LoadTexture("assets/Items/Yellow/Mirrored_Box.png");
+    itemTextures["Stake"] = LoadTexture("assets/Items/Yellow/Stake.png");
+    itemTextures["ScrollOfThoth"] = LoadTexture("assets/Items/Yellow/Scroll.png");
+    itemTextures["Violin"] = LoadTexture("assets/Items/Yellow/Violin.png");
+    itemTextures["Tablet"] = LoadTexture("assets/Items/Yellow/Tablet.png");
+    itemTextures["Wolfsbane"] = LoadTexture("assets/Items/Yellow/Wolfsbane.png");
+    itemTextures["Charm"] = LoadTexture("assets/Items/Yellow/Charm.png");
+    //Red
+    itemTextures["Dart"] = LoadTexture("assets/Items/Red/Dart.png");
+    itemTextures["FirePoker"] = LoadTexture("assets/Items/Red/FirePoker.png");
+    itemTextures["Rapier"] = LoadTexture("assets/Items/Red/Rapier.png");
+    itemTextures["Shovel"] = LoadTexture("assets/Items/Red/Shovel.png");
+    itemTextures["Torch"] = LoadTexture("assets/Items/Red/Torch.png");
+    itemTextures["Pitchfork"] = LoadTexture("assets/Items/Red/Pitchfork.png");
+    itemTextures["Rifle"] = LoadTexture("assets/Items/Red/Rifle.png");
+    itemTextures["SilverCane"] = LoadTexture("assets/Items/Red/SilverCane.png");
+    itemTextures["Knife"] = LoadTexture("assets/Items/Red/Knife.png");
+    itemTextures["Pistol"] = LoadTexture("assets/Items/Red/Pistol.png");
+    itemTextures["BearTrap"] = LoadTexture("assets/Items/Red/BearTrap.png");
+    itemTextures["Speargun"] = LoadTexture("assets/Items/Red/Speargun.png");
+    //Blue
+    itemTextures["AnatomyTest"] = LoadTexture("assets/Items/Blue/AnatomyTest.png");
+    itemTextures["Contrifuge"] = LoadTexture("assets/Items/Blue/Centrifuge.png");
+    itemTextures["Kite"] = LoadTexture("assets/Items/Blue/Kite.png");
+    itemTextures["Research"] = LoadTexture("assets/Items/Blue/Research.png");
+    itemTextures["Telescope"] = LoadTexture("assets/Items/Blue/Telescope.png");
+    itemTextures["Searchlight"] = LoadTexture("assets/Items/Blue/Searchlight.png");
+    itemTextures["Experiment"] = LoadTexture("assets/Items/Blue/Experiments.png");
+    itemTextures["Analysis"] = LoadTexture("assets/Items/Blue/Analysis.png");
+    itemTextures["Rotenone"] = LoadTexture("assets/Items/Blue/Rotenone.png");
+    itemTextures["CosmicRayDiffuser"] = LoadTexture("assets/Items/Blue/CosmicRayDiffuser.png");
+    itemTextures["Nebularium"] = LoadTexture("assets/Items/Blue/Nebularium.png");
+    itemTextures["MonocaneMixture"] = LoadTexture("assets/Items/Blue/MonocaneMixture.png");
+    itemTextures["Fossil"] = LoadTexture("assets/Items/Blue/Fossil.png");
+
+    //Perks
+    perkTextures["VisitFromDetective"] = LoadTexture("assets/Perk_Cards/VisitFromTheDetective.png");
+    perkTextures["BreakOfDown"] = LoadTexture("assets/Perk_Cards/BreakOfDown.png");
+    perkTextures["OverStock"] = LoadTexture("assets/Perk_Cards/Overstock.png");
+    perkTextures["LateIntoTheNight"] = LoadTexture("assets/Perk_Cards/LateIntoTheNight.png");
+    perkTextures["Repel"] = LoadTexture("assets/Perk_Cards/Repel.png");
+    perkTextures["Hurry"] = LoadTexture("assets/Perk_Cards/Hurry.png");
+
+    //MonsterCards
+    monsterCardTextures["FromTheBat"] = LoadTexture("assets/Monster_Cards/FromOfTheBat.png");
+    monsterCardTextures["Sunrise"] = LoadTexture("assets/Monster_Cards/Sunrise.png");
+    monsterCardTextures["Thief"] = LoadTexture("assets/Monster_Cards/Thief.png");
+    monsterCardTextures["TheDelivery"] = LoadTexture("assets/Monster_Cards/TheDelivery.png");
+    monsterCardTextures["FortuneTeller"] = LoadTexture("assets/Monster_Cards/FortuneTeller.png");
+    monsterCardTextures["FormerEmployer"] = LoadTexture("assets/Monster_Cards/FomerEmployer.png");
+    monsterCardTextures["HurriedAssistant"] = LoadTexture("assets/Monster_Cards/HurriedAssistant.png");
+    monsterCardTextures["TheInnocent"] = LoadTexture("assets/Monster_Cards/TheInnocent.png");
+    monsterCardTextures["EgyptianExpert"] = LoadTexture("assets/Monster_Cards/EgyptianExpert.png");
+    monsterCardTextures["TheIchthyologist"] = LoadTexture("assets/Monster_Cards/TheIchtyologist.png");
+    monsterCardTextures["OnTheMove"] = LoadTexture("assets/Monster_Cards/OnTheMove.png");
+    monsterCardTextures["HypnoticGaze"] = LoadTexture("assets/Monster_Cards/HypnoticGaze.png");
+
+    //MonsterMats
+    monstermatTextures["Dracula"] = LoadTexture("assets/Monster_Mat/DraculaMat.png");
+    monstermatTextures["InvisibleMan"] = LoadTexture("assets/Monster_Mat/InvisibleManMat.png");
+
+    //Backgrounds
+    backgroundTextures["menu"] = LoadTexture("assets/Background/Background1.png");
+    backgroundTextures["input"] = LoadTexture("assets/Background/Background2.png");
+    backgroundTextures["exit"] = LoadTexture("assets/Background/Background3.png");
+    backgroundTextures["back"] = LoadTexture("assets/Background/Background4.png");
+
+    //Map
+    mapTexture = LoadTexture("assets/map.png");
+
+    //Font
+    font = LoadFont("assets/Fonts/Creepster.ttf");
+
+    //Coffin
+    coffinBrokenTexture = LoadTexture("assets/Items/coffins/SmashedCoffin.png");
+    coffinIntactTexture = LoadTexture("assets/Items/coffins/Coffin.png");
+    
+
+} 
+void ShowInTerminal :: UnloadAssets(){
+    
+    for (auto& [_, tex] : heroTextures) UnloadTexture(tex);
+    for (auto& [_, tex] : monsterTextures) UnloadTexture(tex);
+    for (auto& [_, tex] : villagerTextures) UnloadTexture(tex);
+    for (auto& [_, tex] : perkTextures) UnloadTexture(tex);
+    for (auto& [_, tex] : itemTextures) UnloadTexture(tex);
+    for (auto& [_, tex] : monsterCardTextures) UnloadTexture(tex);
+    for (auto& [_, tex] : monstermatTextures) UnloadTexture(tex);
+    for (auto& [_, tex] : backgroundTextures) UnloadTexture(tex);
+    UnloadTexture(mapTexture);
+    UnloadFont(font);
+    UnloadTexture(coffinBrokenTexture);
+    UnloadTexture(coffinIntactTexture);
+
+
+}
 int ShowInTerminal :: MenuGenerator(const std::vector<std::string>& options, std::string& msg, Texture2D bg, Font font) {
     int selected = -1;
 
@@ -181,17 +301,6 @@ void ShowInTerminal:: ShowExitScreen(Texture2D bg, Font font) {
         EndDrawing();
     }
 }
-void ShowInTerminal::ShowPause()
-{
-    StylizeTextBoard("Press Enter to continue...");
-    std ::cin.get();
-}
-void ShowInTerminal::ShowPauseWithRefresh()
-{
-    StylizeTextBoard("Press Enter to continue...");
-    Refresh();
-    std ::cin.get();
-}
 
 void ShowInTerminal :: DrawTerrorLevel(int terrorLevel, Font font, Vector2 position) {
     
@@ -211,71 +320,63 @@ void ShowInTerminal :: DrawTerrorLevel(int terrorLevel, Font font, Vector2 posit
 
     DrawRectangleLinesEx(barBg, 2, BLACK);
 }
-Element ShowInTerminal::RenderMap()
-{
-    return paragraph(R"(
-Cave ─── Camp  Precinct   Inn     Barn    Dungeon
-         │      │          │       │         │
-         │______│__________│____Theater____Tower___Docks
-         │                         │________________
-         │                                         │
-         │                           ___Graveyard  │
-      Mansion__________Church________│             │
-         │        │                  │___Hospital  │
-         │        │____Museum                      │
-Abbey____│        │                                │
-  │               │                                │
-  Crypt           │                                │
-                  Shop_____________________________│
-Institute____Lab__│
-)") | border | bgcolor(Color::DarkGoldenrod) | color(Color::Black);
+
+void ShowInTerminal :: DrawDraculaMat(const std::vector<std::pair<bool, std::string>>& coffins, Vector2 startPos) {
+    DrawTexture(monstermatTextures["Dracula"], startPos.x, startPos.y, WHITE);
+
+    float offsetX = 40;
+    float spacing = 150;
+
+    for (size_t i = 0; i < coffins.size(); ++i) {
+        
+        std::string locationName = coffins[i].second;
+        DrawTextEx(font, locationName.c_str(), { startPos.x + offsetX + i * spacing, startPos.y + 100 }, 18, 1, BLACK);
+
+        
+        Texture2D& tex = coffins[i].first ? coffinBrokenTexture : coffinIntactTexture;
+        DrawTexture(tex, startPos.x + offsetX + i * spacing, startPos.y + 130, WHITE);
+    }
 }
-void ShowInTerminal :: DrawDraculaMat(const std::vector<std::pair<bool, std::string>>& coffins, Font font, Vector2 position) {
+void ShowInTerminal :: DrawInvisibleManMat(const std::vector<std::pair<bool, std::string>>& evidences, Font font, Vector2 position) {
     float fontSize = 18;
     float spacing = 2;
     float y = position.y;
 
-    DrawTextEx(font, "Dracula Mat:", {position.x, y}, fontSize, spacing, RED);
+    DrawTextEx(font, "Invisible Man Mat:", {position.x, y}, fontSize, spacing, GOLD);
     y += fontSize + 6;
 
     float boxWidth = 250;
-    float boxHeight = coffins.size() * (fontSize + 4) + 10;
+    float boxHeight = evidences.size() * (fontSize + 4) + 10;
     DrawRectangle(position.x - 10, y - 6, boxWidth, boxHeight, Fade(BEIGE, 0.7f));
     DrawRectangleLinesEx({position.x - 10, y - 6, boxWidth, boxHeight}, 2, DARKBROWN);
 
-    for (const auto& c : coffins) {
-        std::string line = c.second + " : ";
-        line += (c.first ? u8"\u2713" : u8"\u2717");  // ✓ یا ✗
-        DrawTextEx(font, line.c_str(), {position.x, y}, fontSize, spacing, BLACK);
+    for (const auto& e : evidences) {
+        std::string line = e.second + " : ";
+        line += (e.first ? u8"\u2713" : u8"\u2717");
+        DrawTextEx(font, line.c_str(), {position.x, y}, fontSize, spacing, VIOLET);
         y += fontSize + 4;
     }
 }
-Element ShowInTerminal::RenderInvisibleManMat(std::vector<std::pair<bool , std::string>> evidences)
-{
-    std::string ShowCollected = "";
-    for (const auto &e : evidences)
-    {
-        ShowCollected += e.second;
-        ShowCollected +=" : " ;
-        ShowCollected += (e .first? u8"\u2713" : u8"\u2717");
-        ShowCollected += "\n" ;
+void ShowInTerminal :: DrawItemsList(const std::vector<std::shared_ptr<Item>>& items, Font font, Vector2 position) {
+    float fontSize = 18;
+    float spacing = 2;
+    float y = position.y;
+
+    float boxWidth = 260;
+    float boxHeight = items.size() * (fontSize + 4) + 10;
+    DrawRectangle(position.x - 10, position.y - 10, boxWidth, boxHeight, Fade(DARKGREEN, 0.5f));
+    DrawRectangleLinesEx({position.x - 10, position.y - 10, boxWidth, boxHeight}, 2, DARKGRAY);
+
+    for (const auto& item : items) {
+        std::string line = "- " + item->getName() + " (" + std::to_string(item->getPower()) + ")";
+        Color color = WHITE;
+        if (item->getColor() == ItemColor::Red) color = RED;
+        else if (item->getColor() == ItemColor::Yellow) color = YELLOW;
+        else if (item->getColor() == ItemColor::Blue) color = SKYBLUE;
+
+        DrawTextEx(font, line.c_str(), {position.x, y}, fontSize, spacing, color);
+        y += fontSize + 4;
     }
-    return hbox({text("Invisible Man Mat : ") | bold | color(Color::YellowLight),
-                 paragraph(ShowCollected) | bold | color(Color::BlueViolet) | bgcolor(Color::SandyBrown)});
-}
-Element ShowInTerminal::RenderItems(const std::vector<std::shared_ptr<Item>> &items)
-{
-    std::vector<Element> lines;
-    for (const auto &item : items)
-    {
-        if (ItemColor ::Red == item->getColor())
-            lines.push_back(text("- " + item->getName() + " (" + std::to_string(item->getPower()) + ")") | color(Color ::Red));
-        if (ItemColor ::Yellow == item->getColor())
-            lines.push_back(text("- " + item->getName() + " (" + std::to_string(item->getPower()) + ")") | color(Color ::Yellow));
-        if (ItemColor ::Blue == item->getColor())
-            lines.push_back(text("- " + item->getName() + " (" + std::to_string(item->getPower()) + ")") | color(Color ::Blue));
-    }
-    return vbox(lines) | border | bgcolor(Color::DarkOliveGreen1) | color(Color::White);
 }
 void ShowInTerminal :: DrawHeroInfo(std::shared_ptr<Hero> hero, Font font, Vector2 position) {
     float fontSize = 18;
@@ -333,7 +434,7 @@ void ShowInTerminal :: DrawMonsterCard(const std::shared_ptr<MonsterCard>& card,
 
     float boxHeight = y - position.y + 10;
     DrawRectangle(position.x - 10, position.y - 10, 280, boxHeight, Fade(MAROON, 0.5f));
-    DrawRectangleLinesEx({position.x - 10, position.y - 10, 280, boxHeight}, 2, DARKRED);
+    DrawRectangleLinesEx({position.x - 10, position.y - 10, 280, boxHeight}, 2 ,MAROON);
 }
 void ShowInTerminal :: DrawPerkCard(const std::shared_ptr<PerkCard>& card, Font font, Vector2 position) {
     float fontSize = 18;
@@ -358,207 +459,207 @@ void ShowInTerminal :: DrawPerkCard(const std::shared_ptr<PerkCard>& card, Font 
     DrawRectangle(position.x - 10, position.y - 10, 220, boxHeight, Fade(LIGHTGRAY, 0.4f));
     DrawRectangleLinesEx({position.x - 10, position.y - 10, 220, boxHeight}, 2, DARKGRAY);
 }
-Table ShowInTerminal::RenderLocationOverview(
-    const std::unordered_map<std::string, std::shared_ptr<Location>> &locations,
-    const std::vector<std::shared_ptr<Monster>> &monsters,
-    const std::vector<std::shared_ptr<Villager>> &villagers,
-    const std::vector<std::shared_ptr<Item>> &items,
-    const std ::vector<std ::shared_ptr<Hero>> &heros)
-{
- std::vector<std::vector<Element>> t;
-t.push_back({text("Location"), text("Item"), text("Monsters"), text("Villagers"), text("Heros")});
+void ShowInTerminal :: DrawLocationOverview(const std::unordered_map<std::string, std::shared_ptr<Location>>& locations,
+                          const std::vector<std::shared_ptr<Monster>>& monsters,
+                          const std::vector<std::shared_ptr<Villager>>& villagers,
+                          const std::vector<std::shared_ptr<Item>>& items,
+                          const std::vector<std::shared_ptr<Hero>>& heroes,
+                          Font font, Vector2 startPos) {
+    float rowHeight = 24;
+    float spacing = 2;
+    float y = startPos.y;
 
-for (const auto &[name, loc] : locations) {
-    std::vector<Element> itemElements;
-    std::vector<Element> monsterElements;
-    std::vector<Element> villagerElements;
-    std::vector<Element> heroElements;
+    float colWidths[5] = {130, 170, 130, 170, 130};
+    const char* headers[] = {"Location", "Items", "Monsters", "Villagers", "Heroes"};
 
-    // Items
-    for (auto &i : items) {
-        if (i->getLocation() == loc) {
-            if (i->getColor() == ItemColor::Red) {
-                itemElements.push_back(text(i->getName() + "(" + std ::to_string(i->getPower()) + ")") | color(Color::Red));
-                itemElements.push_back(text(","));
-            } else if (i->getColor() == ItemColor::Yellow) {
-                itemElements.push_back(text(i->getName()+ "(" + std::to_string(i->getPower()) + ")") | color(Color::Yellow));
-                itemElements.push_back(text(","));
-            } else if (i->getColor() == ItemColor::Blue) {
-                itemElements.push_back(text(i->getName() + "(" + std::to_string(i->getPower()) + ")")| color(Color::Blue));
-                itemElements.push_back(text(","));
+
+    float x = startPos.x;
+    for (int i = 0; i < 5; i++) {
+        DrawTextEx(font, headers[i], {x, y}, 18, spacing, GOLD);
+        x += colWidths[i];
+    }
+    y += rowHeight;
+
+
+    for (const auto& [name, loc] : locations) {
+        x = startPos.x;
+
+
+        DrawTextEx(font, loc->GetCityName().c_str(), {x, y}, 16, spacing, WHITE);
+        x += colWidths[0];
+
+
+        float itemX = x;
+        bool hasItem = false;
+        for (auto& i : items) {
+            if (i->getLocation() == loc) {
+                std::string str = i->getName() + "(" + std::to_string(i->getPower()) + ")";
+                Color c = (i->getColor() == ItemColor::Red) ? RED :
+                          (i->getColor() == ItemColor::Yellow) ? YELLOW : SKYBLUE;
+                DrawTextEx(font, str.c_str(), {itemX, y}, 16, spacing, c);
+                itemX += MeasureTextEx(font, str.c_str(), 16, spacing).x + 10;
+                hasItem = true;
+            }
+        }
+        if (!hasItem)
+            DrawTextEx(font, "-", {x, y}, 16, spacing, DARKGRAY);
+        x += colWidths[1];
+
+    
+        float monsterX = x;
+        bool hasMonster = false;
+        for (auto& m : monsters) {
+            if (m->GetLocation() == loc) {
+                std::string name = m->GetName();
+                if (m->GetFrenzyMarker()) name += "*";
+                DrawTextEx(font, name.c_str(), {monsterX, y}, 16, spacing, RED);
+                monsterX += MeasureTextEx(font, name.c_str(), 16, spacing).x + 10;
+                hasMonster = true;
+            }
+        }
+        if (!hasMonster)
+            DrawTextEx(font, "-", {x, y}, 16, spacing, DARKGRAY);
+        x += colWidths[2];
+
+        float villagerX = x;
+        bool hasVillager = false;
+        for (auto& v : villagers) {
+            if (v->getCurrentLocation() == loc) {
+                std::string name = v->getName() + "(" + v->getSafeLocation()->GetCityName() + ")";
+                DrawTextEx(font, name.c_str(), {villagerX, y}, 16, spacing, LIME);
+                villagerX += MeasureTextEx(font, name.c_str(), 16, spacing).x + 10;
+                hasVillager = true;
+            }
+        }
+        if (!hasVillager)
+            DrawTextEx(font, "-", {x, y}, 16, spacing, DARKGRAY);
+        x += colWidths[3];
+
+        float heroX = x;
+        bool hasHero = false;
+        for (auto& h : heroes) {
+            if (h->getLocation() == loc) {
+                DrawTextEx(font, h->getName().c_str(), {heroX, y}, 16, spacing, GRAY);
+                heroX += MeasureTextEx(font, h->getName().c_str(), 16, spacing).x + 10;
+                hasHero = true;
+            }
+        }
+        if (!hasHero)
+            DrawTextEx(font, "-", {x, y}, 16, spacing, DARKGRAY);
+
+        
+        y += rowHeight;
+    }
+
+    DrawRectangleLinesEx({startPos.x - 10, startPos.y - 10, 730, y - startPos.y + 20}, 2, Fade(DARKGRAY, 0.5f));
+}
+
+int ShowInTerminal :: ShowHeroPhase(Game& game, const std::vector<std::string>& options, Texture2D mapTexture, Font font) {
+    int selected = -1;
+
+    float scaleY = (float)GetScreenHeight() / 772.0f;
+    Vector2 mapPos = {0, 0};
+
+    Rectangle optionRects[options.size()];
+    float buttonWidth = 180;
+    float buttonHeight = 40;
+    float spacing = 15;
+    float totalHeight = options.size() * (buttonHeight + spacing);
+    float startY = GetScreenHeight() - totalHeight - 20;
+
+    for (int i = 0; i < options.size(); i++) {
+        float x = (GetScreenWidth() - buttonWidth) / 2;
+        float y = startY + i * (buttonHeight + spacing);
+        optionRects[i] = {x, y, buttonWidth, buttonHeight};
+    }
+
+    std::shared_ptr<MonsterCard> dummyMonsterCard = std::make_shared<MonsterCard>("Dummy", 0, "", MonsterStrike("", 0, 0));
+
+    while (!WindowShouldClose()) {
+        Vector2 mouse = GetMousePosition();
+
+        BeginDrawing();
+        ClearBackground(BLACK);
+
+        // map
+        DrawTexturePro(mapTexture, {0, 0, (float)mapTexture.width, (float)mapTexture.height},
+                       {0, 0, (float)GetScreenWidth(), (float)GetScreenHeight()},
+                       {0, 0}, 0.0f, WHITE);
+
+        DrawTerrorLevel(game.terrorLevel, font, {30, 20});
+
+        if (game.heroPlayer)
+            DrawHeroInfo(game.heroPlayer, font, {550, 20});
+
+        if (game.heroPlayer && game.heroPlayer->PeekPerkCard())
+            DrawPerkCard(game.heroPlayer->PeekPerkCard(), font, {550, 200});
+
+
+        DrawMonsterCard(dummyMonsterCard, font, {550, 340});
+
+    
+        if (auto dracula = game.GetDracula())
+            DrawDraculaMat(dracula->GetCoffins(), font, {30, 460});
+
+        
+        if (auto invisible = game.GetInvisibleMan())
+            DrawInvisibleManMat(invisible->GetEvidence(), font, {550, 460});
+
+    
+        // DrawItemsList(game.GetItemsInGame(), font, {550, 620});
+
+    
+        DrawLocationOverview(game.getMapPlan().getLocations(), game.Monsters,
+                             game.villagers, game.GetItemsInGame(), game.heroes,
+                             font, {30, 280});
+
+    
+        for (int i = 0; i < options.size(); i++) {
+            bool hover = CheckCollisionPointRec(mouse, optionRects[i]);
+            DrawRectangleRounded(optionRects[i], 0.3f, 10, hover ? GRAY : DARKGRAY);
+            int tw = MeasureText(options[i].c_str(), 20);
+            DrawText(options[i].c_str(), optionRects[i].x + (buttonWidth - tw) / 2,
+                     optionRects[i].y + 10, 20, WHITE);
+        }
+
+        EndDrawing();
+
+    
+        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+            for (int i = 0; i < options.size(); i++) {
+                if (CheckCollisionPointRec(mouse, optionRects[i])) {
+                    selected = i;
+                    return selected;
+                }
             }
         }
     }
 
-    // Monsters
-    for (auto &m : monsters) {
-        if (m->GetLocation() == loc) {
-            auto monsterName = m->GetFrenzyMarker() ? m->GetName() + "*" : m->GetName();
-            monsterElements.push_back(text(monsterName) | color(Color::Red));
-        }
-    }
-
-    // Villagers
-    for (auto &v : villagers) {
-        if (v->getCurrentLocation() == loc) {
-            villagerElements.push_back(text(v->getName() + "(" + v->getSafeLocation()->GetCityName() + ")") | color(Color::GreenYellow));
-        }
-    }
-
-    // Heroes
-    for (auto &h : heros) {
-        if (h->getLocation() == loc) {
-            heroElements.push_back(text(h->getName()) | color(Color::GrayLight));
-        }
-    }
-
-    if (itemElements.empty()) itemElements.push_back(text("-"));
-    if (monsterElements.empty()) monsterElements.push_back(text("-"));
-    if (villagerElements.empty()) villagerElements.push_back(text("-"));
-    if (heroElements.empty()) heroElements.push_back(text("-"));
-  
-    t.push_back({
-        text(loc->GetCityName()),
-        hbox(itemElements),
-        hbox(monsterElements),
-        hbox(villagerElements),
-        hbox(heroElements),
-    });
+    return selected;
 }
+void ShowInTerminal :: ShowMonsterPhase(Game& game, Font font) {
+    if (game.MonsterDeck.empty()) return;
 
-    auto table = Table(t);
-    table.SelectAll().Border(LIGHT);
+    std::shared_ptr<MonsterCard> monsterCard = game.MonsterDeck.back();
 
-    // Add border around the columns.
-    table.SelectColumn(0).Border(LIGHT);
-    table.SelectColumn(1).Border(LIGHT);
-    table.SelectColumn(2).Border(LIGHT);
-    table.SelectColumn(3).Border(LIGHT);
-    table.SelectColumn(4).Border(LIGHT);
-    //Rows
-    for(int i = 0 ; i < 19 ; ++i)
-    table.SelectRow(i).Border(LIGHT);
-  
-    // Make first row bold with a double border.
-    table.SelectRow(0).Decorate(bold);
-    table.SelectRow(0).SeparatorVertical(LIGHT);
-    table.SelectRow(0).Border(DOUBLE);
+    while (!WindowShouldClose()) {
+        BeginDrawing();
+        ClearBackground(BLACK);
 
-    // Select row from the second to the last.
-    auto content = table.SelectRows(1, -1);
+        DrawMonsterCard(monsterCard, font, {40, 40});
 
-    return table;
+        DrawLocationOverview(game.getMapPlan().getLocations(),
+                             game.Monsters,
+                             game.villagers,
+                             game.GetItemsInGame(),
+                             game.heroes,
+                             font, {40, 220});
+
+        DrawTextEx(font, "Press SPACE to continue...", {260, 550}, 18, 2, WHITE);
+
+        EndDrawing();
+
+        if (IsKeyPressed(KEY_SPACE)) break;
+    }
 }
-
-int ShowInTerminal::ShowHeroPhase(Game &game, const std::vector<std::string> options)
-{
-    // Print
-    StylizeTextBoard("========================================HeroPhase========================================");
-    std::cout << '\n';
-    int selectedIndex = -1;
-    // Initial Setup
-
-    auto monsterCardView = std::make_shared<MonsterCard>("MonsterCards", 0, "", MonsterStrike("", 0, 0));
-    auto mapView = RenderMap();
-    auto terrorView = RenderTerrorLevel(game.terrorLevel);
-
-    auto dracula = game.GetDracula();
-    Element draculaMat = text("Task Done!");
-    if (dracula) {
-        draculaMat = RenderDraculaMat(dracula->GetCoffins());
-    }
-
-    auto invisibleMan = game.GetInvisibleMan();
-    Element invisibleManMat = text("Task Done!");
-    if (invisibleMan) {
-        invisibleManMat = RenderInvisibleManMat(invisibleMan->GetEvidence());
-    }
-
-    Element heroInfo = text("No hero");
-    if (game.heroPlayer) {
-        heroInfo = RenderHeroInfo(game.heroPlayer);
-    }
-
-    Element perkCard = text("No Perk Card");
-    if (game.heroPlayer && game.heroPlayer->PeekPerkCard()) {
-        perkCard = RenderPerkCard(game.heroPlayer->PeekPerkCard());
-    }
-
-    auto monsterCard = RenderMonsterCard(monsterCardView);
-    auto locOverview = RenderLocationOverview(
-        game.getMapPlan().getLocations(),
-        game.Monsters,
-        game.villagers,
-        game.GetItemsInGame(),
-        game.heroes);
-    auto doc = locOverview.Render();
-
-    // Menu component
-    auto menuComponent = Menu(&options, &selectedIndex);
-    auto menuRenderer = Renderer(menuComponent, [&] {
-        return vbox({
-            hbox({text("selected = "), text(std::to_string(selectedIndex)) | color(Color::BlueViolet)}),
-            separator(),
-            menuComponent->Render() | frame
-        }) | border | bgcolor(Color::Black);
-    });
-    auto menuContainer = Container::Vertical({menuComponent});
-
-    // Main layout
-    auto layout = Renderer([&] {
-        return vbox({
-            hbox({ftxui::separator(), terrorView, ftxui::separator()}),
-            ftxui::separator(),
-            hbox({ftxui::separator(), mapView, ftxui::separator(), doc | bgcolor(Color::Black), ftxui::separator()}),
-            hbox({ftxui::separator(), heroInfo, ftxui::separator(),
-                  perkCard, ftxui::separator(),
-                  monsterCard, ftxui::separator(),
-                  draculaMat, ftxui::separator(),
-                  invisibleManMat, ftxui::separator()}),
-            ftxui::separator(),
-            text("Choose your action:"),
-        });
-    });
-    auto layoutContainer = Container::Horizontal({});
-
-    // Final combined layout
-    auto combined = Container::Vertical({menuContainer});
-    auto final_renderer = Renderer(combined, [&] {
-        return vbox({
-            layout->Render(),
-            menuRenderer->Render() | frame | border | bgcolor(Color::Black) | color(Color::BlueViolet)
-        });
-    });
-
-    // Main Screen
-    auto screen = ScreenInteractive::FitComponent();
-    screen.Loop(final_renderer);
-
-    return selectedIndex;
-}
-void ShowInTerminal:: ShowMonsterPhase( Game & game){
-    //print
-    StylizeTextBoard("===============================================MonsterPhase===============================================");
-      // Monster Card
-    if (!game.MonsterDeck.empty()) {
-        auto monsterCard = RenderMonsterCard(game.MonsterDeck.back());
-
-        auto locOverview = RenderLocationOverview(
-            game.getMapPlan().getLocations(),
-            game.Monsters,
-            game.villagers,
-            game.GetItemsInGame(),
-            game.heroes);
-
-        auto layout = hbox(monsterCard, locOverview.Render()) | border;
-        auto screen = Screen::Create(Dimension::Fit(layout));
-        Render(screen, layout); 
-        std::cout << screen.ToString() << '\n';
-    }
-    ShowPause();
-
-  }
-
-
-
     
