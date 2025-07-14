@@ -379,7 +379,7 @@ void Game::HeroPhase()
                     guideable.emplace_back(villager, neighbor);
                 }
             }
-            for(const auto & v : VillagerWithYout)
+            for (const auto &v : VillagerWithYout)
             {
                 guideOptions.push_back(v->getName() + " (at " + currentLoc->GetCityName() + ")");
                 guideable.emplace_back(v, currentLoc);
@@ -394,24 +394,25 @@ void Game::HeroPhase()
 
                     auto villager = guideable[choice].first;
                     auto from = guideable[choice].second;
-                    if(guideable[choice].second != currentLoc){
-                    from->RemoveVillager(villager);
-                    villager->SetLocation(currentLoc);
-                    MyTerminal.StylizeTextBoard("You guided " + villager->getName() + " to " + currentLoc->GetCityName() + ".\n");
-                    heroPlayer->DecreaseAction();
-                }
-                else 
-                {
-                    auto neighborsAround =  guideable[choice].second->GetNeighbors();
-                    std::vector<std::string> GuidableLocs;
-                    for(const auto & l : neighborsAround)
-                    GuidableLocs.push_back(l->GetCityName());
-                    MyTerminal.StylizeTextBoard("choose a place to guid " + villager->getName());
-                    int s = MyTerminal.MenuGenerator(GuidableLocs);
-                    from->RemoveVillager(villager);
-                    villager->SetLocation(neighborsAround[s]);
-                    MyTerminal.StylizeTextBoard("You guided " + villager->getName() + " to " + neighborsAround[s]->GetCityName() + ".\n");
-                    heroPlayer->DecreaseAction();
+                    if (guideable[choice].second != currentLoc)
+                    {
+                        from->RemoveVillager(villager);
+                        villager->SetLocation(currentLoc);
+                        MyTerminal.StylizeTextBoard("You guided " + villager->getName() + " to " + currentLoc->GetCityName() + ".\n");
+                        heroPlayer->DecreaseAction();
+                    }
+                    else
+                    {
+                        auto neighborsAround = guideable[choice].second->GetNeighbors();
+                        std::vector<std::string> GuidableLocs;
+                        for (const auto &l : neighborsAround)
+                            GuidableLocs.push_back(l->GetCityName());
+                        MyTerminal.StylizeTextBoard("choose a place to guid " + villager->getName());
+                        int s = MyTerminal.MenuGenerator(GuidableLocs);
+                        from->RemoveVillager(villager);
+                        villager->SetLocation(neighborsAround[s]);
+                        MyTerminal.StylizeTextBoard("You guided " + villager->getName() + " to " + neighborsAround[s]->GetCityName() + ".\n");
+                        heroPlayer->DecreaseAction();
                     }
                     if (villager->isAlive() == State::Rescued)
                     {
@@ -478,30 +479,58 @@ void Game::HeroPhase()
                 {
                     // collect red items
                     std::vector<std::shared_ptr<Item>> redItems;
+                    std::vector<std::string> redItemNames;
                     for (const auto &item : inventory)
                         if (item->getColor() == ItemColor::Red)
-                            redItems.push_back(item);
-
-                    std::sort(redItems.begin(), redItems.end(), [](const auto &a, const auto &b)
-                              { return a->getPower() < b->getPower(); });
-
-                    int total = 0;
-                    std::vector<std::shared_ptr<Item>> usedItems;
-                    // if we have a red item with power 6:
-                    if (redItems.back()->getPower() == 6)
-                    {
-                        total = 6;
-                        usedItems.push_back(redItems.back());
-                    }
-                    // else use greedy
-                    else
-                    {
-                        for (const auto &item : redItems)
                         {
-                            if (total >= requiredPower)
-                                break;
-                            total += item->getPower();
-                            usedItems.push_back(item);
+                            redItems.push_back(item);
+                            redItemNames.push_back(item->getName());
+                        }
+
+                    std::vector<std::shared_ptr<Item>> usedItems;
+                    int total = 0;
+                    int selected = -1;
+                    redItemNames.push_back("Exit");
+                    while (true)
+                    {
+                        MyTerminal.StylizeTextBoard("Choose items:");
+                        selected = MyTerminal.MenuGenerator(redItemNames);
+
+                        if (selected == redItems.size()) // Exit option selected
+                            break;
+
+                        if (selected < 0 || selected >= redItemNames.size())
+                        {
+                            MyTerminal.StylizeTextBoard("Invalid selection. Try again.");
+                            continue;
+                        }
+
+                        total += redItems[selected]->getPower();
+                        // Scientist logic : 
+                        if (heroPlayer->getName() == "Scientist")
+                        {
+                            MyTerminal.StylizeTextBoard("Would you like to use your ability on "+ redItemNames[selected] + " Scientist?");
+                            int s  = MyTerminal.MenuGenerator({"yes" , "no"});
+                            if(s == 0){
+                                total++;
+                                MyTerminal.StylizeTextBoard("Added 1 power to " + redItemNames[selected]);
+                                MyTerminal.ShowPause();
+                            }
+                        }
+                        usedItems.push_back(redItems[selected]);
+                        redItems.erase(redItems.begin() + selected);
+
+                        // Update the item list
+                        redItemNames.clear();
+                        for (const auto &i : redItems)
+                            redItemNames.push_back(i->getName() + " (" + std::to_string(i->getPower()) + ")");
+
+                        redItemNames.push_back("Exit");
+
+                        if (redItems.empty())
+                        {
+                            MyTerminal.StylizeTextBoard("No more items to choose from.");
+                            break;
                         }
                     }
 
@@ -628,10 +657,10 @@ void Game::HeroPhase()
         }
         // Save Game
         else if (selected == 10)
-        { 
+        {
             int slot = MyTerminal.MenuGenerator({"Slot 1", "Slot 2", "Slot 3", "Slot 4", "Slot 5"});
-        GameFileHandler::SaveGame(*this, "file_" + std::to_string( slot + 1));
-                MyTerminal.StylizeTextBoard("Game saved to slot " + std::to_string(slot + 1));
+            GameFileHandler::SaveGame(*this, "file_" + std::to_string(slot + 1));
+            MyTerminal.StylizeTextBoard("Game saved to slot " + std::to_string(slot + 1));
         }
 
         if (CheckGameEnd())

@@ -148,10 +148,14 @@ void Hero::DefeatAction(std::shared_ptr<Monster> monster, Game &game)
 
     // Filter inventory
     std::vector<std::shared_ptr<Item>> filteredItems, usedItems;
+    std::vector<std::string> filtteredNames;
     for (const auto &item : inventory)
     {
         if (item->getColor() == requiredColor)
+        {
             filteredItems.push_back(item);
+            filtteredNames.push_back(item->getName() + " " + "(" + std::to_string(item->getPower()) + ")");
+        }
     }
 
     // Check item empty
@@ -162,19 +166,51 @@ void Hero::DefeatAction(std::shared_ptr<Monster> monster, Game &game)
         return;
     }
 
-    // Greedy aproach
     int total = 0;
-    std::sort(filteredItems.begin(), filteredItems.end(), [](const auto &a, const auto &b)
-              { return a->getPower() < b->getPower(); });
-
-    for (const auto &item : filteredItems)
+    int selected = -1;
+    filtteredNames.push_back("Exit");
+    while (true)
     {
-        if (total >= requiredPower)
-            break;
-        total += item->getPower();
-        usedItems.push_back(item);
-    }
+        game.MyTerminal.StylizeTextBoard("Choose items:");
+        selected = game.MyTerminal.MenuGenerator(filtteredNames);
 
+        if (selected == filteredItems.size()) // Exit option selected
+            break;
+
+        if (selected < 0 || selected >= filteredItems.size())
+        {
+            game.MyTerminal.StylizeTextBoard("Invalid selection. Try again.");
+            continue;
+        }
+
+        total += filteredItems[selected]->getPower();
+        if (name == "Scientist")
+        {
+            game.MyTerminal.StylizeTextBoard("Would you like to use your ability on " + filtteredNames[selected] + " Scientist?");
+            int s = game.MyTerminal.MenuGenerator({"yes", "no"});
+            if (s == 0)
+            {
+                total++;
+               game.MyTerminal.StylizeTextBoard("Added 1 power to " + filtteredNames[selected]);
+               game.MyTerminal.ShowPause();
+            }
+        }
+        usedItems.push_back(filteredItems[selected]);
+        filteredItems.erase(filteredItems.begin() + selected);
+
+        // Update the item list
+        filtteredNames.clear();
+        for (const auto &i : filteredItems)
+            filtteredNames.push_back(i->getName() + " (" + std::to_string(i->getPower()) + ")");
+
+        filtteredNames.push_back("Exit");
+
+        if (filteredItems.empty())
+        {
+            game.MyTerminal.StylizeTextBoard("No more items to choose from.");
+            break;
+        }
+    }
     if (total >= requiredPower)
     {
         for (auto &item : usedItems)
@@ -192,7 +228,7 @@ void Hero::DefeatAction(std::shared_ptr<Monster> monster, Game &game)
     }
     else
     {
-        game.MyTerminal.StylizeTextBoard("Total power: " + std::to_string(total) + " , Requierd Power : " + std::to_string(requiredPower)) ;
+        game.MyTerminal.StylizeTextBoard("Total power: " + std::to_string(total) + " , Requierd Power : " + std::to_string(requiredPower));
         game.MyTerminal.StylizeTextBoard("Not enough item power to defeat the monster!");
         game.MyTerminal.ShowPause();
     }
