@@ -10,109 +10,153 @@
 #include <string>
 #include <iomanip>
 #include <cstring>
+#include "raymath.h"
 
 void ShowInTerminal :: LoadAssets(){
     //Heroes
-    heroTextures["Mayor"] = LoadTexture("assets/Heros/Mayor.png");
-    heroTextures["Archaeologist"] = LoadTexture("assets/Heros/Arshaeologist.png");
-    heroTextures["Courier"] = LoadTexture("assets/Heros/Courier.png");
-    heroTextures["Scientist"] = LoadTexture("assets/Heros/Scientits.png");
+    heroTextures["Mayor"] = LoadTexture("../assets/Heros/Mayor.png");
+    heroTextures["Archaeologist"] = LoadTexture("../assets/Heros/Arshaeologist.png");
+    heroTextures["Courier"] = LoadTexture("../assets/Heros/Courier.png");
+    heroTextures["Scientist"] = LoadTexture("../assets/Heros/Scientits.png");
 
     //Monsters
-    monsterTextures["Dracula"] = LoadTexture("assets/Monsters/Dracula.png");
-    monsterTextures["InvisibleMan"] = LoadTexture("assets/Monsters/InvisibleMan.png");
+    monsterTextures["Dracula"] = LoadTexture("../assets/Monsters/Dracula.png");
+    monsterTextures["InvisibleMan"] = LoadTexture("../assets/Monsters/InvisibleMan.png");
 
     //Villagers
-    villagerTextures["DrCranley"] = LoadTexture("assets/Villager/DrCranley.png");
-    villagerTextures["DrReed"] = LoadTexture("assets/Villager/DrReed.png");
-    villagerTextures["ProfPearson"] = LoadTexture("assets/Villager/ProfPearson.png");
-    villagerTextures["Maleva"] = LoadTexture("assets/Villager/Maleva.png");
-    villagerTextures["Fritz"] = LoadTexture("assets/Villager/Fritz.png");
-    villagerTextures["WilburAndChick"] = LoadTexture("assets/Villager/WilburAndChick.png");
-    villagerTextures["Maria"] = LoadTexture("assets/Villager/Maria.png");
+    villagerTextures["DrCranley"] = LoadTexture("../assets/Villager/DrCranley.png");
+    villagerTextures["DrReed"] = LoadTexture("../assets/Villager/DrReed.png");
+    villagerTextures["ProfPearson"] = LoadTexture("../assets/Villager/ProfPearson.png");
+    villagerTextures["Maleva"] = LoadTexture("../assets/Villager/Maleva.png");
+    villagerTextures["Fritz"] = LoadTexture("../assets/Villager/Fritz.png");
+    villagerTextures["WilburAndChick"] = LoadTexture("../assets/Villager/WilburAndChick.png");
+    villagerTextures["Maria"] = LoadTexture("../assets/Villager/Maria.png");
 
     //Items
     //Yellow
-    itemTextures["Flower"] = LoadTexture("assets/Items/Yellow/Flower.png");
-    itemTextures["TarotDeck"] = LoadTexture("assets/Items/Yellow/Tarot.png");
-    itemTextures["Garlic"] = LoadTexture("assets/Items/Yellow/Garlic.png");
-    itemTextures["MirroredBox"] = LoadTexture("assets/Items/Yellow/Mirrored_Box.png");
-    itemTextures["Stake"] = LoadTexture("assets/Items/Yellow/Stake.png");
-    itemTextures["ScrollOfThoth"] = LoadTexture("assets/Items/Yellow/Scroll.png");
-    itemTextures["Violin"] = LoadTexture("assets/Items/Yellow/Violin.png");
-    itemTextures["Tablet"] = LoadTexture("assets/Items/Yellow/Tablet.png");
-    itemTextures["Wolfsbane"] = LoadTexture("assets/Items/Yellow/Wolfsbane.png");
-    itemTextures["Charm"] = LoadTexture("assets/Items/Yellow/Charm.png");
+    itemTextures["Flower"] = LoadTexture("../assets/Items/Yellow/Flower.png");
+    itemTextures["TarotDeck"] = LoadTexture("../assets/Items/Yellow/Tarot.png");
+    itemTextures["Garlic"] = LoadTexture("../assets/Items/Yellow/Garlic.png");
+    itemTextures["MirroredBox"] = LoadTexture("../assets/Items/Yellow/Mirrored_Box.png");
+    itemTextures["Stake"] = LoadTexture("../assets/Items/Yellow/Stake.png");
+    itemTextures["ScrollOfThoth"] = LoadTexture("../assets/Items/Yellow/Scroll.png");
+    itemTextures["Violin"] = LoadTexture("../assets/Items/Yellow/Violin.png");
+    itemTextures["Tablet"] = LoadTexture("../assets/Items/Yellow/Tablet.png");
+    itemTextures["Wolfsbane"] = LoadTexture("../assets/Items/Yellow/Wolfsbane.png");
+    itemTextures["Charm"] = LoadTexture("../assets/Items/Yellow/Charm.png");
     //Red
-    itemTextures["Dart"] = LoadTexture("assets/Items/Red/Dart.png");
-    itemTextures["FirePoker"] = LoadTexture("assets/Items/Red/FirePoker.png");
-    itemTextures["Rapier"] = LoadTexture("assets/Items/Red/Rapier.png");
-    itemTextures["Shovel"] = LoadTexture("assets/Items/Red/Shovel.png");
-    itemTextures["Torch"] = LoadTexture("assets/Items/Red/Torch.png");
-    itemTextures["Pitchfork"] = LoadTexture("assets/Items/Red/Pitchfork.png");
-    itemTextures["Rifle"] = LoadTexture("assets/Items/Red/Rifle.png");
-    itemTextures["SilverCane"] = LoadTexture("assets/Items/Red/SilverCane.png");
-    itemTextures["Knife"] = LoadTexture("assets/Items/Red/Knife.png");
-    itemTextures["Pistol"] = LoadTexture("assets/Items/Red/Pistol.png");
-    itemTextures["BearTrap"] = LoadTexture("assets/Items/Red/BearTrap.png");
-    itemTextures["Speargun"] = LoadTexture("assets/Items/Red/Speargun.png");
+    itemTextures["Dart"] = LoadTexture("../assets/Items/Red/Dart.png");
+    itemTextures["FirePoker"] = LoadTexture("../assets/Items/Red/FirePoker.png");
+    itemTextures["Rapier"] = LoadTexture("../assets/Items/Red/Rapier.png");
+    itemTextures["Shovel"] = LoadTexture("../assets/Items/Red/Shovel.png");
+    itemTextures["Torch"] = LoadTexture("../assets/Items/Red/Torch.png");
+    itemTextures["Pitchfork"] = LoadTexture("../assets/Items/Red/Pitchfork.png");
+    itemTextures["Rifle"] = LoadTexture("../assets/Items/Red/Rifle.png");
+    itemTextures["SilverCane"] = LoadTexture("../assets/Items/Red/SilverCane.png");
+    itemTextures["Knife"] = LoadTexture("../assets/Items/Red/Knife.png");
+    itemTextures["Pistol"] = LoadTexture("../assets/Items/Red/Pistol.png");
+    itemTextures["BearTrap"] = LoadTexture("../assets/Items/Red/BearTrap.png");
+    itemTextures["Speargun"] = LoadTexture("../assets/Items/Red/Speargun.png");
     //Blue
-    itemTextures["AnatomyTest"] = LoadTexture("assets/Items/Blue/AnatomyTest.png");
-    itemTextures["Contrifuge"] = LoadTexture("assets/Items/Blue/Centrifuge.png");
-    itemTextures["Kite"] = LoadTexture("assets/Items/Blue/Kite.png");
-    itemTextures["Research"] = LoadTexture("assets/Items/Blue/Research.png");
-    itemTextures["Telescope"] = LoadTexture("assets/Items/Blue/Telescope.png");
-    itemTextures["Searchlight"] = LoadTexture("assets/Items/Blue/Searchlight.png");
-    itemTextures["Experiment"] = LoadTexture("assets/Items/Blue/Experiments.png");
-    itemTextures["Analysis"] = LoadTexture("assets/Items/Blue/Analysis.png");
-    itemTextures["Rotenone"] = LoadTexture("assets/Items/Blue/Rotenone.png");
-    itemTextures["CosmicRayDiffuser"] = LoadTexture("assets/Items/Blue/CosmicRayDiffuser.png");
-    itemTextures["Nebularium"] = LoadTexture("assets/Items/Blue/Nebularium.png");
-    itemTextures["MonocaneMixture"] = LoadTexture("assets/Items/Blue/MonocaneMixture.png");
-    itemTextures["Fossil"] = LoadTexture("assets/Items/Blue/Fossil.png");
+    itemTextures["AnatomyTest"] = LoadTexture("../assets/Items/Blue/AnatomyTest.png");
+    itemTextures["Contrifuge"] = LoadTexture("../assets/Items/Blue/Centrifuge.png");
+    itemTextures["Kite"] = LoadTexture("../assets/Items/Blue/Kite.png");
+    itemTextures["Research"] = LoadTexture("../assets/Items/Blue/Research.png");
+    itemTextures["Telescope"] = LoadTexture("../assets/Items/Blue/Telescope.png");
+    itemTextures["Searchlight"] = LoadTexture("../assets/Items/Blue/Searchlight.png");
+    itemTextures["Experiment"] = LoadTexture("../assets/Items/Blue/Experiments.png");
+    itemTextures["Analysis"] = LoadTexture("../assets/Items/Blue/Analysis.png");
+    itemTextures["Rotenone"] = LoadTexture("../assets/Items/Blue/Rotenone.png");
+    itemTextures["CosmicRayDiffuser"] = LoadTexture("../assets/Items/Blue/CosmicRayDiffuser.png");
+    itemTextures["Nebularium"] = LoadTexture("../assets/Items/Blue/Nebularium.png");
+    itemTextures["MonocaneMixture"] = LoadTexture("../assets/Items/Blue/MonocaneMixture.png");
+    itemTextures["Fossil"] = LoadTexture("../assets/Items/Blue/Fossil.png");
 
     //Perks
-    perkTextures["VisitFromDetective"] = LoadTexture("assets/Perk_Cards/VisitFromTheDetective.png");
-    perkTextures["BreakOfDown"] = LoadTexture("assets/Perk_Cards/BreakOfDown.png");
-    perkTextures["OverStock"] = LoadTexture("assets/Perk_Cards/Overstock.png");
-    perkTextures["LateIntoTheNight"] = LoadTexture("assets/Perk_Cards/LateIntoTheNight.png");
-    perkTextures["Repel"] = LoadTexture("assets/Perk_Cards/Repel.png");
-    perkTextures["Hurry"] = LoadTexture("assets/Perk_Cards/Hurry.png");
+    perkTextures["VisitFromDetective"] = LoadTexture("../assets/Perk_Cards/VisitFromTheDetective.png");
+    perkTextures["BreakOfDown"] = LoadTexture("../assets/Perk_Cards/BreakOfDown.png");
+    perkTextures["OverStock"] = LoadTexture("../assets/Perk_Cards/Overstock.png");
+    perkTextures["LateIntoTheNight"] = LoadTexture("../assets/Perk_Cards/LateIntoTheNight.png");
+    perkTextures["Repel"] = LoadTexture("../assets/Perk_Cards/Repel.png");
+    perkTextures["Hurry"] = LoadTexture("../assets/Perk_Cards/Hurry.png");
 
     //MonsterCards
-    monsterCardTextures["FromTheBat"] = LoadTexture("assets/Monster_Cards/FromOfTheBat.png");
-    monsterCardTextures["Sunrise"] = LoadTexture("assets/Monster_Cards/Sunrise.png");
-    monsterCardTextures["Thief"] = LoadTexture("assets/Monster_Cards/Thief.png");
-    monsterCardTextures["TheDelivery"] = LoadTexture("assets/Monster_Cards/TheDelivery.png");
-    monsterCardTextures["FortuneTeller"] = LoadTexture("assets/Monster_Cards/FortuneTeller.png");
-    monsterCardTextures["FormerEmployer"] = LoadTexture("assets/Monster_Cards/FomerEmployer.png");
-    monsterCardTextures["HurriedAssistant"] = LoadTexture("assets/Monster_Cards/HurriedAssistant.png");
-    monsterCardTextures["TheInnocent"] = LoadTexture("assets/Monster_Cards/TheInnocent.png");
-    monsterCardTextures["EgyptianExpert"] = LoadTexture("assets/Monster_Cards/EgyptianExpert.png");
-    monsterCardTextures["TheIchthyologist"] = LoadTexture("assets/Monster_Cards/TheIchtyologist.png");
-    monsterCardTextures["OnTheMove"] = LoadTexture("assets/Monster_Cards/OnTheMove.png");
-    monsterCardTextures["HypnoticGaze"] = LoadTexture("assets/Monster_Cards/HypnoticGaze.png");
+    monsterCardTextures["FromTheBat"] = LoadTexture("../assets/Monster_Cards/FromOfTheBat.png");
+    monsterCardTextures["Sunrise"] = LoadTexture("../assets/Monster_Cards/Sunrise.png");
+    monsterCardTextures["Thief"] = LoadTexture("../assets/Monster_Cards/Thief.png");
+    monsterCardTextures["TheDelivery"] = LoadTexture("../assets/Monster_Cards/TheDelivery.png");
+    monsterCardTextures["FortuneTeller"] = LoadTexture("../assets/Monster_Cards/FortuneTeller.png");
+    monsterCardTextures["FormerEmployer"] = LoadTexture("../assets/Monster_Cards/FomerEmployer.png");
+    monsterCardTextures["HurriedAssistant"] = LoadTexture("../assets/Monster_Cards/HurriedAssistant.png");
+    monsterCardTextures["TheInnocent"] = LoadTexture("../assets/Monster_Cards/TheInnocent.png");
+    monsterCardTextures["EgyptianExpert"] = LoadTexture("../assets/Monster_Cards/EgyptianExpert.png");
+    monsterCardTextures["TheIchthyologist"] = LoadTexture("../assets/Monster_Cards/TheIchtyologist.png");
+    monsterCardTextures["OnTheMove"] = LoadTexture("../assets/Monster_Cards/OnTheMove.png");
+    monsterCardTextures["HypnoticGaze"] = LoadTexture("../assets/Monster_Cards/HypnoticGaze.png");
 
     //MonsterMats
-    monstermatTextures["Dracula"] = LoadTexture("assets/Monster_Mat/DraculaMat.png");
-    monstermatTextures["InvisibleMan"] = LoadTexture("assets/Monster_Mat/InvisibleManMat.png");
+    monstermatTextures["Dracula"] = LoadTexture("../assets/Monster_Mat/DraculaMat.png");
+    monstermatTextures["InvisibleMan"] = LoadTexture("../assets/Monster_Mat/InvisibleManMat.png");
 
     //Backgrounds
-    backgroundTextures["menu"] = LoadTexture("assets/Background/Background1.png");
-    backgroundTextures["input"] = LoadTexture("assets/Background/Background2.png");
-    backgroundTextures["exit"] = LoadTexture("assets/Background/Background3.png");
-    backgroundTextures["back"] = LoadTexture("assets/Background/Background4.png");
+    backgroundTextures["menu"] = LoadTexture("../assets/Background/Background1.png");
+    backgroundTextures["input"] = LoadTexture("../assets/Background/Background2.png");
+    backgroundTextures["exit"] = LoadTexture("../assets/Background/Background3.png");
+    backgroundTextures["back"] = LoadTexture("../assets/Background/Background4.png");
 
     //Map
-    mapTexture = LoadTexture("assets/map.png");
+    mapTexture = LoadTexture("../assets/map.png");
 
     //Font
-    font = LoadFont("assets/Fonts/Creepster.ttf");
+    font = LoadFont("../assets/Fonts/Creepster.ttf");
 
     //Coffin
-    coffinBrokenTexture = LoadTexture("assets/Items/coffins/SmashedCoffin.png");
-    coffinIntactTexture = LoadTexture("assets/Items/coffins/Coffin.png");
-    
+    coffinBrokenTexture = LoadTexture("../assets/Items/coffins/SmashedCoffin.png");
+    coffinIntactTexture = LoadTexture("../assets/Items/coffins/Coffin.png");
+
+    //Location
+
+    locationPositions["Cave"] = {116, 397};
+    locationPositions["Camp"] = {377, 391};
+    locationPositions["Precinct"] = {653, 262};
+    locationPositions["Inn"] = {937, 248};
+    locationPositions["Abbey"] = {152, 964};
+    locationPositions["Crypt"] = {113, 1262};
+    locationPositions["Mansion"] = {444, 851};
+    locationPositions["Theater"] = {1052, 590};
+    locationPositions["Barn"] = {1245, 284};
+    locationPositions["Tower"] = {1391, 557};
+    locationPositions["Dungeon"] = {1526, 298};
+    locationPositions["Docks"] = {1488, 862};
+    locationPositions["Institute"] = {1344, 1482};
+    locationPositions["Laboratory"] = {1146, 1226};
+    locationPositions["Shop"] = {906, 1030};
+    locationPositions["Museum"] = {377, 1237};
+    locationPositions["Church"] = {755, 1284};
+    locationPositions["Hospital"] = {622, 1501};
+    locationPositions["Graveyard"] = {992, 1485};
+
+   float r = 30.0f;
+
+    locationBounds["Cave"] = {116.0f - r, 397.0f - r, r * 2, r * 2};
+    locationBounds["Camp"] = {377.0f - r, 391.0f - r, r * 2, r * 2};
+    locationBounds["Precinct"] = {653.0f - r, 262.0f - r, r * 2, r * 2};
+    locationBounds["Inn"] = {937.0f - r, 248.0f - r, r * 2, r * 2};
+    locationBounds["Abbey"] = {152.0f - r, 964.0f - r, r * 2, r * 2};
+    locationBounds["Crypt"] = {113.0f - r, 1262.0f - r, r * 2, r * 2};
+    locationBounds["Mansion"] = {444.0f - r, 851.0f - r, r * 2, r * 2};
+    locationBounds["Theater"] = {1052.0f - r, 590.0f - r, r * 2, r * 2};
+    locationBounds["Barn"] = {1245.0f - r, 284.0f - r, r * 2, r * 2};
+    locationBounds["Tower"] = {1391.0f - r, 557.0f - r, r * 2, r * 2};
+    locationBounds["Dungeon"] = {1526.0f - r, 298.0f - r, r * 2, r * 2};
+    locationBounds["Docks"] = {1488.0f - r, 862.0f - r, r * 2, r * 2};
+    locationBounds["Institute"] = {1344.0f - r, 1482.0f - r, r * 2, r * 2};
+    locationBounds["Laboratory"] = {1146.0f - r, 1226.0f - r, r * 2, r * 2};
+    locationBounds["Shop"] = {906.0f - r, 1030.0f - r, r * 2, r * 2};
+    locationBounds["Museum"] = {377.0f - r, 1237.0f - r, r * 2, r * 2};
+    locationBounds["Church"] = {755.0f - r, 1284.0f - r, r * 2, r * 2};
+    locationBounds["Hospital"] = {622.0f - r, 1501.0f - r, r * 2, r * 2};
+    locationBounds["Graveyard"] = {992.0f - r, 1485.0f - r, r * 2, r * 2};
 
 } 
 void ShowInTerminal :: UnloadAssets(){
@@ -132,8 +176,30 @@ void ShowInTerminal :: UnloadAssets(){
 
 
 }
-int ShowInTerminal :: MenuGenerator(const std::vector<std::string>& options, std::string& msg, Texture2D bg, Font font) {
+void ShowInTerminal::ShowMessageBox(const std::string& message) {
+    Rectangle box = { 100, 500, 600, 70 };
+
+    bool waiting = true;
+    while (!WindowShouldClose() && waiting) {
+        BeginDrawing();
+        ClearBackground(BLANK);
+
+        DrawRectangleRounded(box, 0.3f, 12, DARKGRAY);
+        DrawRectangleRoundedLines(box, 0.3f, 12, RAYWHITE);
+
+        int textWidth = MeasureText(message.c_str(), 20);
+        DrawText(message.c_str(), box.x + (box.width - textWidth)/2, box.y + 25, 20, WHITE);
+
+        EndDrawing();
+
+        if (IsKeyPressed(KEY_ENTER) || IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+            waiting = false;
+    }
+}
+int ShowInTerminal :: MenuGenerator(const std::vector<std::string>& options) {
     int selected = -1;
+    Texture2D bg = backgroundTextures["menu"];
+    Font& font = this->font;
 
     const float buttonWidth = 160;
     const float buttonHeight = 40;
@@ -163,9 +229,6 @@ int ShowInTerminal :: MenuGenerator(const std::vector<std::string>& options, std
             DrawText(options[i].c_str(), optionRects[i].x + (buttonWidth - textWidth)/2, optionRects[i].y + 10, 20, BLACK);
         }
 
-        if (!msg.empty()) {
-            DrawTextEx(font, msg.c_str(), { 270, 520 }, 20, 1, BLACK);
-        }
 
         EndDrawing();
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
@@ -180,7 +243,9 @@ int ShowInTerminal :: MenuGenerator(const std::vector<std::string>& options, std
     return -1;
 }
 
-bool ShowInTerminal :: GetPlayerInfo(std::string& name, int& days , Font font , Texture2D bg) {
+bool ShowInTerminal :: GetPlayerInfo(std::string& name, int& days) {
+
+    Texture2D bg = backgroundTextures["input"];
 
     std :: string nameInput = "";
     std :: string daysInput = "";
@@ -267,7 +332,9 @@ bool ShowInTerminal :: GetPlayerInfo(std::string& name, int& days , Font font , 
 
     return submitClicked;
 }
-void ShowInTerminal:: ShowExitScreen(Texture2D bg, Font font) {
+void ShowInTerminal:: ShowExitScreen() {
+    
+    Texture2D bg = backgroundTextures["exit"] ;
     const int screenWidth = GetScreenWidth();
     const int screenHeight = GetScreenHeight();
 
@@ -459,6 +526,39 @@ void ShowInTerminal :: DrawPerkCard(const std::shared_ptr<PerkCard>& card, Font 
     DrawRectangle(position.x - 10, position.y - 10, 220, boxHeight, Fade(LIGHTGRAY, 0.4f));
     DrawRectangleLinesEx({position.x - 10, position.y - 10, 220, boxHeight}, 2, DARKGRAY);
 }
+void ShowInTerminal::DrawCharactersOnMap(
+    const std::vector<std::shared_ptr<Hero>>& heroes,
+    const std::vector<std::shared_ptr<Monster>>& monsters,
+    const std::vector<std::shared_ptr<Villager>>& villagers,
+    float scale)
+{
+    for (const auto& h : heroes) {
+        auto posIt = locationPositions.find(h->getLocation()->GetCityName());
+        auto iconIt = heroTextures.find(h->getName());
+        if (posIt != locationPositions.end() && iconIt != heroTextures.end()) {
+            Vector2 offset = {0, 0}; // بدون افست
+            DrawTextureEx(iconIt->second, Vector2Add(posIt->second, offset), 0.0f, scale, WHITE);
+        }
+    }
+
+    for (const auto& m : monsters) {
+        auto posIt = locationPositions.find(m->GetLocation()->GetCityName());
+        auto iconIt = monsterTextures.find(m->GetName());
+        if (posIt != locationPositions.end() && iconIt != monsterTextures.end()) {
+            Vector2 offset = {25, 20}; // یه کم پایین‌تر
+            DrawTextureEx(iconIt->second, Vector2Add(posIt->second, offset), 0.0f, scale, WHITE);
+        }
+    }
+
+    for (const auto& v : villagers) {
+        auto posIt = locationPositions.find(v->getCurrentLocation()->GetCityName());
+        auto iconIt = villagerTextures.find(v->getName());
+        if (posIt != locationPositions.end() && iconIt != villagerTextures.end()) {
+            Vector2 offset = {15, -20}; // بالاتر از بقیه
+            DrawTextureEx(iconIt->second, Vector2Add(posIt->second, offset), 0.0f, scale, WHITE);
+        }
+    }
+}
 void ShowInTerminal :: DrawLocationOverview(const std::unordered_map<std::string, std::shared_ptr<Location>>& locations,
                           const std::vector<std::shared_ptr<Monster>>& monsters,
                           const std::vector<std::shared_ptr<Villager>>& villagers,
@@ -554,7 +654,7 @@ void ShowInTerminal :: DrawLocationOverview(const std::unordered_map<std::string
     DrawRectangleLinesEx({startPos.x - 10, startPos.y - 10, 730, y - startPos.y + 20}, 2, Fade(DARKGRAY, 0.5f));
 }
 
-int ShowInTerminal :: ShowHeroPhase(Game& game, const std::vector<std::string>& options, Texture2D mapTexture, Font font) {
+int ShowInTerminal :: ShowHeroPhase(Game& game, const std::vector<std::string>& options) {
     int selected = -1;
 
     float scaleY = (float)GetScreenHeight() / 772.0f;
@@ -585,6 +685,7 @@ int ShowInTerminal :: ShowHeroPhase(Game& game, const std::vector<std::string>& 
         DrawTexturePro(mapTexture, {0, 0, (float)mapTexture.width, (float)mapTexture.height},
                        {0, 0, (float)GetScreenWidth(), (float)GetScreenHeight()},
                        {0, 0}, 0.0f, WHITE);
+        DrawCharactersOnMap(game.heroes , game.Monsters, game.villagers , 0.6f);
 
         DrawTerrorLevel(game.terrorLevel, font, {30, 20});
 
@@ -599,7 +700,7 @@ int ShowInTerminal :: ShowHeroPhase(Game& game, const std::vector<std::string>& 
 
     
         if (auto dracula = game.GetDracula())
-            DrawDraculaMat(dracula->GetCoffins(), font, {30, 460});
+            DrawDraculaMat(dracula->GetCoffins(), {500, 60});
 
         
         if (auto invisible = game.GetInvisibleMan())
@@ -637,7 +738,7 @@ int ShowInTerminal :: ShowHeroPhase(Game& game, const std::vector<std::string>& 
 
     return selected;
 }
-void ShowInTerminal :: ShowMonsterPhase(Game& game, Font font) {
+void ShowInTerminal :: ShowMonsterPhase(Game& game) {
     if (game.MonsterDeck.empty()) return;
 
     std::shared_ptr<MonsterCard> monsterCard = game.MonsterDeck.back();
