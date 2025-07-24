@@ -32,7 +32,7 @@ using namespace ErrorType;
 using namespace LocationNames;
 using namespace Names;
 // constructor
-Game ::Game() : terrorLevel(0), heroPlayer(nullptr), GameOver(false), skipMonsterPhase(false)
+Game ::Game() : terrorLevel(0), heroPlayer(nullptr), GameOver(false), skipMonsterPhase(false) , showMessage(true) , message("")
 {
     SetUpGame();
 }
@@ -312,8 +312,7 @@ void Game::HeroPhase()
         {
             if (!(selected == 6 || selected == 7 || selected == 8 || selected == 9))
             {
-                MyTerminal.StylizeTextBoard("No more actions choose your perk cards or exit!");
-                MyTerminal.ShowPause();
+                MyTerminal.ShowMessageBox("No more actions choose your perk cards or exit!");
                 selected = -1;
             }
         }
@@ -324,7 +323,7 @@ void Game::HeroPhase()
             std::vector<std::string> neighborNames;
             for (const auto &loc : neighbors)
                 neighborNames.push_back(loc->GetCityName());
-            MyTerminal.StylizeTextBoard("Choose a neighbor to move :");
+            MyTerminal.ShowMessageBox("Choose a neighbor to move :");
             int select = MyTerminal.MenuGenerator(neighborNames);
             if (select >= 0 && select < neighbors.size())
             {
@@ -332,7 +331,7 @@ void Game::HeroPhase()
                 auto villagersInNeighbor = heroPlayer->getLocation()->GetVillager();
                 if (!villagersInNeighbor.empty())
                 {
-                    MyTerminal.StylizeTextBoard("Would you like to move all the villagers with you?");
+                    MyTerminal.ShowMessageBox("Would you like to move all the villagers with you?");
                     int choice = MyTerminal.MenuGenerator({"Yes", "No"});
                     if (choice == 0)
                     {
@@ -343,7 +342,7 @@ void Game::HeroPhase()
                             if (v->isAlive() == State ::Rescued)
                             {
                                 RemoveVillagerFromGame(v);
-                                MyTerminal.StylizeTextBoard("You rescued " + v->getName());
+                                MyTerminal.ShowMessageBox("You rescued " + v->getName());
                                 heroPlayer->GetPerkCard(PerkDeck.back());
                                 heroPlayer->getLocation()->RemoveVillager(v);
                                 PerkDeck.pop_back();
@@ -356,8 +355,8 @@ void Game::HeroPhase()
                 heroPlayer->moveTo(nextLocation);
                 heroPlayer->DecreaseAction();
             }
-            MyTerminal.StylizeTextBoard(heroPlayer->getName() + " moved to " + heroPlayer->getLocation()->GetCityName());
-            MyTerminal.ShowPause();
+            MyTerminal.ShowMessageBox(heroPlayer->getName() + " moved to " + heroPlayer->getLocation()->GetCityName());
+            
         }
 
         // Guide
@@ -380,7 +379,7 @@ void Game::HeroPhase()
 
             if (!guideOptions.empty())
             {
-                MyTerminal.StylizeTextBoard("Select a Villager To Guide :");
+                MyTerminal.ShowMessageBox("Select a Villager To Guide :");
                 int choice = MyTerminal.MenuGenerator(guideOptions);
                 if (choice >= 0 && choice < guideable.size())
                 {
@@ -388,22 +387,22 @@ void Game::HeroPhase()
                     auto from = guideable[choice].second;
                     from->RemoveVillager(villager);
                     villager->SetLocation(currentLoc);
-                    MyTerminal.StylizeTextBoard("You guided " + villager->getName() + " to " + currentLoc->GetCityName() + ".\n");
+                    MyTerminal.ShowMessageBox("You guided " + villager->getName() + " to " + currentLoc->GetCityName() + ".\n");
                     heroPlayer->DecreaseAction();
                     if (villager->isAlive() == State::Rescued)
                     {
                         RemoveVillagerFromGame(villager);
-                        MyTerminal.StylizeTextBoard("You rescued " + villager->getName());
+                        MyTerminal.ShowMessageBox("You rescued " + villager->getName());
                         heroPlayer->GetPerkCard(PerkDeck.back());
                         PerkDeck.pop_back();
                     }
-                    MyTerminal.ShowPause();
+                    
                 }
             }
             else
             {
-                MyTerminal.StylizeTextBoard("No villagers in nearby locations to guide.\n");
-                MyTerminal.ShowPause();
+                MyTerminal.ShowMessageBox("No villagers in nearby locations to guide.\n");
+                
             }
         }
 
@@ -413,21 +412,21 @@ void Game::HeroPhase()
             if (!heroPlayer->getLocation()->GetItems().empty())
             {
                 heroPlayer->pickUpItems();
-                MyTerminal.StylizeTextBoard(heroPlayer->getName() + " Pick up all the Items!");
+                MyTerminal.ShowMessageBox(heroPlayer->getName() + " Pick up all the Items!");
                 auto invisible = GetInvisibleMan();
                 if (invisible)
                 {
                     if (invisible->IsTasksLocation(heroPlayer->getLocation()->GetCityName()))
                     {
-                        MyTerminal.StylizeTextBoard("You pick up one of the evidences in city " + heroPlayer->getLocation()->GetCityName());
+                        MyTerminal.ShowMessageBox("You pick up one of the evidences in city " + heroPlayer->getLocation()->GetCityName());
                     }
                 }
-                MyTerminal.ShowPause();
+                
             }
             else
             {
-                MyTerminal.StylizeTextBoard("Not any Items to pick up");
-                MyTerminal.ShowPause();
+                MyTerminal.ShowMessageBox("Not any Items to pick up");
+            
             }
         }
 
@@ -448,8 +447,8 @@ void Game::HeroPhase()
             {
                 if (dracula->IsCoffinDestroyed(city))
                 {
-                    MyTerminal.StylizeTextBoard("You already destroyed the coffin at " + city + ".");
-                    MyTerminal.ShowPause();
+                    MyTerminal.ShowMessageBox("You already destroyed the coffin at " + city + ".");
+                
                 }
                 else
                 {
@@ -488,13 +487,13 @@ void Game::HeroPhase()
                         for (auto &item : usedItems)
                             heroPlayer->RemoveItem(item);
                         heroPlayer->DecreaseAction();
-                        MyTerminal.StylizeTextBoard("You smashed a Dracula coffin at " + city + "!");
-                        MyTerminal.ShowPause();
+                        MyTerminal.ShowMessageBox("You smashed a Dracula coffin at " + city + "!");
+                        
                     }
                     else
                     {
-                        MyTerminal.StylizeTextBoard("Not enough red item power.");
-                        MyTerminal.ShowPause();
+                        MyTerminal.ShowMessageBox("Not enough red item power.");
+                        
                     }
                 }
                 actionTaken = true;
@@ -513,16 +512,14 @@ void Game::HeroPhase()
                             found = true;
                             if (invisible->IsEvidenceDestroyed(itemLoc))
                             {
-                                MyTerminal.StylizeTextBoard("You already collected evidence at " + itemLoc + ".");
-                                MyTerminal.ShowPause();
+                                MyTerminal.ShowMessageBox("You already collected evidence at " + itemLoc + ".");
                             }
                             else
                             {
                                 heroPlayer->RemoveItem(item);
                                 invisible->AddDetroyedEvidence(itemLoc);
                                 heroPlayer->DecreaseAction();
-                                MyTerminal.StylizeTextBoard("You collected Invisible Man evidence at " + itemLoc + " and put it into " + Precinct);
-                                MyTerminal.ShowPause();
+                                MyTerminal.ShowMessageBox("You collected Invisible Man evidence at " + itemLoc + " and put it into " + Precinct);
                                 break;
                             }
                         }
@@ -530,16 +527,16 @@ void Game::HeroPhase()
                 }
                 if (!found)
                 {
-                    MyTerminal.StylizeTextBoard("You don't have any item to put in " + Precinct);
-                    MyTerminal.ShowPause();
+                    MyTerminal.ShowMessageBox("You don't have any item to put in " + Precinct);
+                    
                 }
                 actionTaken = true;
             }
 
             if (!actionTaken)
             {
-                MyTerminal.StylizeTextBoard("Nothing can be advanced at this location.");
-                MyTerminal.ShowPause();
+                MyTerminal.ShowMessageBox("Nothing can be advanced at this location.");
+                
             }
         }
 
@@ -551,7 +548,7 @@ void Game::HeroPhase()
             {
                 if (monster.size() == 2)
                 {
-                    MyTerminal.StylizeTextBoard("There are two Monsters in Your Location choose one to defeat:");
+                    MyTerminal.ShowMessageBox("There are two Monsters in Your Location choose one to defeat:");
                     int selection = MyTerminal.MenuGenerator({"Dracula", "Invisible Man"});
                     if (selection == 0)
                     {
@@ -568,15 +565,14 @@ void Game::HeroPhase()
                 }
             }
             else
-                MyTerminal.StylizeTextBoard("No monster in your location to defeat!");
-            MyTerminal.ShowPause();
+                MyTerminal.ShowMessageBox("No monster in your location to defeat!");
         }
 
         // Special Action
         else if (selected == 5)
         {
             heroPlayer->specialAction(*this);
-            MyTerminal.ShowPause();
+
         }
         // perk card
         else if (selected == 6)
@@ -586,29 +582,27 @@ void Game::HeroPhase()
         // help button
         else if (selected == 7)
         {
-            Help();
+           // Help();
         }
         // exit button
         else if (selected == 8)
         {
             heroPlayer->resetActions();
             SwitchPlayer();
-            MyTerminal.StylizeTextBoard("exiting the hero phase...");
-            MyTerminal.ShowPause();
+            MyTerminal.ShowMessageBox("exiting the hero phase...");
             break;
         }
         // exit Game Button
         else if (selected == 9)
         {
-            MyTerminal.StylizeTextBoard("Logging Out ...");
+            MyTerminal.ShowMessageBox("Logging Out ...");
             exit(0);
         }
         if (CheckGameEnd())
             return;
-<<<<<<< HEAD
-=======
-        MyTerminal.Refresh();
->>>>>>> main
+
+    
+
     }
     heroPlayer->resetActions();
 }
@@ -617,7 +611,7 @@ void Game::MonsterPhase()
 {
     if (MonsterDeck.empty())
     {
-        MyTerminal.StylizeTextBoard("No Monster card left in the deck");
+        MyTerminal.ShowMessageBox("No Monster card left in the deck");
         return;
     }
     MyTerminal.ShowMonsterPhase(*this);
@@ -667,7 +661,9 @@ void Game::ChooseHero(std::string player1, std::string player2)
     for (const auto &hero : availableHeroes)
         heroNames.push_back(hero->getName());
 
-    MyTerminal.StylizeTextBoard(player1 + " , choose your hero:");
+   // MyTerminal.ShowMessageBox(player1 + " , choose your hero:");
+   MyTerminal.DrawMessageBox(player1 + " , choose your hero." , showMessage);
+   MyTerminal.Enter(showMessage);
     int player1Choice = MyTerminal.MenuGenerator(heroNames);
     auto player1Hero = availableHeroes[player1Choice];
     switch (player1Choice)
@@ -703,7 +699,7 @@ void Game::ChooseHero(std::string player1, std::string player2)
     for (const auto &hero : availableHeroes)
         heroNames.push_back(hero->getName());
 
-    MyTerminal.StylizeTextBoard(player2 + " , choose your hero:");
+    MyTerminal.ShowMessageBox(player2 + " , choose your hero:");
     int player2Choice = MyTerminal.MenuGenerator(heroNames);
     auto player2Hero = availableHeroes[player2Choice];
 
@@ -733,170 +729,236 @@ void Game::ChooseHero(std::string player1, std::string player2)
     }
     heroPlayer = heroes[0];
 }
-
 void Game::GameStart()
 {
-    int StartMenuSelected = -1;
-    while (StartMenuSelected != 0)
-    {
-
-        // Start menue:
     const int screenWidth = 800;
     const int screenHeight = 600;
-
     InitWindow(screenWidth, screenHeight, "Horrified Game");
     SetTargetFPS(60);
+    MyTerminal.LoadAssets();
+    auto dracula = GetDracula();
+    if(!dracula || !dracula->GetLocation())
+    SetUpGame();
 
     BeginDrawing();
     ClearBackground(RAYWHITE);
     DrawText("Loading...", 350, 280, 20, DARKGRAY);
     EndDrawing();
 
-    Font font = LoadFont("assets/Fonts/Creepster.ttf");
-    Texture2D bg1 = LoadTexture("assets/Background.png");
-    Texture2D bg2 = LoadTexture("assets/Background2.png");
-    Texture2D bg3 = LoadTexture("assets/Background3.png");
+    while (true)
+    {
+        int StartMenuSelected = MyTerminal.MenuGenerator({"Start", "Load Game", "Exit"});
 
-    std::string message;
-        int StartMenuSelected = MyTerminal.MenuGenerator(std::vector<std::string>{"Start", "Load Game", "Exit"} , message , bg1 , font );
-        std::string p1, p2;
-        int lastTime1, lastTime2;
 
-        switch (StartMenuSelected)
-        {
-        case 0:
-        {
-            // Garlic questions :
-
-        std :: string name1 , name2;
-        int days1 = 0 , days2 = 0 ;
-        if(!MyTerminal.GetPlayerInfo(name1 , days1 , font , bg3 )) continue;
-        if(!MyTerminal.GetPlayerInfo(name2 , days2 , font , bg3 )) continue;
-        std :: string p1 , p2 ;
-        if(days1 > days2){
-             p1 = name2;
-             p2 = name1;
+        if (StartMenuSelected == 2) {
+            MyTerminal.ShowExitScreen();
+            return;
         }
-        else{
+
+        if (StartMenuSelected == 1) {
+            
+            continue;
+        }
+        if(StartMenuSelected == 0){
+                    std::string name1, name2;
+        int days1 = 0, days2 = 0;
+
+        if (!MyTerminal.GetPlayerInfo(name1, days1)) continue;
+        if (!MyTerminal.GetPlayerInfo(name2, days2)) continue;
+
+        std::string p1, p2;
+        if (days1 > days2) {
+            p1 = name2;
+            p2 = name1;
+        } else {
             p1 = name1;
             p2 = name2;
         }
 
-        message = p1 + " choose your hero.";
-        int HeroChoose1 = MyTerminal.MenuGenerator({ "Mayor", "Scientist" , "Archaeologist" , "Courier" }, message, bg2, font);
-        message = p2 + " choose your hero.";
-        int HeroChoose2 =  MyTerminal.MenuGenerator(std::vector<std::string>{"Mayor", "Archaeologist" , "Courier" , "Scientist"} , message , bg2 , font);
-
-           
-            heroPlayer = heroes[HeroChoose1];
-
-            p1 = MyTerminal.GetInput("What's Your Name Player 1? ", String);
-            lastTime1 = stoi(MyTerminal.GetInput("When was the last time that you ate garlic " + p1 + "? (Ex: 2 days): ", Int));
-            p2 = MyTerminal.GetInput("What's Your Name Player 2? ", String);
-            lastTime2 = stoi(MyTerminal.GetInput("When was the last time that you ate garlic " + p2 + "? (Ex: 2 days): ", Int));
-            MyTerminal.Refresh();
-            std::string starter;
-            if (lastTime1 >= lastTime2)
-            {
-                ChooseHero(p2, p1);
-            }
-            else
-            {
-                ChooseHero(p1, p2);
-            }
-
-        }
-        case 1:
-            Help();
-            break;
-        case 2:
-        MyTerminal.ShowExitScreen(bg3 , font);
-        default:
-            MyTerminal.StylizeTextBoard("Not an option!!!");
-            break;
-        }
-        if (StartMenuSelected == 0)
-        {
-            break;
-        }
+        ChooseHero(p1, p2);
+       // SetUpGame();
+        break;
 
     }
+
+
+        }
+
+
+
     while (!CheckGameEnd())
     {
         HeroPhase();
-        if (!skipMonsterPhase && !CheckGameEnd())
-        {
+
+        if (!skipMonsterPhase && !CheckGameEnd()) {
             MonsterPhase();
-        }
-        else
-        {
+        } else {
             skipMonsterPhase = false;
         }
     }
+
+    MyTerminal.UnloadAssets();
+    CloseWindow();
 }
-{
-    MyTerminal.StylizeTextBoard(
-        "======================== HORRIFIED GAME INSTRUCTIONS ========================\n"
-        "Welcome to the Horrified Game! Here are the basics you need to know:\n\n"
 
-        "1. Goal:\n"
-        "   - Work with the other heroes to defeat the monsters (Dracula, Invisible Man, etc.) by\n"
-        "     completing their objectives (destroying coffins, collecting evidence, defeating monsters, etc.).\n"
-        "   - Protect the villagers by guiding or moving them to their safe locations.\n"
-        "   - Prevent the terror level from reaching its maximum.\n\n"
+// void Game::GameStart()
+// {
+//     MyTerminal.LoadAssets();
+//     int StartMenuSelected = -1;
+//     while (StartMenuSelected != 0)
+//     {
 
-        "2. Hero Actions:\n"
-        "   - Move: Travel between connected locations.\n"
-        "   - Guide: Move villagers from adjacent locations to your location.\n"
-        "   - Pick Up: Collect available items at your current location.\n"
-        "   - Advance: Perform special tasks like destroying Dracula's coffin or collecting evidence for the Invisible Man.\n"
-        "   - Defeat: Attempt to defeat a monster when in the same location.\n"
-        "   - Use Perks: Play a perk card for special bonuses.\n"
-        "   - Special Action: Perform unique character abilities.\n"
-        "   - End Turn: Finish your hero phase.\n\n"
+//         // Start menue:
+//     const int screenWidth = 800;
+//     const int screenHeight = 600;
 
-        "3. Monsters:\n"
-        "   - Each monster has unique abilities and special tasks required to defeat them.\n"
-        "   - Monsters move and attack every monster phase, causing terror and defeating heroes and villagers.\n\n"
+//     InitWindow(screenWidth, screenHeight, "Horrified Game");
+//     SetTargetFPS(60);
 
-        "4. Terror Level:\n"
-        "   - The terror level increases when monsters kill heroes or villagers.\n"
-        "   - If the terror level reaches the maximum, you lose the game.\n\n"
+//     BeginDrawing();
+//     ClearBackground(RAYWHITE);
+//     DrawText("Loading...", 350, 280, 20, DARKGRAY);
+//     EndDrawing();
 
-        "5. Win the Game:\n"
-        "   - Complete the objectives for all monsters.\n"
-        "   - Maintain a low terror level.\n\n"
+//     std::string message;
+//         int StartMenuSelected = MyTerminal.MenuGenerator(std::vector<std::string>{"Start", "Load Game", "Exit"} , message );
+//         std::string p1, p2;
+//         int lastTime1, lastTime2;
 
-        "Remember:\n"
-        "   - Plan your moves strategically.\n"
-        "   - Protect the villagers.\n"
-        "   - Use your perk cards wisely.\n"
-        "   - Defeat the monsters and save the town!\n\n"
+//         switch (StartMenuSelected)
+//         {
+//         case 0:
+//         {
+//             // Garlic questions :
 
-        "Good luck, hero!\n"
-        "==========================================================================\n");
+//         std :: string name1 , name2;
+//         int days1 = 0 , days2 = 0 ;
+//         if(!MyTerminal.GetPlayerInfo(name1 , days1 )) continue;
+//         if(!MyTerminal.GetPlayerInfo(name2 , days2 )) continue;
+//         std :: string p1 , p2 ;
+//         if(days1 > days2){
+//              p1 = name2;
+//              p2 = name1;
+//         }
+//         else{
+//             p1 = name1;
+//             p2 = name2;
+//         }
 
-    MyTerminal.ShowPause();
-    return;
-}
+//         message = p1 + " choose your hero.";
+//         int HeroChoose1 = MyTerminal.MenuGenerator({"Mayor", "Archaeologist" , "Courier" ,"Scientist"}, message, bg2, font);
+//         message = p2 + " choose your hero.";
+//         int HeroChoose2 =  MyTerminal.MenuGenerator({"Mayor", "Archaeologist" , "Courier" , "Scientist"} , message , bg2 , font);
+
+           
+//             heroPlayer = heroes[HeroChoose1];
+
+//             p1 = MyTerminal.GetInput("What's Your Name Player 1? ", String);
+//             lastTime1 = stoi(MyTerminal.GetInput("When was the last time that you ate garlic " + p1 + "? (Ex: 2 days): ", Int));
+//             p2 = MyTerminal.GetInput("What's Your Name Player 2? ", String);
+//             lastTime2 = stoi(MyTerminal.GetInput("When was the last time that you ate garlic " + p2 + "? (Ex: 2 days): ", Int));
+//             MyTerminal.Refresh();
+//             std::string starter;
+//             if (lastTime1 >= lastTime2)
+//             {
+//                 ChooseHero(p2, p1);
+//             }
+//             else
+//             {
+//                 ChooseHero(p1, p2);
+//             }
+
+//         }
+//         case 1:
+
+//         case 2:
+//         MyTerminal.ShowExitScreen();
+//         default:
+//             break;
+//         }
+//         if (StartMenuSelected == 0)
+//         {
+//             break;
+//         }
+
+//     }
+//     while (!CheckGameEnd())
+//     {
+//         HeroPhase();
+//         if (!skipMonsterPhase && !CheckGameEnd())
+//         {
+//             MonsterPhase();
+//         }
+//         else
+//         {
+//             skipMonsterPhase = false;
+//         }
+//     }
+// }
+
+    // MyTerminal.ShowMessageBox(
+    //     "======================== HORRIFIED GAME INSTRUCTIONS ========================\n"
+    //     "Welcome to the Horrified Game! Here are the basics you need to know:\n\n"
+
+    //     "1. Goal:\n"
+    //     "   - Work with the other heroes to defeat the monsters (Dracula, Invisible Man, etc.) by\n"
+    //     "     completing their objectives (destroying coffins, collecting evidence, defeating monsters, etc.).\n"
+    //     "   - Protect the villagers by guiding or moving them to their safe locations.\n"
+    //     "   - Prevent the terror level from reaching its maximum.\n\n"
+
+    //     "2. Hero Actions:\n"
+    //     "   - Move: Travel between connected locations.\n"
+    //     "   - Guide: Move villagers from adjacent locations to your location.\n"
+    //     "   - Pick Up: Collect available items at your current location.\n"
+    //     "   - Advance: Perform special tasks like destroying Dracula's coffin or collecting evidence for the Invisible Man.\n"
+    //     "   - Defeat: Attempt to defeat a monster when in the same location.\n"
+    //     "   - Use Perks: Play a perk card for special bonuses.\n"
+    //     "   - Special Action: Perform unique character abilities.\n"
+    //     "   - End Turn: Finish your hero phase.\n\n"
+
+    //     "3. Monsters:\n"
+    //     "   - Each monster has unique abilities and special tasks required to defeat them.\n"
+    //     "   - Monsters move and attack every monster phase, causing terror and defeating heroes and villagers.\n\n"
+
+    //     "4. Terror Level:\n"
+    //     "   - The terror level increases when monsters kill heroes or villagers.\n"
+    //     "   - If the terror level reaches the maximum, you lose the game.\n\n"
+
+    //     "5. Win the Game:\n"
+    //     "   - Complete the objectives for all monsters.\n"
+    //     "   - Maintain a low terror level.\n\n"
+
+    //     "Remember:\n"
+    //     "   - Plan your moves strategically.\n"
+    //     "   - Protect the villagers.\n"
+    //     "   - Use your perk cards wisely.\n"
+    //     "   - Defeat the monsters and save the town!\n\n"
+
+    //     "Good luck, hero!\n"
+    //     "==========================================================================\n");
+
+    // return;
+
+  
+
 bool Game::CheckGameEnd()
 {
     if (MonsterDeck.empty() && !Monsters.empty())
     {
-        MyTerminal.StylizeTextBoard("💀 Darkness Falls... The town is overrun! The monsters have prevailed.\n");
+        MyTerminal.ShowMessageBox("💀 Darkness Falls... The town is overrun! The monsters have prevailed.\n");
         GameOver = true;
     }
     else if (terrorLevel >= 5)
     {
-        MyTerminal.StylizeTextBoard("🩸 Terror Reigns! The townsfolk have lost all hope... Evil claims victory.\n");
+        MyTerminal.ShowMessageBox("🩸 Terror Reigns! The townsfolk have lost all hope... Evil claims victory.\n");
         GameOver = true;
     }
     else if (Monsters.empty())
     {
-        MyTerminal.StylizeTextBoard("🎉 Victory! The Heroes have vanquished all the monsters!\n");
+        MyTerminal.ShowMessageBox("🎉 Victory! The Heroes have vanquished all the monsters!\n");
         GameOver = true;
     }
-    if (GameOver)
-        exit(0);
+    // if (GameOver)
+    //    GameOver = true;
     return GameOver;
 }
