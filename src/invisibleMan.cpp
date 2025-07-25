@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <queue>
 #include <iostream>
+#include <limits>
 using namespace LocationNames;
 InvisibleMan:: InvisibleMan() : Monster("Invisible Man",6,false){Evidences ={ {false , Inn} , {false , Laboratory} , {false ,Barn } , {false ,Mansion } , {false , Institute}};}
 //Move method
@@ -28,21 +29,20 @@ return false;
 }
 //Power
 void InvisibleMan::StalkUnseen(Game& game, int moves) {
-    game.MyTerminal.StylizeTextBoard("Stalk Unseen Activated : ");
+    game.MyTerminal.ShowMessageBox("Stalk Unseen Activated : ");
     auto& villagers = game.getVillagers();
     auto& map = game.getMapPlan(); 
     if(villagers.empty())
     {
-        game.MyTerminal.StylizeTextBoard("No villager in the map to use Stalk unseen!");
+        game.MyTerminal.ShowMessageBox("No villager in the map to use Stalk unseen!");
         return;
     }
     auto locals = CurrentLocation->GetVillager();
     if (!locals.empty()) {
         auto target = locals.back();
-        game.MyTerminal.StylizeTextBoard("Invisible Man is already in "+target->getCurrentLocation()->GetCityName()+ " uses Stalk Unseen and kills " + target->getName());
+        game.MyTerminal.ShowMessageBox("Invisible Man is already in "+target->getCurrentLocation()->GetCityName()+ " uses Stalk Unseen and kills " + target->getName());
         target->kill();
         game.RemoveVillagerFromGame(target);
-        game.MyTerminal.ShowPause();
         return;
     }
 
@@ -77,7 +77,7 @@ void InvisibleMan::StalkUnseen(Game& game, int moves) {
     }
 
     if (!targetLoc) {
-        game.MyTerminal.StylizeTextBoard("No villager found for Stalk Unseen!");
+        game.MyTerminal.ShowMessageBox("No villager found for Stalk Unseen!");
         return;
     }
 
@@ -97,10 +97,10 @@ void InvisibleMan::StalkUnseen(Game& game, int moves) {
     auto afterMove = CurrentLocation->GetVillager();
     if (!afterMove.empty()) {
         auto target = afterMove.back();
-        game.MyTerminal.StylizeTextBoard("Invisible Man moved Toward " + target->getName());
+        game.MyTerminal.ShowMessageBox("Invisible Man moved Toward " + target->getName());
         CurrentLocation->RemoveVillager(target);
     } else {
-        game.MyTerminal.StylizeTextBoard("Invisible Man moved to " + CurrentLocation->GetCityName());
+        game.MyTerminal.ShowMessageBox("Invisible Man moved to " + CurrentLocation->GetCityName());
     }
 }
 //Check if evidence already destroyed

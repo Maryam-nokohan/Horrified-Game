@@ -303,6 +303,7 @@ void Game::SwitchPlayer()
 void Game::HeroPhase()
 {
 
+    std :: cout << "bebinam miare??????***********************************/n";
     int selected = -1;
     while (selected != 8)
     {
@@ -670,25 +671,32 @@ void Game::ChooseHero(std::string player1, std::string player2)
     {
     case 0:
         heroes.push_back(std ::make_shared<Mayor>(startMayorloc));
+        if(!PerkDeck.empty()){
         heroes[0]->GetPerkCard(PerkDeck.back());
         PerkDeck.pop_back();
+        }
         break;
 
     case 1:
         heroes.push_back(std ::make_shared<Archaeologist>(startArchloc));
+         if(!PerkDeck.empty()){
         heroes[0]->GetPerkCard(PerkDeck.back());
         PerkDeck.pop_back();
-
+         }
         break;
     case 2:
         heroes.push_back(std::make_shared<Courier>(startCourierloc));
+         if(!PerkDeck.empty()){
         heroes[0]->GetPerkCard(PerkDeck.back());
         PerkDeck.pop_back();
+         }
         break;
     case 3:
         heroes.push_back(std::make_shared<Scientist>(startScientistloc));
+         if(!PerkDeck.empty()){
         heroes[0]->GetPerkCard(PerkDeck.back());
         PerkDeck.pop_back();
+         }
         break;
     default:
         break;
@@ -705,29 +713,38 @@ void Game::ChooseHero(std::string player1, std::string player2)
 
     if( heroNames[player2Choice] == "Mayor" ){
     heroes.push_back(std ::make_shared<Mayor>(startMayorloc));
+     if(!PerkDeck.empty()){
     heroes[1]->GetPerkCard(PerkDeck.back());
     PerkDeck.pop_back();
+     }
     }
     else if (heroNames[player2Choice] == "Archaeologist" )
     {
         heroes.push_back(std ::make_shared<Archaeologist>(startArchloc));
+         if(!PerkDeck.empty()){
         heroes[1]->GetPerkCard(PerkDeck.back());
         PerkDeck.pop_back();
+         }
     }
     else if (heroNames[player2Choice] == "Courier" )
     {
         heroes.push_back(std::make_shared<Courier>(startCourierloc));
+         if(!PerkDeck.empty()){
         heroes[1]->GetPerkCard(PerkDeck.back());
         PerkDeck.pop_back();
+         }
     }
     else if (heroNames[player2Choice] == "Scientist")
     {
         heroes.push_back(std::make_shared<Scientist>(startScientistloc));
+         if(!PerkDeck.empty()){
         heroes[1]->GetPerkCard(PerkDeck.back());
         PerkDeck.pop_back();
+         }
 
     }
     heroPlayer = heroes[0];
+    std :: cout << heroes[0] <<"--------------\n";
 }
 void Game::GameStart()
 {
@@ -775,12 +792,12 @@ void Game::GameStart()
             p2 = name2;
         }
 
+        SetUpGame();
         ChooseHero(p1, p2);
        // SetUpGame();
         break;
 
     }
-
 
         }
 

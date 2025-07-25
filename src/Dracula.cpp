@@ -10,18 +10,16 @@ using namespace LocationNames;
 Dracula :: Dracula() : Monster("Dracula",1,true){Table ={{false ,Crypt} ,{ false ,Cave} , {false,Dungeon} , {false,Graveyard} };}
 //Power:
 void Dracula :: DarkCharm(Game &game) {
-game.MyTerminal.StylizeTextBoard("Dracula using Dark Charm !!");
+game.MyTerminal.ShowMessageBox("Dracula using Dark Charm !!");
 if(game.heroPlayer->getLocation()->GetCityName() == CurrentLocation->GetCityName())
 {
-    game.MyTerminal.StylizeTextBoard( "Hero Already in Dracula's Location.");
-    game.MyTerminal.ShowPause();
+    game.MyTerminal.ShowMessageBox( "Hero Already in Dracula's Location.");
     return;
 }
 auto HeroLocation = game.heroPlayer->getLocation();
 HeroLocation->RemoveHero(game.heroPlayer);
 game.heroPlayer->moveTo(CurrentLocation);
-game.MyTerminal.StylizeTextBoard(game.heroPlayer->getName() + " moved to dracula spot!");
-game.MyTerminal.ShowPause();
+game.MyTerminal.ShowMessageBox(game.heroPlayer->getName() + " moved to dracula spot!");
 }
 //Move :
 void Dracula :: Move(std :: shared_ptr<Location> NearestOppenent) {

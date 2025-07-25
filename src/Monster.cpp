@@ -140,7 +140,7 @@ const std :: shared_ptr< Location> Monster::FindNearestOpponent(Map& plan, std::
 bool Monster ::Attack(Game& game)
 {
     bool successe = false;
-    game.MyTerminal.StylizeTextBoard(Name + " Attacks!");
+    game.MyTerminal.ShowMessageBox(Name + " Attacks!");
     auto  herosNear = CurrentLocation->GetHero();
     auto  VillagersNear = CurrentLocation->GetVillager();
     if(herosNear.empty())
@@ -149,16 +149,14 @@ bool Monster ::Attack(Game& game)
         game.RemoveVillagerFromGame(VillagersNear.back());
         VillagersNear.back()->kill();
         CurrentLocation->RemoveVillager(VillagersNear.back());
-        game.MyTerminal.StylizeTextBoard(Name + " killed " + VillagersNear.back()->getName());
+        game.MyTerminal.ShowMessageBox(Name + " killed " + VillagersNear.back()->getName());
         successe = true;
         game.increaseTerrorLevel();
-        game.MyTerminal.ShowPause();
         return successe;
         }
         else
         {
-            game.MyTerminal.StylizeTextBoard("No opponent nearby to attack");
-            game.MyTerminal.ShowPause();
+            game.MyTerminal.ShowMessageBox("No opponent nearby to attack");
             return successe;
         }
     }

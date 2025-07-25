@@ -15,16 +15,16 @@
 void ShowInTerminal :: LoadAssets(){
     //Heroes
     heroTextures["Mayor"] = LoadTexture("../assets/Heros/Mayor.png");
-    heroTextures["Archaeologist"] = LoadTexture("../assets/Heros/Arshaeologist.png");
+    heroTextures["Archaeologist"] = LoadTexture("../assets/Heros/Archaeologist.png");
     heroTextures["Courier"] = LoadTexture("../assets/Heros/Courier.png");
-    heroTextures["Scientist"] = LoadTexture("../assets/Heros/Scientits.png");
+    heroTextures["Scientist"] = LoadTexture("../assets/Heros/Scientist.png");
 
     //Monsters
     monsterTextures["Dracula"] = LoadTexture("../assets/Monsters/Dracula.png");
     monsterTextures["InvisibleMan"] = LoadTexture("../assets/Monsters/InvisibleMan.png");
 
     //Villagers
-    villagerTextures["DrCranley"] = LoadTexture("../assets/Villager/DrCranley.png");
+    villagerTextures["DrCranley"] = LoadTexture("../assets/Villager/DrCranly.png");
     villagerTextures["DrReed"] = LoadTexture("../assets/Villager/DrReed.png");
     villagerTextures["ProfPearson"] = LoadTexture("../assets/Villager/ProfPearson.png");
     villagerTextures["Maleva"] = LoadTexture("../assets/Villager/Maleva.png");
@@ -58,7 +58,7 @@ void ShowInTerminal :: LoadAssets(){
     itemTextures["BearTrap"] = LoadTexture("../assets/Items/Red/BearTrap.png");
     itemTextures["Speargun"] = LoadTexture("../assets/Items/Red/Speargun.png");
     //Blue
-    itemTextures["AnatomyTest"] = LoadTexture("../assets/Items/Blue/AnatomyTest.png");
+    itemTextures["AnatomyTest"] = LoadTexture("../assets/Items/Blue/AnatomyText.png");
     itemTextures["Contrifuge"] = LoadTexture("../assets/Items/Blue/Centrifuge.png");
     itemTextures["Kite"] = LoadTexture("../assets/Items/Blue/Kite.png");
     itemTextures["Research"] = LoadTexture("../assets/Items/Blue/Research.png");
@@ -74,14 +74,14 @@ void ShowInTerminal :: LoadAssets(){
 
     //Perks
     perkTextures["VisitFromDetective"] = LoadTexture("../assets/Perk_Cards/VisitFromTheDetective.png");
-    perkTextures["BreakOfDown"] = LoadTexture("../assets/Perk_Cards/BreakOfDown.png");
+    perkTextures["BreakOfDown"] = LoadTexture("../assets/Perk_Cards/BreakOfDawn.png");
     perkTextures["OverStock"] = LoadTexture("../assets/Perk_Cards/Overstock.png");
     perkTextures["LateIntoTheNight"] = LoadTexture("../assets/Perk_Cards/LateIntoTheNight.png");
     perkTextures["Repel"] = LoadTexture("../assets/Perk_Cards/Repel.png");
     perkTextures["Hurry"] = LoadTexture("../assets/Perk_Cards/Hurry.png");
 
     //MonsterCards
-    monsterCardTextures["FromTheBat"] = LoadTexture("../assets/Monster_Cards/FromOfTheBat.png");
+    monsterCardTextures["FromTheBat"] = LoadTexture("../assets/Monster_Cards/FormOfTheBat.png");
     monsterCardTextures["Sunrise"] = LoadTexture("../assets/Monster_Cards/Sunrise.png");
     monsterCardTextures["Thief"] = LoadTexture("../assets/Monster_Cards/Thief.png");
     monsterCardTextures["TheDelivery"] = LoadTexture("../assets/Monster_Cards/TheDelivery.png");
@@ -102,7 +102,7 @@ void ShowInTerminal :: LoadAssets(){
     backgroundTextures["menu"] = LoadTexture("../assets/Background/Background1.png");
     backgroundTextures["input"] = LoadTexture("../assets/Background/Background2.png");
     backgroundTextures["exit"] = LoadTexture("../assets/Background/Background3.png");
-    backgroundTextures["back"] = LoadTexture("../assets/Background/Background4.png");
+    backgroundTextures["back"] = LoadTexture("../assets/Background/Background4.jpg");
 
     //Map
     mapTexture = LoadTexture("../assets/map.png");
@@ -111,8 +111,8 @@ void ShowInTerminal :: LoadAssets(){
     font = LoadFont("../assets/Fonts/Creepster.ttf");
 
     //Coffin
-    coffinBrokenTexture = LoadTexture("../assets/Items/coffins/SmashedCoffin.png");
-    coffinIntactTexture = LoadTexture("../assets/Items/coffins/Coffin.png");
+    coffinBrokenTexture = LoadTexture("../assets/Items/Coffins/SmashedCoffin.png");
+    coffinIntactTexture = LoadTexture("../assets/Items/Coffins/Coffin.png");
 
     //Location
 
@@ -174,6 +174,24 @@ void ShowInTerminal :: UnloadAssets(){
     UnloadTexture(coffinBrokenTexture);
     UnloadTexture(coffinIntactTexture);
 
+
+}
+void ShowInTerminal :: DrawMessageBox(const std :: string& message , bool& showMessage)
+{
+if(showMessage){
+    Rectangle box = { 100, 500, 600, 70 };
+
+    DrawRectangleRounded(box, 0.3f, 12, DARKGRAY);
+    DrawRectangleRoundedLines(box, 0.3f, 12, RAYWHITE);
+
+    int textWidth = MeasureText(message.c_str(), 20);
+    DrawText(message.c_str(), box.x + (box.width - textWidth) / 2, box.y + 25, 20, WHITE);
+}}
+void ShowInTerminal :: Enter(bool& showMessage){
+        
+        if (IsKeyPressed(KEY_ENTER) || IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+            showMessage = false;
+        }
 
 }
 void ShowInTerminal::ShowMessageBox(const std::string& message) {
@@ -388,20 +406,60 @@ void ShowInTerminal :: DrawTerrorLevel(int terrorLevel, Font font, Vector2 posit
     DrawRectangleLinesEx(barBg, 2, BLACK);
 }
 
-void ShowInTerminal :: DrawDraculaMat(const std::vector<std::pair<bool, std::string>>& coffins, Vector2 startPos) {
+// void ShowInTerminal :: DrawDraculaMat(const std::vector<std::pair<bool, std::string>>& coffins, Vector2 startPos) {
+//     DrawTexture(monstermatTextures["Dracula"], startPos.x, startPos.y, WHITE);
+
+//     float offsetX = 40;
+//     float spacing = 150;
+
+//     for (size_t i = 0; i < coffins.size(); ++i) {
+        
+//         std::string locationName = coffins[i].second;
+//         DrawTextEx(font, locationName.c_str(), { startPos.x + offsetX + i * spacing, startPos.y + 100 }, 18, 1, BLACK);
+
+        
+//         Texture2D& tex = coffins[i].first ? coffinBrokenTexture : coffinIntactTexture;
+//         DrawTexture(tex, startPos.x + offsetX + i * spacing, startPos.y + 130, WHITE);
+//     }
+// }
+void ShowInTerminal::DrawDraculaMat(Game& game, Vector2 startPos) {
+
+    auto dracula = game.GetDracula();
+    if(!dracula || !dracula->GetLocation()) return;
+    if (!dracula) return; // اگه دراکولا مقداردهی نشده، هیچی رسم نکن
+
+    if (monstermatTextures.find("Dracula") == monstermatTextures.end()) return;
+
+    // رسم تصویر اصلی مات
     DrawTexture(monstermatTextures["Dracula"], startPos.x, startPos.y, WHITE);
 
-    float offsetX = 40;
-    float spacing = 150;
+    auto coffins = dracula->GetCoffins();
+
+    float offsetX = 50;
+    float spacing = 70;
+    float textOffsetY = 100;
 
     for (size_t i = 0; i < coffins.size(); ++i) {
-        
-        std::string locationName = coffins[i].second;
-        DrawTextEx(font, locationName.c_str(), { startPos.x + offsetX + i * spacing, startPos.y + 100 }, 18, 1, BLACK);
+        std::string locName = coffins[i].second;
+        bool isBroken = coffins[i].first;
 
-        
-        Texture2D& tex = coffins[i].first ? coffinBrokenTexture : coffinIntactTexture;
-        DrawTexture(tex, startPos.x + offsetX + i * spacing, startPos.y + 130, WHITE);
+        // متن نام مکان
+        DrawText(locName.c_str(), startPos.x + offsetX + i * spacing, startPos.y + textOffsetY, 16, BLACK);
+
+        // رسم عکس تابوت
+        Texture2D* tex = nullptr;
+        if (isBroken && coffinBrokenTexture.id != 0) {
+            tex = &coffinBrokenTexture;
+        } else if (!isBroken && coffinIntactTexture.id != 0) {
+            tex = &coffinIntactTexture;
+        }
+
+        if (tex) {
+            DrawTexture(*tex, startPos.x + offsetX + i * spacing, startPos.y + textOffsetY + 25, WHITE);
+        } else {
+            // اگر فایل لود نشده باشه، علامت X نشون بده
+            DrawText("❌", startPos.x + offsetX + i * spacing, startPos.y + textOffsetY + 25, 20, RED);
+        }
     }
 }
 void ShowInTerminal :: DrawInvisibleManMat(const std::vector<std::pair<bool, std::string>>& evidences, Font font, Vector2 position) {
@@ -700,7 +758,7 @@ int ShowInTerminal :: ShowHeroPhase(Game& game, const std::vector<std::string>& 
 
     
         if (auto dracula = game.GetDracula())
-            DrawDraculaMat(dracula->GetCoffins(), {500, 60});
+            DrawDraculaMat(game, {500, 60});
 
         
         if (auto invisible = game.GetInvisibleMan())

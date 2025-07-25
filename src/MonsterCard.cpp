@@ -11,6 +11,7 @@
 #include <unordered_set>
 #include <iostream>
 #include <memory>
+#include <limits>
 using namespace LocationNames;
 using namespace Names;
 
@@ -34,8 +35,8 @@ void MonsterCard ::ApplyEffect(Game & game)
 {
     //Put items : 
     game.SetRandomItems(item);
-    game.MyTerminal.StylizeTextBoard("Added " + std :: to_string(item) + " items to map");
-    game.MyTerminal.ShowPause();
+    game.MyTerminal.ShowMessageBox("Added " + std :: to_string(item) + " items to map");
+    
     //apply event
     auto dracula = game.GetDracula();
     auto invisible = game.GetInvisibleMan();
@@ -44,12 +45,12 @@ void MonsterCard ::ApplyEffect(Game & game)
     {
         if(dracula){
         dracula->SetLocation(game.mapPlan.GetLocationptr(Crypt));
-        game.MyTerminal.StylizeTextBoard(Sunrise + " Card Event Applyed  :"  + Event);
-        game.MyTerminal.ShowPause();
+        game.MyTerminal.ShowMessageBox(Sunrise + " Card Event Applyed  :"  + Event);
+        
         }
         else {
-            game.MyTerminal.StylizeTextBoard("dracula isn't in the game to apply Sunrise card effect!");
-            game.MyTerminal.ShowPause();
+            game.MyTerminal.ShowMessageBox("dracula isn't in the game to apply Sunrise card effect!");
+            
             return;}
     }
 
@@ -58,12 +59,12 @@ void MonsterCard ::ApplyEffect(Game & game)
         if(dracula){
         dracula->GetLocation()->RemoveMonster(dracula);
         dracula->SetLocation(game.heroPlayer->getLocation());
-        game.MyTerminal.StylizeTextBoard(FromTheBat+ " Card Event Applyed  :"  + Event);
-        game.MyTerminal.ShowPause();
+        game.MyTerminal.ShowMessageBox(FromTheBat+ " Card Event Applyed  :"  + Event);
+        
         }
         else {
-            game.MyTerminal.StylizeTextBoard("dracula isn't in the game to apply "+ FromTheBat+" card effect!");
-            game.MyTerminal.ShowPause();
+            game.MyTerminal.ShowMessageBox("dracula isn't in the game to apply "+ FromTheBat+" card effect!");
+            
             }
     }
 
@@ -84,19 +85,19 @@ void MonsterCard ::ApplyEffect(Game & game)
         {
             invisible->SetLocation(bestLoc);
             bestLoc->ClearItems();
-            game.MyTerminal.StylizeTextBoard(Thief + " Card Event Applyed  :"  + Event);
-            game.MyTerminal.ShowPause();
+            game.MyTerminal.ShowMessageBox(Thief + " Card Event Applyed  :"  + Event);
+            
         }
         else 
         {
-            game.MyTerminal.StylizeTextBoard("No items in game to apply " + Thief + " effect!");
-            game.MyTerminal.ShowPause();
+            game.MyTerminal.ShowMessageBox("No items in game to apply " + Thief + " effect!");
+        
         }
     }
     else 
     {
-        game.MyTerminal.StylizeTextBoard("Invisible man is not in the game to apply " + Thief + " effect!");
-        game.MyTerminal.ShowPause();
+        game.MyTerminal.ShowMessageBox("Invisible man is not in the game to apply " + Thief + " effect!");
+        
 
     }
     }
@@ -114,13 +115,13 @@ void MonsterCard ::ApplyEffect(Game & game)
         }
         if(found)
         {
-            game.MyTerminal.StylizeTextBoard(TheDelivery + " Card Event Applyed  :"  + Event);
-            game.MyTerminal.ShowPause();
+            game.MyTerminal.ShowMessageBox(TheDelivery + " Card Event Applyed  :"  + Event);
+            
         }
         else
         {
-            game.MyTerminal.StylizeTextBoard("Not found " + WilburAndChick + " to apply " + TheDelivery);
-            game.MyTerminal.ShowPause();
+            game.MyTerminal.ShowMessageBox("Not found " + WilburAndChick + " to apply " + TheDelivery);
+            
             return;
         }
     }
@@ -137,13 +138,13 @@ void MonsterCard ::ApplyEffect(Game & game)
         }
         if(found)
         {
-            game.MyTerminal.StylizeTextBoard(FortuneTeller + " Card Event Applyed  :"  + Event);
-            game.MyTerminal.ShowPause();
+            game.MyTerminal.ShowMessageBox(FortuneTeller + " Card Event Applyed  :"  + Event);
+            
         }
         else
         {
-            game.MyTerminal.StylizeTextBoard("Not found " +Maleva + " to apply " + FortuneTeller);
-            game.MyTerminal.ShowPause();
+            game.MyTerminal.ShowMessageBox("Not found " +Maleva + " to apply " + FortuneTeller);
+            
             return;
         }
     }
@@ -160,13 +161,13 @@ void MonsterCard ::ApplyEffect(Game & game)
         }
         if(found)
         {
-            game.MyTerminal.StylizeTextBoard(FormerEmployer + " Card Event Applyed  :"  + Event);
-            game.MyTerminal.ShowPause();
+            game.MyTerminal.ShowMessageBox(FormerEmployer + " Card Event Applyed  :"  + Event);
+            
         }
         else
         {
-            game.MyTerminal.StylizeTextBoard("Not found " + DrCranley + " to apply " + FormerEmployer);
-            game.MyTerminal.ShowPause();
+            game.MyTerminal.ShowMessageBox("Not found " + DrCranley + " to apply " + FormerEmployer);
+            
             return;
         }
     }
@@ -183,13 +184,13 @@ void MonsterCard ::ApplyEffect(Game & game)
         }
         if(found)
         {
-            game.MyTerminal.StylizeTextBoard(HurriedAssistant + " Card Event Applyed  :"  + Event);
-            game.MyTerminal.ShowPause();
+            game.MyTerminal.ShowMessageBox(HurriedAssistant + " Card Event Applyed  :"  + Event);
+        
         }
         else
         {
-            game.MyTerminal.StylizeTextBoard("Not found " + Fritz + " to apply " + HurriedAssistant);
-            game.MyTerminal.ShowPause();
+            game.MyTerminal.ShowMessageBox("Not found " + Fritz + " to apply " + HurriedAssistant);
+            
             return;
         }
     }
@@ -206,13 +207,12 @@ void MonsterCard ::ApplyEffect(Game & game)
         }
         if(found)
         {
-            game.MyTerminal.StylizeTextBoard(TheInnocent + " Card Event Applyed  :"  + Event);
-            game.MyTerminal.ShowPause();
+            game.MyTerminal.ShowMessageBox(TheInnocent + " Card Event Applyed  :"  + Event);
         }
         else
         {
-            game.MyTerminal.StylizeTextBoard("Not found " + Maria + " to apply " + TheInnocent);
-            game.MyTerminal.ShowPause();
+            game.MyTerminal.ShowMessageBox("Not found " + Maria + " to apply " + TheInnocent);
+
             return;
         }
     }
@@ -229,13 +229,11 @@ void MonsterCard ::ApplyEffect(Game & game)
         }
         if(found)
         {
-            game.MyTerminal.StylizeTextBoard(EgyptianExpert + " Card Event Applyed  :"  + Event);
-            game.MyTerminal.ShowPause();
+            game.MyTerminal.ShowMessageBox(EgyptianExpert + " Card Event Applyed  :"  + Event);
         }
         else
         {
-            game.MyTerminal.StylizeTextBoard("Not found " + ProfPearson + " to apply " + EgyptianExpert);
-            game.MyTerminal.ShowPause();
+            game.MyTerminal.ShowMessageBox("Not found " + ProfPearson + " to apply " + EgyptianExpert);
             return;
         };
     }
@@ -252,13 +250,11 @@ void MonsterCard ::ApplyEffect(Game & game)
         }
         if(found)
         {
-            game.MyTerminal.StylizeTextBoard(TheIchthyologist + " Card Event Applyed  :"  + Event);
-            game.MyTerminal.ShowPause();
+            game.MyTerminal.ShowMessageBox(TheIchthyologist + " Card Event Applyed  :"  + Event);
         }
         else
         {
-            game.MyTerminal.StylizeTextBoard("Not found " + DrReed + " to apply " + TheIchthyologist);
-            game.MyTerminal.ShowPause();
+            game.MyTerminal.ShowMessageBox("Not found " + DrReed + " to apply " + TheIchthyologist);
             return;
         }
     }
@@ -332,19 +328,18 @@ void MonsterCard ::ApplyEffect(Game & game)
                 auto nextStep = path.front();
                 from->RemoveVillager(v);
                 v->SetLocation(nextStep);
-                game.MyTerminal.StylizeTextBoard("Villager " + v->getName() + " moves toward safe house: " + nextStep->GetCityName());
+                game.MyTerminal.ShowMessageBox("Villager " + v->getName() + " moves toward safe house: " + nextStep->GetCityName());
                  if (v->isAlive() == State ::Rescued)
                             {
                                 game.RemoveVillagerFromGame(v);
-                                game.MyTerminal.StylizeTextBoard("You rescued " + v->getName());
+                                game.MyTerminal.ShowMessageBox("You rescued " + v->getName());
                                 game.heroPlayer->GetPerkCard(game.PerkDeck.back());
                                 game.heroPlayer->getLocation()->RemoveVillager(v);
                                 game.PerkDeck.pop_back();
                             }
             }
         }
-        game.MyTerminal.StylizeTextBoard(OnTheMove + " Card Event Applyed  :"  + Event);
-        game.MyTerminal.ShowPause();
+        game.MyTerminal.ShowMessageBox(OnTheMove + " Card Event Applyed  :"  + Event);
     }
 
     else if (Name == HypnoticGaze)
@@ -433,28 +428,28 @@ void MonsterCard ::ApplyEffect(Game & game)
                 auto loc = closestHero->getLocation();
                 loc->RemoveHero(closestHero);
                 closestHero->SetLocation(nextStep);
-                game.MyTerminal.StylizeTextBoard("Hero " + closestHero->getName() + " moves toward dracula.");
+                game.MyTerminal.ShowMessageBox("Hero " + closestHero->getName() + " moves toward dracula.");
             }
             else if (closestVillager)
             {
                 auto loc = closestVillager->getCurrentLocation();
                 loc->RemoveVillager(closestVillager);
                 closestVillager->SetLocation(nextStep);
-                game.MyTerminal.StylizeTextBoard("Villager " + closestVillager->getName() + " moves toward dracula.");
+                game.MyTerminal.ShowMessageBox("Villager " + closestVillager->getName() + " moves toward dracula.");
             }
         }
-           game.MyTerminal.StylizeTextBoard(HypnoticGaze + " Card Event Applyed  :"  + Event);
+           game.MyTerminal.ShowMessageBox(HypnoticGaze + " Card Event Applyed  :"  + Event);
     }
     else
     {
-    game.MyTerminal.StylizeTextBoard("dracula isn't in the game to apply "+ HypnoticGaze +" card effect!");
+    game.MyTerminal.ShowMessageBox("dracula isn't in the game to apply "+ HypnoticGaze +" card effect!");
     
 }
-game.MyTerminal.ShowPause();
+
 }
 
     //apply strikes : 
-    game.MyTerminal.StylizeTextBoard("Applying Strikes ...");
+    game.MyTerminal.ShowMessageBox("Applying Strikes ...");
     for (const auto ch : Strikes.MonsterSymbol)
     {
         if(EndStrike)
@@ -484,7 +479,6 @@ game.MyTerminal.ShowPause();
         }
         }
     }
-    game.MyTerminal.ShowPause();
 }
 void MonsterCard:: ApplyMonsterStrike(Game & game , std ::shared_ptr<Monster> monsterName)
 {
@@ -497,13 +491,12 @@ void MonsterCard:: ApplyMonsterStrike(Game & game , std ::shared_ptr<Monster> mo
     {
         auto nearestOp = monsterName->FindNearestOpponent(game.mapPlan , monsterName->GetLocation(),Strikes.MoveNum);
         monsterName->Move(nearestOp);
-        game.MyTerminal.StylizeTextBoard(monsterName->GetName() + " moved toward the nearest opponent at " + nearestOp->GetCityName());
-        game.MyTerminal.ShowPause();
+        game.MyTerminal.ShowMessageBox(monsterName->GetName() + " moved toward the nearest opponent at " + nearestOp->GetCityName());
+
     }
     else
     {
-        game.MyTerminal.StylizeTextBoard(monsterName->GetName() + " already in the opponent location");
-        game.MyTerminal.ShowPause();
+        game.MyTerminal.ShowMessageBox(monsterName->GetName() + " already in the opponent location");
     }
     int InvisibleManPowerDices = 0;
     for (int i = 0; i < Strikes.DiceRolls; ++i)
@@ -514,7 +507,7 @@ void MonsterCard:: ApplyMonsterStrike(Game & game , std ::shared_ptr<Monster> mo
        {
         faces.push_back(game.GameDice.DiceRoll());
        }
-        game.MyTerminal.StylizeTextBoard("=============================\nDice rolled : <" + faces[0] + "> " +" <" + faces[1] + "> " + " <" + faces[2] + ">\n=============================" );
+        game.MyTerminal.ShowMessageBox("=============================\nDice rolled : <" + faces[0] + "> " +" <" + faces[1] + "> " + " <" + faces[2] + ">\n=============================" );
         for(const auto & face : faces){
         if (face == "*")
         {
@@ -555,5 +548,5 @@ void MonsterCard:: ApplyMonsterStrike(Game & game , std ::shared_ptr<Monster> mo
             }
             
         }
-game.MyTerminal.ShowPause();
+
 }

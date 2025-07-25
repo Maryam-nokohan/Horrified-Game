@@ -29,6 +29,8 @@ class Game{
     std :: shared_ptr <Hero>heroPlayer2;
     bool GameOver;
     bool skipMonsterPhase;
+    bool showMessage;
+    std :: string message;
     Dice GameDice;
     std :: vector <std :: shared_ptr<Hero>> heroes;
     std :: vector <std :: shared_ptr <Monster>> Monsters;
@@ -54,7 +56,7 @@ class Game{
     void SetRandomItems(int);
     void MonsterPhase();
     void SwitchPlayer();
-    void Help();
+    //void Help();
     bool CheckGameEnd();
     void increaseTerrorLevel();
     void RemoveVillagerFromGame(std::shared_ptr<Villager>);

@@ -2,60 +2,25 @@
 #include <string>
 #include <cctype>
 #include <stdexcept>
-void CheckString(std ::string test)
+bool CheckString(const std ::string& test)
 {
-    if (test.empty())
-    {
-        throw std ::invalid_argument("Error : empty string is invalid input !!\n");
-    }
+    return !(test.empty());
 }
-void CheckFloat(std ::string test)
+bool CheckFloat(std ::string& test)
 {
-    if (test.empty())
-    {
-        throw std ::invalid_argument("Error : empty string is invalid input !!\n");
+      bool dot = false;
+    if (test.empty()) return false;
+    for (char c : test) {
+        if (c == '.') {
+            if (dot) return false;
+            dot = true;
+        } else if (!isdigit(c)) return false;
     }
-    try
-    {
-        stod(test);
-    }
-    catch (std ::invalid_argument &e)
-    {
-        std ::cerr << e.what(); //"Invalid floating point!"
-    }
-    catch (std ::out_of_range &e)
-    {
-        std ::cerr << e.what();
-    }
-    if (stod(test) < 0)
-    {
-        throw std ::invalid_argument("negative input is unavailiable!!\n");
-    }
+    return true;
 }
-void CheckInt(std ::string test)
+bool CheckInt(std ::string& test)
 {
-    if (test.empty())
-    {
-        throw std ::invalid_argument("Error : empty string is invalid input !!\n");
-    }
-    else if(test.find('.') != std::string::npos)
-    {
-        throw std::invalid_argument("Error : Float point is not valid!!\n");
-    }
-    try
-    {
-        stoi(test);
-    }
-    catch (std ::invalid_argument &e)
-    {
-        std ::cerr << e.what(); //"Invalid int!"
-    }
-    catch (std ::out_of_range &e)
-    {
-        std ::cerr << e.what();
-    }
-    if (stoi(test) < 0)
-    {
-        throw std ::invalid_argument("negative input is unavailiable!!\n");
-    }
+  if (test.empty()) return false;
+    for (char c : test) if (!isdigit(c)) return false;
+    return true;
 }

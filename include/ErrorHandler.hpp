@@ -1,5 +1,6 @@
 #include <iostream>
 #include <stdexcept>
-void CheckString(std :: string);
-void CheckFloat(std :: string);
-void CheckInt(std :: string);
+#include <string>
+bool CheckString(const std :: string&);
+bool CheckFloat(std :: string&);
+bool CheckInt(std :: string&);

@@ -20,8 +20,8 @@ void Archaeologist::specialAction(Game& game) {
         }
         itemsThere.clear();
         DecreaseAction();
-        game.MyTerminal.StylizeTextBoard(output);
+        game.MyTerminal.ShowMessageBox(output);
     }
 }
-    game.MyTerminal.StylizeTextBoard("Not any item in the nearby locations!");
+    game.MyTerminal.ShowMessageBox("Not any item in the nearby locations!");
 }
