@@ -590,6 +590,7 @@ void ShowInTerminal::DrawCharactersOnMap(
     const std::vector<std::shared_ptr<Villager>>& villagers,
     float scale)
 {
+    
     for (const auto& h : heroes) {
         auto posIt = locationPositions.find(h->getLocation()->GetCityName());
         auto iconIt = heroTextures.find(h->getName());
@@ -598,6 +599,7 @@ void ShowInTerminal::DrawCharactersOnMap(
             DrawTextureEx(iconIt->second, Vector2Add(posIt->second, offset), 0.0f, scale, WHITE);
         }
     }
+    std::cout << "\nfuck\n";
 
     for (const auto& m : monsters) {
         auto posIt = locationPositions.find(m->GetLocation()->GetCityName());

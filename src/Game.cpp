@@ -753,56 +753,47 @@ void Game::GameStart()
     InitWindow(screenWidth, screenHeight, "Horrified Game");
     SetTargetFPS(60);
     MyTerminal.LoadAssets();
-    auto dracula = GetDracula();
-    if(!dracula || !dracula->GetLocation())
-    SetUpGame();
-
+    
     BeginDrawing();
     ClearBackground(RAYWHITE);
     DrawText("Loading...", 350, 280, 20, DARKGRAY);
     EndDrawing();
-
-    while (true)
-    {
+    while (true){
+    
         int StartMenuSelected = MyTerminal.MenuGenerator({"Start", "Load Game", "Exit"});
-
-
+        
+        
         if (StartMenuSelected == 2) {
             MyTerminal.ShowExitScreen();
             return;
         }
-
+        
         if (StartMenuSelected == 1) {
             
             continue;
         }
         if(StartMenuSelected == 0){
-                    std::string name1, name2;
-        int days1 = 0, days2 = 0;
-
-        if (!MyTerminal.GetPlayerInfo(name1, days1)) continue;
-        if (!MyTerminal.GetPlayerInfo(name2, days2)) continue;
-
-        std::string p1, p2;
-        if (days1 > days2) {
-            p1 = name2;
-            p2 = name1;
-        } else {
-            p1 = name1;
-            p2 = name2;
+            std::string name1, name2;
+            int days1 = 0, days2 = 0;
+            
+            if (!MyTerminal.GetPlayerInfo(name1, days1)) continue;
+            if (!MyTerminal.GetPlayerInfo(name2, days2)) continue;
+            
+            std::string p1, p2;
+            if (days1 > days2) {
+                p1 = name2;
+                p2 = name1;
+            } else {
+                p1 = name1;
+                p2 = name2;
+            }
+            
+            ChooseHero(p1, p2);
+            break;
+            
         }
-
-        SetUpGame();
-        ChooseHero(p1, p2);
-       // SetUpGame();
-        break;
-
-    }
-
-        }
-
-
-
+    }        
+    
     while (!CheckGameEnd())
     {
         HeroPhase();
@@ -818,6 +809,8 @@ void Game::GameStart()
     CloseWindow();
 }
 
+    
+    
 // void Game::GameStart()
 // {
 //     MyTerminal.LoadAssets();
