@@ -744,20 +744,22 @@ void Game::ChooseHero(std::string player1, std::string player2)
 
     }
     heroPlayer = heroes[0];
-    std :: cout << heroes[0] <<"--------------\n";
 }
 void Game::GameStart()
 {
-    const int screenWidth = 800;
-    const int screenHeight = 600;
+    const int screenWidth = 900 ;
+    const int screenHeight = 700 ;
     InitWindow(screenWidth, screenHeight, "Horrified Game");
     SetTargetFPS(60);
-    MyTerminal.LoadAssets();
+
     
-    BeginDrawing();
-    ClearBackground(RAYWHITE);
+     BeginDrawing();
+     ClearBackground(RAYWHITE);
     DrawText("Loading...", 350, 280, 20, DARKGRAY);
     EndDrawing();
+    WaitTime(0.2);
+
+       MyTerminal.LoadAssets();
     while (true){
     
         int StartMenuSelected = MyTerminal.MenuGenerator({"Start", "Load Game", "Exit"});
@@ -807,6 +809,7 @@ void Game::GameStart()
 
     MyTerminal.UnloadAssets();
     CloseWindow();
+    exit(0);
 }
 
     
