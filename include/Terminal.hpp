@@ -57,7 +57,7 @@ class ShowInTerminal{
     const std::vector<std::shared_ptr<Hero>>& heroes,
     const std::vector<std::shared_ptr<Monster>>& monsters,
     const std::vector<std::shared_ptr<Villager>>& villagers,
-    float scale);
+    float scale , Vector2 ofest);
   int ShowHeroPhase( Game& game, const std::vector<std::string>& options);
   void ShowMonsterPhase( Game & game);
 

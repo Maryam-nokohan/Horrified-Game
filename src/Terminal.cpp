@@ -11,6 +11,8 @@
 #include <iomanip>
 #include <cstring>
 #include "raymath.h"
+#include <cmath>
+#include <algorithm>
 
 void ShowInTerminal :: LoadAssets(){
     //Heroes
@@ -176,6 +178,7 @@ void ShowInTerminal :: UnloadAssets(){
 
 
 }
+
 void ShowInTerminal :: DrawMessageBox(const std :: string& message , bool& showMessage)
 {
 if(showMessage){
@@ -324,7 +327,22 @@ bool ShowInTerminal :: GetPlayerInfo(std::string& name, int& days) {
 
         BeginDrawing();
         ClearBackground(RAYWHITE);
-        DrawTexture(bg, 0, 0, WHITE);
+       // DrawTexture(bg, 0, 0, WHITE);
+// float screenW = 800.0f;
+// float screenH = 600.0f;
+// float texW = (float)bg.width;
+// float texH = (float)bg.height;
+
+// float scale = std::min(screenW / texW, screenH / texH);
+// float drawW = texW * scale;
+// float drawH = texH * scale;
+
+// Rectangle source = {0, 0, texW, texH};
+// Rectangle dest = {(screenW - drawW) / 2.0f, (screenH - drawH) / 2.0f, drawW, drawH};
+
+// DrawTexturePro(bg, source, dest, {0, 0}, 0.0f, WHITE);
+ DrawTexturePro(bg, {0, 0, (float)bg.width, (float)bg.height}, {0, 0, (float)GetScreenWidth(), (float)GetScreenHeight()}, {0, 0}, 0.0f, WHITE);
+
 
         DrawTextEx(font, "Enter your name:", {nameBox.x, nameBox.y - 30}, 20, 2, WHITE);
         DrawRectangleRec(nameBox, typingName ? LIGHTGRAY : GRAY);
@@ -342,7 +360,7 @@ bool ShowInTerminal :: GetPlayerInfo(std::string& name, int& days) {
         DrawText("Back", backBtn.x + 30, backBtn.y + 10, 20, BLACK);
 
         if (!errorMsg.empty()) {
-            DrawText(errorMsg.c_str(), 200, 420, 18, RED);
+            DrawTextEx(font , errorMsg.c_str(), {200, 400}, 20 , 2 , RED);
         }
 
         EndDrawing();
@@ -422,44 +440,138 @@ void ShowInTerminal :: DrawTerrorLevel(int terrorLevel, Font font, Vector2 posit
 //         DrawTexture(tex, startPos.x + offsetX + i * spacing, startPos.y + 130, WHITE);
 //     }
 // }
+// void ShowInTerminal::DrawDraculaMat(Game& game, Vector2 startPos) {
+
+//     auto dracula = game.GetDracula();
+//     if(!dracula || !dracula->GetLocation()) return;
+//     if (!dracula) return; // اگه دراکولا مقداردهی نشده، هیچی رسم نکن
+
+//     if (monstermatTextures.find("Dracula") == monstermatTextures.end()) return;
+
+//     // رسم تصویر اصلی مات
+//     DrawTexture(monstermatTextures["Dracula"], startPos.x, startPos.y, WHITE);
+
+//     auto coffins = dracula->GetCoffins();
+
+//     float offsetX = 50;
+//     float spacing = 70;
+//     float textOffsetY = 100;
+
+//     for (size_t i = 0; i < coffins.size(); ++i) {
+//         std::string locName = coffins[i].second;
+//         bool isBroken = coffins[i].first;
+
+//         // متن نام مکان
+//         DrawText(locName.c_str(), startPos.x + offsetX + i * spacing, startPos.y + textOffsetY, 16, BLACK);
+
+//         // رسم عکس تابوت
+//         Texture2D* tex = nullptr;
+//         if (isBroken && coffinBrokenTexture.id != 0) {
+//             tex = &coffinBrokenTexture;
+//         } else if (!isBroken && coffinIntactTexture.id != 0) {
+//             tex = &coffinIntactTexture;
+//         }
+
+//         if (tex) {
+//             DrawTexture(*tex, startPos.x + offsetX + i * spacing, startPos.y + textOffsetY + 25, WHITE);
+//         } else {
+//             // اگر فایل لود نشده باشه، علامت X نشون بده
+//             DrawText("❌", startPos.x + offsetX + i * spacing, startPos.y + textOffsetY + 25, 20, RED);
+//         }
+//     }
+// }
 void ShowInTerminal::DrawDraculaMat(Game& game, Vector2 startPos) {
-
     auto dracula = game.GetDracula();
-    if(!dracula || !dracula->GetLocation()) return;
-    if (!dracula) return; // اگه دراکولا مقداردهی نشده، هیچی رسم نکن
+    if (!dracula) return;
 
-    if (monstermatTextures.find("Dracula") == monstermatTextures.end()) return;
+    const auto& coffins = dracula->GetCoffins();
+    if (coffins.empty()) return;
 
-    // رسم تصویر اصلی مات
-    DrawTexture(monstermatTextures["Dracula"], startPos.x, startPos.y, WHITE);
+    // تنظیمات جدید با چیدمان افقی
+    const float cellWidth = 170.0f;  // کاهش عرض
+    const float cellHeight = 50.0f;  // کاهش شدید ارتفاع
+    const float padding = 6.0f;
+    const float coffinSize = 35.0f;  // کاهش سایز تابوت
+    const float textFontSize = 16.0f;
+    const float titleFontSize = 18.0f;
+    
+    // رنگ‌ها
+    const Color tableColor = { 50, 50, 80, 255 };
+    const Color borderColor = { 100, 100, 140, 255 };
+    const Color textColor = WHITE;
 
-    auto coffins = dracula->GetCoffins();
+    // عنوان جدول
+    const char* title = "Dracula mat";
+    Vector2 titleSize = MeasureTextEx(font, title, titleFontSize, 1);
+    DrawTextEx(font, title, 
+              {startPos.x + (cellWidth - titleSize.x)/2, startPos.y - 25}, 
+              titleFontSize, 1, WHITE);
 
-    float offsetX = 50;
-    float spacing = 70;
-    float textOffsetY = 100;
+    // محاسبه فضای قابل نمایش
+    float availableHeight = GetScreenHeight() - startPos.y - 30;
+    int maxVisibleRows = std::floor(availableHeight / cellHeight);
+    int rowsToShow = std::min((int)coffins.size(), maxVisibleRows);
 
-    for (size_t i = 0; i < coffins.size(); ++i) {
-        std::string locName = coffins[i].second;
-        bool isBroken = coffins[i].first;
+    for (int i = 0; i < rowsToShow; i++) {
+        float cellY = startPos.y + i * cellHeight;
+        
+        // رسم سلول جدول
+        DrawRectangleRounded(
+            Rectangle{startPos.x, cellY, cellWidth, cellHeight}, 
+            0.1f, 5, tableColor);
+        DrawRectangleRoundedLines(
+            Rectangle{startPos.x, cellY, cellWidth, cellHeight}, 
+            0.1f, 5, borderColor);
 
-        // متن نام مکان
-        DrawText(locName.c_str(), startPos.x + offsetX + i * spacing, startPos.y + textOffsetY, 16, BLACK);
+        // متن و تابوت در یک خط
+        const auto& locName = coffins[i].second;
+        std::string label = locName + ":";
+        Vector2 textSize = MeasureTextEx(font, label.c_str(), textFontSize, 1);
+        
+        // نمایش متن سمت چپ
+        DrawTextEx(font, label.c_str(), 
+                  {startPos.x + padding, cellY + (cellHeight - textSize.y)/2}, 
+                  textFontSize, 1, textColor);
 
-        // رسم عکس تابوت
-        Texture2D* tex = nullptr;
-        if (isBroken && coffinBrokenTexture.id != 0) {
-            tex = &coffinBrokenTexture;
-        } else if (!isBroken && coffinIntactTexture.id != 0) {
-            tex = &coffinIntactTexture;
+        // نمایش تابوت سمت راست
+        float coffinX = startPos.x + cellWidth - coffinSize - padding;
+        float coffinY = cellY + (cellHeight - coffinSize)/2;
+        
+        if (coffins[i].first) { // تابوت شکسته
+            if (coffinBrokenTexture.id != 0) {
+                DrawTexturePro(
+                    coffinBrokenTexture,
+                    Rectangle{0, 0, (float)coffinBrokenTexture.width, (float)coffinBrokenTexture.height},
+                    Rectangle{coffinX, coffinY, coffinSize, coffinSize * (float)coffinBrokenTexture.height/coffinBrokenTexture.width},
+                    Vector2{0, 0}, 0.0f, WHITE
+                );
+            } else {
+                DrawTextEx(font, "💀", 
+                          Vector2{coffinX + coffinSize/2 - 8, coffinY + 2}, 
+                          20, 1, RED);
+            }
+        } else { // تابوت سالم
+            if (coffinIntactTexture.id != 0) {
+                DrawTexturePro(
+                    coffinIntactTexture,
+                    Rectangle{0, 0, (float)coffinIntactTexture.width, (float)coffinIntactTexture.height},
+                    Rectangle{coffinX, coffinY, coffinSize, coffinSize * (float)coffinIntactTexture.height/coffinIntactTexture.width},
+                    Vector2{0, 0}, 0.0f, WHITE
+                );
+            } else {
+                DrawTextEx(font, "⚰️", 
+                          Vector2{coffinX + coffinSize/2 - 8, coffinY + 2}, 
+                          20, 1, GREEN);
+            }
         }
+    }
 
-        if (tex) {
-            DrawTexture(*tex, startPos.x + offsetX + i * spacing, startPos.y + textOffsetY + 25, WHITE);
-        } else {
-            // اگر فایل لود نشده باشه، علامت X نشون بده
-            DrawText("❌", startPos.x + offsetX + i * spacing, startPos.y + textOffsetY + 25, 20, RED);
-        }
+    // نمایش پیام برای موارد اضافی
+    if (coffins.size() > maxVisibleRows) {
+        const char* moreMsg = TextFormat("+%d more...", (int)coffins.size() - maxVisibleRows);
+        DrawTextEx(font, moreMsg, 
+                  Vector2{startPos.x + 10, startPos.y + rowsToShow * cellHeight + 5}, 
+                  14, 1, GRAY);
     }
 }
 void ShowInTerminal :: DrawInvisibleManMat(const std::vector<std::pair<bool, std::string>>& evidences, Font font, Vector2 position) {
@@ -584,41 +696,75 @@ void ShowInTerminal :: DrawPerkCard(const std::shared_ptr<PerkCard>& card, Font 
     DrawRectangle(position.x - 10, position.y - 10, 220, boxHeight, Fade(LIGHTGRAY, 0.4f));
     DrawRectangleLinesEx({position.x - 10, position.y - 10, 220, boxHeight}, 2, DARKGRAY);
 }
-void ShowInTerminal::DrawCharactersOnMap(
-    const std::vector<std::shared_ptr<Hero>>& heroes,
-    const std::vector<std::shared_ptr<Monster>>& monsters,
-    const std::vector<std::shared_ptr<Villager>>& villagers,
-    float scale)
-{
+// void ShowInTerminal::DrawCharactersOnMap(
+//     const std::vector<std::shared_ptr<Hero>>& heroes,
+//     const std::vector<std::shared_ptr<Monster>>& monsters,
+//     const std::vector<std::shared_ptr<Villager>>& villagers,
+//     float scale)
+// {
     
-    for (const auto& h : heroes) {
-        auto posIt = locationPositions.find(h->getLocation()->GetCityName());
-        auto iconIt = heroTextures.find(h->getName());
-        if (posIt != locationPositions.end() && iconIt != heroTextures.end()) {
-            Vector2 offset = {0, 0}; // بدون افست
-            DrawTextureEx(iconIt->second, Vector2Add(posIt->second, offset), 0.0f, scale, WHITE);
-        }
-    }
-    std::cout << "\nfuck\n";
+//     for (const auto& h : heroes) {
+//         auto posIt = locationPositions.find(h->getLocation()->GetCityName());
+//         auto iconIt = heroTextures.find(h->getName());
+//         if (posIt != locationPositions.end() && iconIt != heroTextures.end()) {
+//             Vector2 offset = {0, 0}; // بدون افست
+//             DrawTextureEx(iconIt->second, Vector2Add(posIt->second, offset), 0.0f, scale, WHITE);
+//         }
+//     }
 
-    for (const auto& m : monsters) {
-        auto posIt = locationPositions.find(m->GetLocation()->GetCityName());
-        auto iconIt = monsterTextures.find(m->GetName());
-        if (posIt != locationPositions.end() && iconIt != monsterTextures.end()) {
-            Vector2 offset = {25, 20}; // یه کم پایین‌تر
-            DrawTextureEx(iconIt->second, Vector2Add(posIt->second, offset), 0.0f, scale, WHITE);
-        }
-    }
+//     for (const auto& m : monsters) {
+//         auto posIt = locationPositions.find(m->GetLocation()->GetCityName());
+//         auto iconIt = monsterTextures.find(m->GetName());
+//         if (posIt != locationPositions.end() && iconIt != monsterTextures.end()) {
+//             Vector2 offset = {25, 20}; // یه کم پایین‌تر
+//             DrawTextureEx(iconIt->second, Vector2Add(posIt->second, offset), 0.0f, scale, WHITE);
+//         }
+//     }
 
-    for (const auto& v : villagers) {
-        auto posIt = locationPositions.find(v->getCurrentLocation()->GetCityName());
-        auto iconIt = villagerTextures.find(v->getName());
-        if (posIt != locationPositions.end() && iconIt != villagerTextures.end()) {
-            Vector2 offset = {15, -20}; // بالاتر از بقیه
-            DrawTextureEx(iconIt->second, Vector2Add(posIt->second, offset), 0.0f, scale, WHITE);
-        }
-    }
-}
+//     for (const auto& v : villagers) {
+//         if(v->getCurrentLocation()){
+//         auto posIt = locationPositions.find(v->getCurrentLocation()->GetCityName());
+//         auto iconIt = villagerTextures.find(v->getName());
+//         if (posIt != locationPositions.end() && iconIt != villagerTextures.end()) {
+//             Vector2 offset = {15, -20}; // بالاتر از بقیه
+//             DrawTextureEx(iconIt->second, Vector2Add(posIt->second, offset), 0.0f, scale, WHITE);
+//         }}
+//     }
+// }
+// void ShowInTerminal::DrawCharactersOnMap( *****
+//     const std::vector<std::shared_ptr<Hero>>& heroes,
+//     const std::vector<std::shared_ptr<Monster>>& monsters,
+//     const std::vector<std::shared_ptr<Villager>>& villagers,
+//     float scale,
+//     Vector2 offset)
+// {
+//     std::map<std::string, int> slotOffset; // برای جلوگیری از هم‌پوشانی
+
+//     auto drawCharacter = [&](std::string location, Texture2D& texture) {
+//         if (locationPositions.count(location)) {
+//             Vector2 basePos = locationPositions[location];
+//             basePos = Vector2Add(Vector2Scale(basePos, scale), offset);
+
+//             int index = slotOffset[location]++;
+//             basePos.x += index * 15; // فاصله افقی بین آیتم‌ها
+//             basePos.y += index * 10; // فاصله عمودی برای هم‌پوشانی کمتر
+
+//             DrawTextureEx(texture, basePos, 0.0f, scale, WHITE);
+//         }
+//     };
+
+//     for (const auto& h : heroes)
+//         drawCharacter(h->getLocation()->GetCityName(), heroTextures[h->getName()]);
+
+//     for (const auto& m : monsters)
+//         drawCharacter(m->GetLocation()->GetCityName(), monsterTextures[m->GetName()]);
+
+//     for (const auto& v : villagers){
+//         if (v->getCurrentLocation())
+//          drawCharacter(v->getCurrentLocation()->GetCityName(), villagerTextures[v->getName()]);
+//     }
+       
+// }
 void ShowInTerminal :: DrawLocationOverview(const std::unordered_map<std::string, std::shared_ptr<Location>>& locations,
                           const std::vector<std::shared_ptr<Monster>>& monsters,
                           const std::vector<std::shared_ptr<Villager>>& villagers,
@@ -714,22 +860,350 @@ void ShowInTerminal :: DrawLocationOverview(const std::unordered_map<std::string
     DrawRectangleLinesEx({startPos.x - 10, startPos.y - 10, 730, y - startPos.y + 20}, 2, Fade(DARKGRAY, 0.5f));
 }
 
-int ShowInTerminal :: ShowHeroPhase(Game& game, const std::vector<std::string>& options) {
+// int ShowInTerminal :: ShowHeroPhase(Game& game, const std::vector<std::string>& options) {
+//     int selected = -1;
+
+//     float scaleY = (float)GetScreenHeight() / 772.0f;
+//     Vector2 mapPos = {0, 0};
+
+//     Rectangle optionRects[options.size()];
+//     float buttonWidth = 180;
+//     float buttonHeight = 40;
+//     float spacing = 15;
+//     float totalHeight = options.size() * (buttonHeight + spacing);
+//     float startY = GetScreenHeight() - totalHeight - 20;
+
+//     for (int i = 0; i < options.size(); i++) {
+//         float x = (GetScreenWidth() - buttonWidth) / 2;
+//         float y = startY + i * (buttonHeight + spacing);
+//         optionRects[i] = {x, y, buttonWidth, buttonHeight};
+//     }
+
+//     std::shared_ptr<MonsterCard> dummyMonsterCard = std::make_shared<MonsterCard>("Dummy", 0, "", MonsterStrike("", 0, 0));
+
+//     while (!WindowShouldClose()) {
+//         Vector2 mouse = GetMousePosition();
+
+//         BeginDrawing();
+//         ClearBackground(BLACK);
+
+//         // map
+//         DrawTexturePro(mapTexture, {0, 0, (float)mapTexture.width, (float)mapTexture.height},
+//                        {0, 0, (float)GetScreenWidth(), (float)GetScreenHeight()},
+//                        {0, 0}, 0.0f, WHITE);
+//         DrawCharactersOnMap(game.heroes , game.Monsters, game.villagers , 0.6f);
+
+//         DrawTerrorLevel(game.terrorLevel, font, {30, 20});
+
+//         if (game.heroPlayer)
+//             DrawHeroInfo(game.heroPlayer, font, {550, 20});
+
+//         if (game.heroPlayer && game.heroPlayer->PeekPerkCard())
+//             DrawPerkCard(game.heroPlayer->PeekPerkCard(), font, {550, 200});
+
+
+//         DrawMonsterCard(dummyMonsterCard, font, {550, 340});
+
+    
+//         if (auto dracula = game.GetDracula())
+//             DrawDraculaMat(game, {500, 60});
+
+        
+//         if (auto invisible = game.GetInvisibleMan())
+//             DrawInvisibleManMat(invisible->GetEvidence(), font, {550, 460});
+
+    
+//         // DrawItemsList(game.GetItemsInGame(), font, {550, 620});
+
+    
+//         DrawLocationOverview(game.getMapPlan().getLocations(), game.Monsters,
+//                              game.villagers, game.GetItemsInGame(), game.heroes,
+//                              font, {30, 280});
+
+    
+//         for (int i = 0; i < options.size(); i++) {
+//             bool hover = CheckCollisionPointRec(mouse, optionRects[i]);
+//             DrawRectangleRounded(optionRects[i], 0.3f, 10, hover ? GRAY : DARKGRAY);
+//             int tw = MeasureText(options[i].c_str(), 20);
+//             DrawText(options[i].c_str(), optionRects[i].x + (buttonWidth - tw) / 2,
+//                      optionRects[i].y + 10, 20, WHITE);
+//         }
+
+//         EndDrawing();
+
+    
+//         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+//             for (int i = 0; i < options.size(); i++) {
+//                 if (CheckCollisionPointRec(mouse, optionRects[i])) {
+//                     selected = i;
+//                     return selected;
+//                 }
+//             }
+//         }
+//     }
+
+//     return selected;
+// }
+// int ShowInTerminal::ShowHeroPhase(Game& game, const std::vector<std::string>& options) {
+//     int selected = -1;
+
+//     float mapScale = 0.6f;
+//     float mapDrawWidth = mapTexture.width * mapScale;
+//     float mapDrawHeight = mapTexture.height * mapScale;
+
+//     Vector2 mapPos;
+//     mapPos.x = (GetScreenWidth() - mapDrawWidth) / 2;
+//     mapPos.y = (GetScreenHeight() - mapDrawHeight) / 2;
+
+//     Rectangle optionRects[options.size()];
+//     float buttonWidth = 180;
+//     float buttonHeight = 40;
+//     float spacing = 15;
+//     float totalHeight = options.size() * (buttonHeight + spacing);
+//     float startY = GetScreenHeight() - totalHeight - 20;
+
+//     for (int i = 0; i < options.size(); i++) {
+//         float x = (GetScreenWidth() - buttonWidth) / 2;
+//         float y = startY + i * (buttonHeight + spacing);
+//         optionRects[i] = {x, y, buttonWidth, buttonHeight};
+//     }
+
+//     std::shared_ptr<MonsterCard> dummyMonsterCard = std::make_shared<MonsterCard>("Dummy", 0, "", MonsterStrike("", 0, 0));
+
+//     while (!WindowShouldClose()) {
+//         Vector2 mouse = GetMousePosition();
+
+//         BeginDrawing();
+//         ClearBackground(BLACK);
+
+//         // 🗺 Draw scaled & centered map
+//         DrawTexturePro(
+//             mapTexture,
+//             {0, 0, (float)mapTexture.width, (float)mapTexture.height},
+//             {mapPos.x, mapPos.y, mapDrawWidth, mapDrawHeight},
+//             {0, 0}, 0.0f, WHITE
+//         );
+
+//         // 🧍 Characters on map (scaled)
+//         DrawCharactersOnMap(game.heroes, game.Monsters, game.villagers, mapScale, mapPos);
+
+//         // 📊 UI Elements around the map
+//         DrawTerrorLevel(game.terrorLevel, font, {30, 20});
+
+//         if (game.heroPlayer)
+//             DrawHeroInfo(game.heroPlayer, font, {30, 100});
+
+//         if (game.heroPlayer && game.heroPlayer->PeekPerkCard())
+//             DrawPerkCard(game.heroPlayer->PeekPerkCard(), font, {30, 280});
+
+//         DrawMonsterCard(dummyMonsterCard, font, {30, 420});
+
+//         if (auto dracula = game.GetDracula())
+//             DrawDraculaMat(game, {(float)GetScreenWidth() - 400, 60});
+
+//         if (auto invisible = game.GetInvisibleMan())
+//             DrawInvisibleManMat(invisible->GetEvidence(), font, {(float)GetScreenWidth() - 400, 400});
+
+//         // 🔍 Draw Location Overview (optional)
+//         // DrawLocationOverview(game.getMapPlan().getLocations(), game.Monsters,
+//         //                     game.villagers, game.GetItemsInGame(), game.heroes,
+//         //                     font, {30, 600});
+
+//         // 🎮 Options
+//         for (int i = 0; i < options.size(); i++) {
+//             bool hover = CheckCollisionPointRec(mouse, optionRects[i]);
+//             DrawRectangleRounded(optionRects[i], 0.3f, 10, hover ? GRAY : DARKGRAY);
+//             int tw = MeasureText(options[i].c_str(), 20);
+//             DrawText(options[i].c_str(), optionRects[i].x + (buttonWidth - tw) / 2,
+//                      optionRects[i].y + 10, 20, WHITE);
+//         }
+
+//         EndDrawing();
+
+//         // 🔘 Click Handling
+//         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+//             for (int i = 0; i < options.size(); i++) {
+//                 if (CheckCollisionPointRec(mouse, optionRects[i])) {
+//                     selected = i;
+//                     return selected;
+//                 }
+//             }
+//         }
+//     }
+
+//     return selected;
+// // }
+// int ShowInTerminal::ShowHeroPhase(Game& game, const std::vector<std::string>& options) { ****
+//     int selected = -1;
+
+//     // تنظیمات جدید برای نقشه کوچکتر
+//     float mapScale = 0.3f;  // مقیاس کوچکتر
+//     float mapDrawWidth = mapTexture.width * mapScale;
+//     float mapDrawHeight = mapTexture.height * mapScale;
+
+//     // موقعیت نقشه (کاملاً وسط صفحه)
+//     Vector2 mapPos;
+//     mapPos.x = (GetScreenWidth() - mapDrawWidth) / 2;
+//     mapPos.y = (GetScreenHeight() - mapDrawHeight) / 2 - 50; // 50 پیکسل بالاتر از مرکز واقعی
+
+//     // تنظیمات جدید برای دکمه‌ها
+//     const int buttonsPerRow = 5;  // پنج دکمه در هر ردیف
+//     const float buttonWidth = 130; // عرض کمتر
+//     const float buttonHeight = 35; // ارتفاع کمتر
+//     const float spacing = 10;     // فاصله بین دکمه‌ها
+//     const Color buttonColor = {70, 70, 100, 255}; // رنگ آبی تیره
+//     const Color hoverColor = {100, 100, 150, 255}; // رنگ آبی روشن هنگام هاور
+
+//     // محاسبه موقعیت دکمه‌ها (دو ردیف پنجتایی)
+//     Rectangle optionRects[options.size()];
+//     for (int i = 0; i < options.size(); i++) {
+//         int row = i / buttonsPerRow;
+//         int col = i % buttonsPerRow;
+        
+//         float totalWidth = buttonsPerRow * buttonWidth + (buttonsPerRow - 1) * spacing;
+//         float x = (GetScreenWidth() - totalWidth) / 2 + col * (buttonWidth + spacing);
+//         float y = GetScreenHeight() - 120 + row * (buttonHeight + spacing); // 120 پیکسل از پایین
+//         optionRects[i] = {x, y, buttonWidth, buttonHeight};
+//     }
+
+//     std::shared_ptr<MonsterCard> dummyMonsterCard = std::make_shared<MonsterCard>("Dummy", 0, "", MonsterStrike("", 0, 0));
+
+//     while (!WindowShouldClose()) {
+//         Vector2 mouse = GetMousePosition();
+
+//         BeginDrawing();
+//         ClearBackground(BLACK);
+
+//         // 🗺 نقشه با اندازه کوچک و کاملاً وسط
+//         DrawTexturePro(
+//             mapTexture,
+//             {0, 0, (float)mapTexture.width, (float)mapTexture.height},
+//             {mapPos.x, mapPos.y, mapDrawWidth, mapDrawHeight},
+//             {0, 0}, 0.0f, WHITE
+//         );
+
+//         // 🧍 کاراکترها روی نقشه
+//         DrawCharactersOnMap(game.heroes, game.Monsters, game.villagers, mapScale, mapPos);
+
+//         // 📊 عناصر UI اطراف نقشه
+//         DrawTerrorLevel(game.terrorLevel, font, {30, 20});
+
+//         if (game.heroPlayer)
+//             DrawHeroInfo(game.heroPlayer, font, {30, 60});
+
+//         if (game.heroPlayer && game.heroPlayer->PeekPerkCard())
+//             DrawPerkCard(game.heroPlayer->PeekPerkCard(), font, {30, 220});
+
+//         DrawMonsterCard(dummyMonsterCard, font, {30, 360});
+
+//       //  if (auto dracula = game.GetDracula())
+//          //   DrawDraculaMat(game, {(float)GetScreenWidth() - 350, 60});
+
+//         if (auto invisible = game.GetInvisibleMan())
+//             DrawInvisibleManMat(invisible->GetEvidence(), font, {(float)GetScreenWidth() - 350, 300});
+
+//         // 🎮 دکمه‌ها (دو ردیف پنجتایی)
+//         for (int i = 0; i < options.size(); i++) {
+//             bool hover = CheckCollisionPointRec(mouse, optionRects[i]);
+//             DrawRectangleRounded(optionRects[i], 0.3f, 8, hover ? hoverColor : buttonColor);
+            
+//             // متن وسط‌چین شده در دکمه
+//             const char* text = options[i].c_str();
+//             int fontSize = 16;
+//             int tw = MeasureText(text, fontSize);
+            
+//             // اگر متن طولانی بود، فونت کوچک شود
+//             while (tw > buttonWidth - 10 && fontSize > 12) {
+//                 fontSize--;
+//                 tw = MeasureText(text, fontSize);
+//             }
+            
+//             DrawText(text, 
+//                     optionRects[i].x + (buttonWidth - tw) / 2,
+//                     optionRects[i].y + (buttonHeight - fontSize) / 2, 
+//                     fontSize, WHITE);
+//         }
+
+//         EndDrawing();
+
+//         // 🔘 پردازش کلیک
+//         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+//             for (int i = 0; i < options.size(); i++) {
+//                 if (CheckCollisionPointRec(mouse, optionRects[i])) {
+//                     selected = i;
+//                     return selected;
+//                 }
+//             }
+//         }
+//     }
+
+//     return selected;
+// }
+void ShowInTerminal::DrawCharactersOnMap(
+    const std::vector<std::shared_ptr<Hero>>& heroes,
+    const std::vector<std::shared_ptr<Monster>>& monsters,
+    const std::vector<std::shared_ptr<Villager>>& villagers,
+    float scale,
+    Vector2 offset)
+{
+    std::map<std::string, int> slotOffset; // برای جلوگیری از هم‌پوشانی
+
+    auto drawCharacter = [&](std::string location, Texture2D& texture) {
+        if (locationPositions.count(location)) {
+            Vector2 basePos = locationPositions[location];
+            // تغییرات اصلی اینجا اعمال شده:
+            basePos = Vector2Add(Vector2Scale(basePos, 1.0f/3.0f), offset);
+
+            int index = slotOffset[location]++;
+            basePos.x += index * 15 * (1.0f/3.0f); // فاصله افقی با مقیاس جدید
+            basePos.y += index * 10 * (1.0f/3.0f); // فاصله عمودی با مقیاس جدید
+
+            DrawTextureEx(texture, basePos, 0.0f, 1.0f, WHITE); // مقیاس بافت 1.0
+        }
+    };
+
+    for (const auto& h : heroes)
+        drawCharacter(h->getLocation()->GetCityName(), heroTextures[h->getName()]);
+
+    for (const auto& m : monsters)
+        drawCharacter(m->GetLocation()->GetCityName(), monsterTextures[m->GetName()]);
+
+    for (const auto& v : villagers){
+        if (v->getCurrentLocation())
+            drawCharacter(v->getCurrentLocation()->GetCityName(), villagerTextures[v->getName()]);
+    }
+}
+
+int ShowInTerminal::ShowHeroPhase(Game& game, const std::vector<std::string>& options) {
     int selected = -1;
 
-    float scaleY = (float)GetScreenHeight() / 772.0f;
-    Vector2 mapPos = {0, 0};
+    // تنظیمات جدید برای نقشه کوچکتر
+    float mapScale = 4.0f;  // مقیاس 3 برای کوچک کردن نقشه
+    float mapDrawWidth = mapTexture.width / mapScale; // تقسیم بر مقیاس
+    float mapDrawHeight = mapTexture.height / mapScale; // تقسیم بر مقیاس
 
+    // موقعیت نقشه (کاملاً وسط صفحه)
+    Vector2 mapPos;
+    mapPos.x = (GetScreenWidth() - mapDrawWidth) / 2;
+    mapPos.y = (GetScreenHeight() - mapDrawHeight) / 2 - 50; // 50 پیکسل بالاتر از مرکز واقعی
+
+    // تنظیمات جدید برای دکمه‌ها
+    const int buttonsPerRow = 5;  // پنج دکمه در هر ردیف
+    const float buttonWidth = 130; // عرض کمتر
+    const float buttonHeight = 35; // ارتفاع کمتر
+    const float spacing = 10;     // فاصله بین دکمه‌ها
+    const Color buttonColor = {70, 70, 100, 255}; // رنگ آبی تیره
+    const Color hoverColor = {100, 100, 150, 255}; // رنگ آبی روشن هنگام هاور
+
+    // محاسبه موقعیت دکمه‌ها (دو ردیف پنجتایی)
     Rectangle optionRects[options.size()];
-    float buttonWidth = 180;
-    float buttonHeight = 40;
-    float spacing = 15;
-    float totalHeight = options.size() * (buttonHeight + spacing);
-    float startY = GetScreenHeight() - totalHeight - 20;
-
     for (int i = 0; i < options.size(); i++) {
-        float x = (GetScreenWidth() - buttonWidth) / 2;
-        float y = startY + i * (buttonHeight + spacing);
+        int row = i / buttonsPerRow;
+        int col = i % buttonsPerRow;
+        
+        float totalWidth = buttonsPerRow * buttonWidth + (buttonsPerRow - 1) * spacing;
+        float x = (GetScreenWidth() - totalWidth) / 2 + col * (buttonWidth + spacing);
+        float y = GetScreenHeight() - 120 + row * (buttonHeight + spacing); // 120 پیکسل از پایین
         optionRects[i] = {x, y, buttonWidth, buttonHeight};
     }
 
@@ -741,51 +1215,57 @@ int ShowInTerminal :: ShowHeroPhase(Game& game, const std::vector<std::string>& 
         BeginDrawing();
         ClearBackground(BLACK);
 
-        // map
-        DrawTexturePro(mapTexture, {0, 0, (float)mapTexture.width, (float)mapTexture.height},
-                       {0, 0, (float)GetScreenWidth(), (float)GetScreenHeight()},
-                       {0, 0}, 0.0f, WHITE);
-        DrawCharactersOnMap(game.heroes , game.Monsters, game.villagers , 0.6f);
+        // 🗺 نقشه با اندازه کوچک و کاملاً وسط
+        DrawTexturePro(
+            mapTexture,
+            {0, 0, (float)mapTexture.width, (float)mapTexture.height},
+            {mapPos.x, mapPos.y, mapDrawWidth, mapDrawHeight},
+            {0, 0}, 0.0f, WHITE
+        );
 
+        // 🧍 کاراکترها روی نقشه (با مقیاس معکوس 1/3)
+       // DrawCharactersOnMap(game.heroes, game.Monsters, game.villagers, 1.0f/mapScale, mapPos);
+
+        // 📊 عناصر UI اطراف نقشه
         DrawTerrorLevel(game.terrorLevel, font, {30, 20});
+        
+         if (auto dracula = game.GetDracula())
+             DrawDraculaMat(game, {(float)GetScreenWidth() - 190.0f , 40.0f });
 
         if (game.heroPlayer)
-            DrawHeroInfo(game.heroPlayer, font, {550, 20});
+            DrawHeroInfo(game.heroPlayer, font, {30, 60});
 
         if (game.heroPlayer && game.heroPlayer->PeekPerkCard())
-            DrawPerkCard(game.heroPlayer->PeekPerkCard(), font, {550, 200});
+            DrawPerkCard(game.heroPlayer->PeekPerkCard(), font, {30, 220});
 
+        DrawMonsterCard(dummyMonsterCard, font, {30, 360});if (auto invisible = game.GetInvisibleMan())
+            DrawInvisibleManMat(invisible->GetEvidence(), font, {(float)GetScreenWidth() - 350, 300});
 
-        DrawMonsterCard(dummyMonsterCard, font, {550, 340});
-
-    
-        if (auto dracula = game.GetDracula())
-            DrawDraculaMat(game, {500, 60});
-
-        
-        if (auto invisible = game.GetInvisibleMan())
-            DrawInvisibleManMat(invisible->GetEvidence(), font, {550, 460});
-
-    
-        // DrawItemsList(game.GetItemsInGame(), font, {550, 620});
-
-    
-        DrawLocationOverview(game.getMapPlan().getLocations(), game.Monsters,
-                             game.villagers, game.GetItemsInGame(), game.heroes,
-                             font, {30, 280});
-
-    
+        // 🎮 دکمه‌ها (دو ردیف پنجتایی)
         for (int i = 0; i < options.size(); i++) {
             bool hover = CheckCollisionPointRec(mouse, optionRects[i]);
-            DrawRectangleRounded(optionRects[i], 0.3f, 10, hover ? GRAY : DARKGRAY);
-            int tw = MeasureText(options[i].c_str(), 20);
-            DrawText(options[i].c_str(), optionRects[i].x + (buttonWidth - tw) / 2,
-                     optionRects[i].y + 10, 20, WHITE);
+            DrawRectangleRounded(optionRects[i], 0.3f, 8, hover ? hoverColor : buttonColor);
+            
+            // متن وسط‌چین شده در دکمه
+            const char* text = options[i].c_str();
+            int fontSize = 16;
+            int tw = MeasureText(text, fontSize);
+            
+            // اگر متن طولانی بود، فونت کوچک شود
+            while (tw > buttonWidth - 10 && fontSize > 12) {
+                fontSize--;
+                tw = MeasureText(text, fontSize);
+            }
+            
+            DrawText(text, 
+                    optionRects[i].x + (buttonWidth - tw) / 2,
+                    optionRects[i].y + (buttonHeight - fontSize) / 2, 
+                    fontSize, WHITE);
         }
 
         EndDrawing();
 
-    
+        // 🔘 پردازش کلیک
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
             for (int i = 0; i < options.size(); i++) {
                 if (CheckCollisionPointRec(mouse, optionRects[i])) {
