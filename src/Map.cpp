@@ -55,3 +55,6 @@ Location & Map :: GetLocation(const std :: string & name){
     return *MapPlan.at(name);
 
 }
+void Map::Clear() {
+    MapPlan.clear();
+}
