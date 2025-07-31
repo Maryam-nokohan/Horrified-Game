@@ -18,7 +18,7 @@ protected:
     std::vector<std :: shared_ptr< Item>> inventory;
     std :: shared_ptr<Location> currentLocation;
     std ::vector <std :: shared_ptr<PerkCard>> PerkCards;
-
+// test
 public:
     Hero() = default;
     Hero(const std::string &, int, std :: shared_ptr<Location>);
@@ -28,7 +28,7 @@ public:
     void resetActions();
     void moveTo(std :: shared_ptr<Location>);
     bool PlayerGetHit(Game& game);
-    void pickUpItems();
+    void pickUpItems(std::shared_ptr<Item>);
     virtual void specialAction(Game&) = 0;
     virtual void DefeatAction(std :: shared_ptr<Monster> , Game&);
     void SetLocation(std :: shared_ptr<Location>location);
