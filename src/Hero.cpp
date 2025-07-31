@@ -104,6 +104,7 @@ void Hero::resetActions()
 }
 void Hero::DefeatAction(std::shared_ptr<Monster> monster, Game &game)
 {
+   
     if (!monster)
         throw std::invalid_argument("No monster to defeat");
 
@@ -112,12 +113,14 @@ void Hero::DefeatAction(std::shared_ptr<Monster> monster, Game &game)
     if (!monster->CanBeDefeated())
     {
         game.MyTerminal.ShowMessageBox("You haven't completed the task for " + monsterName + "!");
+        
         return;
     }
 
     if (monster->GetLocation()->GetCityName() != currentLocation->GetCityName())
     {
         game.MyTerminal.ShowMessageBox("You are not in the same location as the monster!");
+        
         return;
     }
 
@@ -137,37 +140,75 @@ void Hero::DefeatAction(std::shared_ptr<Monster> monster, Game &game)
     else
     {
         game.MyTerminal.ShowMessageBox("Unknown monster type.");
+        
         return;
     }
 
     // Filter inventory
     std::vector<std::shared_ptr<Item>> filteredItems, usedItems;
+    std::vector<std::string> filtteredNames;
     for (const auto &item : inventory)
     {
         if (item->getColor() == requiredColor)
+        {
             filteredItems.push_back(item);
+            filtteredNames.push_back(item->getName() + " " + "(" + std::to_string(item->getPower()) + ")");
+        }
     }
 
     // Check item empty
     if (filteredItems.empty())
     {
         game.MyTerminal.ShowMessageBox("You don't have any required-color items!");
+        
         return;
     }
 
-    // Greedy aproach
     int total = 0;
-    std::sort(filteredItems.begin(), filteredItems.end(), [](const auto &a, const auto &b)
-              { return a->getPower() < b->getPower(); });
-
-    for (const auto &item : filteredItems)
+    int selected = -1;
+    filtteredNames.push_back("Exit");
+    while (true)
     {
-        if (total >= requiredPower)
-            break;
-        total += item->getPower();
-        usedItems.push_back(item);
-    }
+        game.MyTerminal.ShowMessageBox("Choose items:");
+        selected = game.MyTerminal.MenuGenerator(filtteredNames);
 
+        if (selected == filteredItems.size()) // Exit option selected
+            break;
+
+        if (selected < 0 || selected >= filteredItems.size())
+        {
+            game.MyTerminal.ShowMessageBox("Invalid selection. Try again.");
+            continue;
+        }
+
+        total += filteredItems[selected]->getPower();
+        if (name == "Scientist")
+        {
+            game.MyTerminal.ShowMessageBox("Would you like to use your ability on " + filtteredNames[selected] + " Scientist?");
+            int s = game.MyTerminal.MenuGenerator({"yes", "no"});
+            if (s == 0)
+            {
+                total++;
+               game.MyTerminal.ShowMessageBox("Added 1 power to " + filtteredNames[selected]);
+               
+            }
+        }
+        usedItems.push_back(filteredItems[selected]);
+        filteredItems.erase(filteredItems.begin() + selected);
+
+        // Update the item list
+        filtteredNames.clear();
+        for (const auto &i : filteredItems)
+            filtteredNames.push_back(i->getName() + " (" + std::to_string(i->getPower()) + ")");
+
+        filtteredNames.push_back("Exit");
+
+        if (filteredItems.empty())
+        {
+            game.MyTerminal.ShowMessageBox("No more items to choose from.");
+            break;
+        }
+    }
     if (total >= requiredPower)
     {
         for (auto &item : usedItems)
@@ -181,13 +222,17 @@ void Hero::DefeatAction(std::shared_ptr<Monster> monster, Game &game)
         monsters.erase(std::remove(monsters.begin(), monsters.end(), monster), monsters.end());
 
         game.MyTerminal.ShowMessageBox("You defeated " + monsterName);
+        
     }
     else
     {
-        game.MyTerminal.ShowMessageBox("Total power: " + std::to_string(total) + " , Requierd Power : " + std::to_string(requiredPower)) ;
+        game.MyTerminal.ShowMessageBox("Total power: " + std::to_string(total) + " , Requierd Power : " + std::to_string(requiredPower));
         game.MyTerminal.ShowMessageBox("Not enough item power to defeat the monster!");
+        
     }
 }
+
+
 
 void Hero::moveTo(std ::shared_ptr<Location> newLocation)
 {
@@ -202,15 +247,16 @@ void Hero::RemoveItem(const std ::shared_ptr<Item> item)
     if (it != inventory.end())
         inventory.erase(it);
 }
-void Hero::pickUpItems()
+void Hero::pickUpItems(std::shared_ptr<Item> item)
 {
-    auto items = currentLocation->GetItems();
-    if (!items.empty())
+    if (item)
     {
-        inventory.insert(inventory.end(), items.begin(), items.end());
-        currentLocation->ClearItems();
+        inventory.push_back(item);
+        DecreaseAction();
+        return;
     }
-    DecreaseAction();
+    else 
+    return;
 }
 void Hero::SetLocation(std ::shared_ptr<Location> location)
 {
