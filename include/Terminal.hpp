@@ -10,6 +10,7 @@
 #include <memory>
 #include "raylib.h"
 #include <unordered_map>
+class Dice;
 class Game;
 class ShowInTerminal{
   private :
@@ -27,6 +28,9 @@ class ShowInTerminal{
   Texture2D coffinBrokenTexture;
   Texture2D coffinIntactTexture;
   Font font;
+  std::vector<std::string> logMessages;
+  const int maxLogLines = 5;
+
    
 
   public :
@@ -42,7 +46,7 @@ class ShowInTerminal{
   void DrawTerrorLevel(int terrorLevel, Font font, Vector2 position);
   void DrawHeroInfo(std::shared_ptr<Hero> hero, Font font, Vector2 position);
   void DrawPerkCard(const std::shared_ptr<PerkCard>& card, Font font, Vector2 position);
-  void DrawMonsterCard(const std::shared_ptr<MonsterCard>& card, Font font, Vector2 position);
+  void DrawMonsterCard(const std::shared_ptr<MonsterCard>& card, Vector2 position , float scale);
  // void DrawDraculaMat(const std::vector<std::pair<bool, std::string>>& coffins,Vector2 position);
  void DrawDraculaMat(Game& , Vector2);
   void DrawInvisibleManMat(const std::vector<std::pair<bool, std::string>>& evidences, Font font, Vector2 position);
@@ -57,9 +61,16 @@ class ShowInTerminal{
     const std::vector<std::shared_ptr<Hero>>& heroes,
     const std::vector<std::shared_ptr<Monster>>& monsters,
     const std::vector<std::shared_ptr<Villager>>& villagers,
-    float scale);
+    const std::vector<std::shared_ptr<Item>> Items,
+    float scale , Vector2 ,float mapDrawWidth,
+    float mapDrawHeight);
+  std::vector<std::string> ShowDiceRollAnimation(Dice& dice, Font font);
   int ShowHeroPhase( Game& game, const std::vector<std::string>& options);
-  void ShowMonsterPhase( Game & game);
+  void ShowMonsterPhase( Game & game , std::shared_ptr<MonsterCard>);
+  Font GetFont();
+  void AddLogMessage(const std::string msg);
+  float GetBestScaleForCharacters(Texture2D ObjectTexture);
+
 
 };
 #endif
