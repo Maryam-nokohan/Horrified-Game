@@ -13,35 +13,35 @@ void PerkCard ::ApplyEffect(Game & game)
     auto dracula = game.GetDracula();
     auto invisible = game.GetInvisibleMan();
     std::string name = GetName();
-            game.MyTerminal.StylizeTextBoard("You used perk: "+ name );
+            game.MyTerminal.ShowMessageBox("You used perk: "+ name );
             if (name == VisitFromDetective) {
                 if(invisible){
                 std::vector<std::string> cities;
                 for (const auto& [name, loc] : game.mapPlan.getLocations())
                     cities.push_back(name);
-                game.MyTerminal.StylizeTextBoard("Choose a City to put invisible man:");
+                game.MyTerminal.ShowMessageBox("Choose a City to put invisible man:");
                 int idx = game.MyTerminal.MenuGenerator(cities);
                 invisible->SetLocation(game.mapPlan.GetLocationptr(cities[idx]));
                 }
                 else 
                 {
-                    game.MyTerminal.StylizeTextBoard("Invisible Man isn't in the Game to apply " + VisitFromDetective+" !");
+                    game.MyTerminal.ShowMessageBox("Invisible Man isn't in the Game to apply " + VisitFromDetective+" !");
                 }
             }
             else if (name == BreakOfDown) {
                 game.skipMonsterPhase = true;
                 game.SetRandomItems(2);
-                game.MyTerminal.StylizeTextBoard("Next Monster phase is skipped and two items added to the Map");
+                game.MyTerminal.ShowMessageBox("Next Monster phase is skipped and two items added to the Map");
                 
             }
             else if (name == OverStock) {
                 game.SetRandomItems(2);
-                game.MyTerminal.StylizeTextBoard("Added two item to the map!");
+                game.MyTerminal.ShowMessageBox("Added two item to the map!");
 
                 }
             else if (name == LateIntoTheNight) {
                 game.heroPlayer->SetAction(2+ game.heroPlayer->getRemainingActions());
-                game.MyTerminal.StylizeTextBoard("Added two action to Hero actions!");
+                game.MyTerminal.ShowMessageBox("Added two action to Hero actions!");
             }
         
             else if (name == Repel) {
@@ -60,11 +60,10 @@ void PerkCard ::ApplyEffect(Game & game)
             }
             if(!found)
             {
-                game.MyTerminal.StylizeTextBoard("No monster to use repel Card!");
-                game.MyTerminal.ShowPause();
+                game.MyTerminal.ShowMessageBox("No monster to use repel Card!");
             }
             else {
-                game.MyTerminal.StylizeTextBoard("Moved Monsters two step farther");
+                game.MyTerminal.ShowMessageBox("Moved Monsters two step farther");
             }
            
             }
@@ -78,5 +77,5 @@ void PerkCard ::ApplyEffect(Game & game)
                 }}
                
             }
-            game.MyTerminal.ShowPause();
+            
         }

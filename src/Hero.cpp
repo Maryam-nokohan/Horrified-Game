@@ -47,8 +47,7 @@ void Hero::UsePerkCard(Game &game)
     }
     else
     {
-        game.MyTerminal.StylizeTextBoard("No perks in the inventory!");
-        game.MyTerminal.ShowPause();
+        game.MyTerminal.ShowMessageBox("No perks in the inventory!");
     }
 }
 void Hero::DecreaseAction() { --remainingActions; }
@@ -58,7 +57,7 @@ bool Hero::PlayerGetHit(Game &game)
 
     if (!inventory.empty())
     {
-        game.MyTerminal.StylizeTextBoard("Would You Like to use an Items " + name + " ?");
+        game.MyTerminal.ShowMessageBox("Would You Like to use an Items " + name + " ?");
         int selected = game.MyTerminal.MenuGenerator(std ::vector<std ::string>{"Yes", "No"});
         switch (selected)
         {
@@ -69,7 +68,7 @@ bool Hero::PlayerGetHit(Game &game)
             {
                 ItemNames.push_back(item->getName());
             }
-            game.MyTerminal.StylizeTextBoard("Choose an Item to discard :");
+            game.MyTerminal.ShowMessageBox("Choose an Item to discard :");
             int index = game.MyTerminal.MenuGenerator(ItemNames);
             RemoveItem(inventory[index]);
             return successe;
@@ -77,8 +76,7 @@ bool Hero::PlayerGetHit(Game &game)
         case 1:
         {
             successe = true;
-            game.MyTerminal.StylizeTextBoard("monster hits you you'll start from the hospital in the next hero phase");
-            game.MyTerminal.ShowPause();
+            game.MyTerminal.ShowMessageBox("monster hits you you'll start from the hospital in the next hero phase");
             currentLocation->RemoveHero(shared_from_this());
             SetLocation(game.mapPlan.GetLocationptr(Hospital));
             game.terrorLevel++;
@@ -91,10 +89,9 @@ bool Hero::PlayerGetHit(Game &game)
     }
     else
     {
-        game.MyTerminal.StylizeTextBoard("Not enaugth Items !!");
-        game.MyTerminal.StylizeTextBoard("monster hits you you'll start from the hospital in the next hero phase");
+        game.MyTerminal.ShowMessageBox("Not enaugth Items !!");
+        game.MyTerminal.ShowMessageBox("monster hits you you'll start from the hospital in the next hero phase");
         successe = true;
-        game.MyTerminal.ShowPause();
         currentLocation->RemoveHero(shared_from_this());
         SetLocation(game.mapPlan.GetLocationptr(Hospital));
         game.terrorLevel++;
@@ -114,15 +111,13 @@ void Hero::DefeatAction(std::shared_ptr<Monster> monster, Game &game)
 
     if (!monster->CanBeDefeated())
     {
-        game.MyTerminal.StylizeTextBoard("You haven't completed the task for " + monsterName + "!");
-        game.MyTerminal.ShowPause();
+        game.MyTerminal.ShowMessageBox("You haven't completed the task for " + monsterName + "!");
         return;
     }
 
     if (monster->GetLocation()->GetCityName() != currentLocation->GetCityName())
     {
-        game.MyTerminal.StylizeTextBoard("You are not in the same location as the monster!");
-        game.MyTerminal.ShowPause();
+        game.MyTerminal.ShowMessageBox("You are not in the same location as the monster!");
         return;
     }
 
@@ -141,8 +136,7 @@ void Hero::DefeatAction(std::shared_ptr<Monster> monster, Game &game)
     }
     else
     {
-        game.MyTerminal.StylizeTextBoard("Unknown monster type.");
-        game.MyTerminal.ShowPause();
+        game.MyTerminal.ShowMessageBox("Unknown monster type.");
         return;
     }
 
@@ -161,8 +155,7 @@ void Hero::DefeatAction(std::shared_ptr<Monster> monster, Game &game)
     // Check item empty
     if (filteredItems.empty())
     {
-        game.MyTerminal.StylizeTextBoard("You don't have any required-color items!");
-        game.MyTerminal.ShowPause();
+        game.MyTerminal.ShowMessageBox("You don't have any required-color items!");
         return;
     }
 
@@ -171,7 +164,7 @@ void Hero::DefeatAction(std::shared_ptr<Monster> monster, Game &game)
     filtteredNames.push_back("Exit");
     while (true)
     {
-        game.MyTerminal.StylizeTextBoard("Choose items:");
+        game.MyTerminal.ShowMessageBox("Choose items:");
         selected = game.MyTerminal.MenuGenerator(filtteredNames);
 
         if (selected == filteredItems.size()) // Exit option selected
@@ -179,20 +172,20 @@ void Hero::DefeatAction(std::shared_ptr<Monster> monster, Game &game)
 
         if (selected < 0 || selected >= filteredItems.size())
         {
-            game.MyTerminal.StylizeTextBoard("Invalid selection. Try again.");
+            game.MyTerminal.ShowMessageBox("Invalid selection. Try again.");
             continue;
         }
 
         total += filteredItems[selected]->getPower();
         if (name == "Scientist")
         {
-            game.MyTerminal.StylizeTextBoard("Would you like to use your ability on " + filtteredNames[selected] + " Scientist?");
+            game.MyTerminal.ShowMessageBox("Would you like to use your ability on " + filtteredNames[selected] + " Scientist?");
             int s = game.MyTerminal.MenuGenerator({"yes", "no"});
             if (s == 0)
             {
                 total++;
-               game.MyTerminal.StylizeTextBoard("Added 1 power to " + filtteredNames[selected]);
-               game.MyTerminal.ShowPause();
+               game.MyTerminal.ShowMessageBox("Added 1 power to " + filtteredNames[selected]);
+              // game.MyTerminal.ShowPause();
             }
         }
         usedItems.push_back(filteredItems[selected]);
@@ -207,7 +200,7 @@ void Hero::DefeatAction(std::shared_ptr<Monster> monster, Game &game)
 
         if (filteredItems.empty())
         {
-            game.MyTerminal.StylizeTextBoard("No more items to choose from.");
+            game.MyTerminal.ShowMessageBox("No more items to choose from.");
             break;
         }
     }
@@ -223,14 +216,12 @@ void Hero::DefeatAction(std::shared_ptr<Monster> monster, Game &game)
         auto &monsters = game.Monsters;
         monsters.erase(std::remove(monsters.begin(), monsters.end(), monster), monsters.end());
 
-        game.MyTerminal.StylizeTextBoard("You defeated " + monsterName);
-        game.MyTerminal.ShowPause();
+        game.MyTerminal.ShowMessageBox("You defeated " + monsterName);
     }
     else
     {
-        game.MyTerminal.StylizeTextBoard("Total power: " + std::to_string(total) + " , Requierd Power : " + std::to_string(requiredPower));
-        game.MyTerminal.StylizeTextBoard("Not enough item power to defeat the monster!");
-        game.MyTerminal.ShowPause();
+        game.MyTerminal.ShowMessageBox("Total power: " + std::to_string(total) + " , Requierd Power : " + std::to_string(requiredPower)) ;
+        game.MyTerminal.ShowMessageBox("Not enough item power to defeat the monster!");
     }
 }
 

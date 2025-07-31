@@ -2,6 +2,6 @@
 #include "../include/Game.hpp"
 Scientist :: Scientist(std::shared_ptr<Location> startLoc) : Hero ("Scientist" , 4 , startLoc){}
 void Scientist::specialAction(Game& game) {
-    game.MyTerminal .StylizeTextBoard("Scientist don't have an special action!");
+    game.MyTerminal .ShowMessageBox("Scientist don't have an special action!");
 }
 void Scientist::Ability(){}
