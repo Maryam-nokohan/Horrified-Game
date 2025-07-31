@@ -5,12 +5,12 @@
 #include "../include/Hero.hpp"
 #include "../include/Villager.hpp"
 #include "../include/Item.hpp"
+#include "../include/Dice.hpp"
 #include <map>
 #include <string>
 #include <memory>
 #include "raylib.h"
 #include <unordered_map>
-class Dice;
 class Game;
 class ShowInTerminal{
   private :
@@ -30,7 +30,8 @@ class ShowInTerminal{
   Font font;
   std::vector<std::string> logMessages;
   const int maxLogLines = 5;
-
+  bool showInventoryPopup = false;
+  Rectangle inventoryPopupBounds = {0 , 0 , 400 , 300};
    
 
   public :
@@ -38,17 +39,19 @@ class ShowInTerminal{
   void ShowMessageBox(const std :: string&);
   void LoadAssets();
   void UnloadAssets();
+  void DrawInventoryPopup(std::shared_ptr<Hero> hero);
+  std::vector<std::string> ShowDiceRollAnimation(Dice &dice, Font font);
   void DrawMessageBox(const std :: string& message , bool&);
   void Enter(bool&);
   int MenuGenerator(const std::vector<std::string>& options);
   bool GetPlayerInfo(std::string& name, int& days);
   void ShowExitScreen();
   void DrawTerrorLevel(int terrorLevel, Font font, Vector2 position);
-  void DrawHeroInfo(std::shared_ptr<Hero> hero, Font font, Vector2 position);
+  void DrawHeroInfo(std::shared_ptr<Hero> hero, Font font, Vector2 position , Rectangle* );
   void DrawPerkCard(const std::shared_ptr<PerkCard>& card, Font font, Vector2 position);
-  void DrawMonsterCard(const std::shared_ptr<MonsterCard>& card, Vector2 position , float scale);
- // void DrawDraculaMat(const std::vector<std::pair<bool, std::string>>& coffins,Vector2 position);
- void DrawDraculaMat(Game& , Vector2);
+  void DrawMonsterCard(const std::shared_ptr<MonsterCard>& card, Vector2 position , float);
+  float GetBestScaleForCharacters(Texture2D ObjectTexture);
+  void DrawDraculaMat(Game& , Vector2);
   void DrawInvisibleManMat(const std::vector<std::pair<bool, std::string>>& evidences, Font font, Vector2 position);
   void DrawItemsList(const std::vector<std::shared_ptr<Item>>& items, Font font, Vector2 position);
   void DrawLocationOverview(const std::unordered_map<std::string, std::shared_ptr<Location>>& locations,
@@ -58,18 +61,19 @@ class ShowInTerminal{
                           const std::vector<std::shared_ptr<Hero>>& heroes,
                           Font font, Vector2 startPos);
   void DrawCharactersOnMap(
-    const std::vector<std::shared_ptr<Hero>>& heroes,
-    const std::vector<std::shared_ptr<Monster>>& monsters,
-    const std::vector<std::shared_ptr<Villager>>& villagers,
+       const std::vector<std::shared_ptr<Hero>> &heroes,
+    const std::vector<std::shared_ptr<Monster>> &monsters,
+    const std::vector<std::shared_ptr<Villager>> &villagers,
     const std::vector<std::shared_ptr<Item>> Items,
-    float scale , Vector2 ,float mapDrawWidth,
-    float mapDrawHeight);
-  std::vector<std::string> ShowDiceRollAnimation(Dice& dice, Font font);
+    float scale,
+    Vector2 mapDrawPos,
+    float mapDrawWidth ,
+    float mapDrawHeight );
+   // std::vector<std::string> ShowDiceRollAnimation(Dice &dice, Font font);
   int ShowHeroPhase( Game& game, const std::vector<std::string>& options);
-  void ShowMonsterPhase( Game & game , std::shared_ptr<MonsterCard>);
+  void ShowMonsterPhase( Game & game , std :: shared_ptr<MonsterCard>);
   Font GetFont();
   void AddLogMessage(const std::string msg);
-  float GetBestScaleForCharacters(Texture2D ObjectTexture);
 
 
 };
