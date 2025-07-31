@@ -191,7 +191,6 @@ void Hero::DefeatAction(std::shared_ptr<Monster> monster, Game &game)
             {
                 total++;
                game.MyTerminal.ShowMessageBox("Added 1 power to " + filtteredNames[selected]);
-               
             }
         }
         usedItems.push_back(filteredItems[selected]);
