@@ -501,6 +501,7 @@ void MonsterCard:: ApplyMonsterStrike(Game & game , std ::shared_ptr<Monster> mo
     int InvisibleManPowerDices = 0;
     for (int i = 0; i < Strikes.DiceRolls; ++i)
     {
+        // test
         // Faces
         std::vector<std::string> faces = game.MyTerminal.ShowDiceRollAnimation(game.GameDice, game.MyTerminal.GetFont());
         for(const auto & face : faces){

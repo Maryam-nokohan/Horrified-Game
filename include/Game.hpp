@@ -66,5 +66,6 @@ class Game{
     std::shared_ptr<Dracula> GetDracula();
     std::shared_ptr<InvisibleMan> GetInvisibleMan();
     void Reset();
+    // test
 };
 #endif

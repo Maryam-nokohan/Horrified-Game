@@ -36,6 +36,7 @@ void Hero::SetAction(int NumOfAction)
     else
         throw std::invalid_argument("Number of actions can't be nagetive!\n");
 }
+// test
 // remove card from inventory
 void Hero::UsePerkCard(Game &game)
 {

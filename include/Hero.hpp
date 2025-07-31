@@ -18,7 +18,7 @@ protected:
     std::vector<std :: shared_ptr< Item>> inventory;
     std :: shared_ptr<Location> currentLocation;
     std ::vector <std :: shared_ptr<PerkCard>> PerkCards;
-
+// test
 public:
     Hero() = default;
     Hero(const std::string &, int, std :: shared_ptr<Location>);

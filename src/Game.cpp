@@ -425,7 +425,7 @@ void Game::HeroPhase()
                 MyTerminal.ShowMessageBox("No villagers in nearby locations to guide.\n");
             }
         }
-
+        //test
         // Pick up
         else if (selected == 2)
         {
