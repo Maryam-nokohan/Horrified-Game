@@ -65,5 +65,6 @@ class Game{
     std::vector<std::shared_ptr<Item>> GetItemsInGame();
     std::shared_ptr<Dracula> GetDracula();
     std::shared_ptr<InvisibleMan> GetInvisibleMan();
+    void Reset();
 };
 #endif
