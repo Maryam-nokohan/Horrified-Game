@@ -303,11 +303,10 @@ void Game::SwitchPlayer()
 void Game::HeroPhase()
 {
 
-    std :: cout << "bebinam miare??????***********************************/n";
     int selected = -1;
     while (selected != 8)
     {
-        selected = MyTerminal.ShowHeroPhase(*this, {"Move", "Guid", "Pick up", "Advance", "Defeat", "Special Action", "Use Perks", "Help", "Exit Hero Phase", "Exit Game"});
+        selected = MyTerminal.ShowHeroPhase(*this, {"Move", "Guid", "Pick up", "Advance", "Defeat", "Special Action", "Use Perks", "Help", "Exit Hero Phase", "Exit Game", "Save Game"});
         // check if actions left :
         if (heroPlayer->getRemainingActions() == 0)
         {
@@ -365,6 +364,7 @@ void Game::HeroPhase()
         {
             auto currentLoc = heroPlayer->getLocation();
             auto neighbors = currentLoc->GetNeighbors();
+            auto VillagerWithYout = currentLoc->GetVillager();
             std::vector<std::string> guideOptions;
             std::vector<std::pair<std::shared_ptr<Villager>, std::shared_ptr<Location>>> guideable;
 
@@ -377,6 +377,11 @@ void Game::HeroPhase()
                     guideable.emplace_back(villager, neighbor);
                 }
             }
+            for (const auto &v : VillagerWithYout)
+            {
+                guideOptions.push_back(v->getName() + " (at " + currentLoc->GetCityName() + ")");
+                guideable.emplace_back(v, currentLoc);
+            }
 
             if (!guideOptions.empty())
             {
@@ -384,12 +389,33 @@ void Game::HeroPhase()
                 int choice = MyTerminal.MenuGenerator(guideOptions);
                 if (choice >= 0 && choice < guideable.size())
                 {
+
                     auto villager = guideable[choice].first;
                     auto from = guideable[choice].second;
                     from->RemoveVillager(villager);
                     villager->SetLocation(currentLoc);
                     MyTerminal.ShowMessageBox("You guided " + villager->getName() + " to " + currentLoc->GetCityName() + ".\n");
                     heroPlayer->DecreaseAction();
+                    if (guideable[choice].second != currentLoc)
+                    {
+                        from->RemoveVillager(villager);
+                        villager->SetLocation(currentLoc);
+                        MyTerminal.ShowMessageBox("You guided " + villager->getName() + " to " + currentLoc->GetCityName() + ".\n");
+                        heroPlayer->DecreaseAction();
+                    }
+                    else
+                    {
+                        auto neighborsAround = guideable[choice].second->GetNeighbors();
+                        std::vector<std::string> GuidableLocs;
+                        for (const auto &l : neighborsAround)
+                            GuidableLocs.push_back(l->GetCityName());
+                        MyTerminal.ShowMessageBox("choose a place to guid " + villager->getName());
+                        int s = MyTerminal.MenuGenerator(GuidableLocs);
+                        from->RemoveVillager(villager);
+                        villager->SetLocation(neighborsAround[s]);
+                        MyTerminal.ShowMessageBox("You guided " + villager->getName() + " to " + neighborsAround[s]->GetCityName() + ".\n");
+                        heroPlayer->DecreaseAction();
+                    }
                     if (villager->isAlive() == State::Rescued)
                     {
                         RemoveVillagerFromGame(villager);
@@ -455,30 +481,57 @@ void Game::HeroPhase()
                 {
                     // collect red items
                     std::vector<std::shared_ptr<Item>> redItems;
+                    std::vector<std::string> redItemNames;
                     for (const auto &item : inventory)
                         if (item->getColor() == ItemColor::Red)
-                            redItems.push_back(item);
-
-                    std::sort(redItems.begin(), redItems.end(), [](const auto &a, const auto &b)
-                              { return a->getPower() < b->getPower(); });
-
-                    int total = 0;
-                    std::vector<std::shared_ptr<Item>> usedItems;
-                    // if we have a red item with power 6:
-                    if (redItems.back()->getPower() == 6)
-                    {
-                        total = 6;
-                        usedItems.push_back(redItems.back());
-                    }
-                    // else use greedy
-                    else
-                    {
-                        for (const auto &item : redItems)
                         {
-                            if (total >= requiredPower)
-                                break;
-                            total += item->getPower();
-                            usedItems.push_back(item);
+                            redItems.push_back(item);
+                            redItemNames.push_back(item->getName());
+                        }
+
+                    std::vector<std::shared_ptr<Item>> usedItems;
+                    int total = 0;
+                    int selected = -1;
+                    redItemNames.push_back("Exit");
+                    while (true)
+                    {
+                        MyTerminal.ShowMessageBox("Choose items:");
+                        selected = MyTerminal.MenuGenerator(redItemNames);
+
+                        if (selected == redItems.size()) // Exit option selected
+                            break;
+
+                        if (selected < 0 || selected >= redItemNames.size())
+                        {
+                            MyTerminal.ShowMessageBox("Invalid selection. Try again.");
+                            continue;
+                        }
+
+                        total += redItems[selected]->getPower();
+                        // Scientist logic : 
+                        if (heroPlayer->getName() == "Scientist")
+                        {
+                            MyTerminal.ShowMessageBox("Would you like to use your ability on "+ redItemNames[selected] + " Scientist?");
+                            int s  = MyTerminal.MenuGenerator({"yes" , "no"});
+                            if(s == 0){
+                                total++;
+                                MyTerminal.ShowMessageBox("Added 1 power to " + redItemNames[selected]);
+                            }
+                        }
+                        usedItems.push_back(redItems[selected]);
+                        redItems.erase(redItems.begin() + selected);
+
+                        // Update the item list
+                        redItemNames.clear();
+                        for (const auto &i : redItems)
+                            redItemNames.push_back(i->getName() + " (" + std::to_string(i->getPower()) + ")");
+
+                        redItemNames.push_back("Exit");
+
+                        if (redItems.empty())
+                        {
+                            MyTerminal.ShowMessageBox("No more items to choose from.");
+                            break;
                         }
                     }
 
@@ -599,12 +652,22 @@ void Game::HeroPhase()
             MyTerminal.ShowMessageBox("Logging Out ...");
             exit(0);
         }
+        // Save Game
+        else if (selected == 10)
+        {
+            int slot = MyTerminal.MenuGenerator({"Slot 1", "Slot 2", "Slot 3", "Slot 4", "Slot 5"});
+          //  GameFileHandler::SaveGame(*this, "file_" + std::to_string(slot + 1));
+            MyTerminal.ShowMessageBox("Game saved to slot " + std::to_string(slot + 1));
+        }
+
         if (CheckGameEnd())
             return;
 
     
 
     }
+
+    
     heroPlayer->resetActions();
 }
 void Game::increaseTerrorLevel() { terrorLevel++; }
@@ -615,7 +678,7 @@ void Game::MonsterPhase()
         MyTerminal.ShowMessageBox("No Monster card left in the deck");
         return;
     }
-    MyTerminal.ShowMonsterPhase(*this);
+   // MyTerminal.ShowMonsterPhase(*this , card);
     auto randomCard = MonsterDeck.back();
     randomCard->ApplyEffect(*this);
     MonsterDeck.pop_back();
@@ -662,9 +725,7 @@ void Game::ChooseHero(std::string player1, std::string player2)
     for (const auto &hero : availableHeroes)
         heroNames.push_back(hero->getName());
 
-   // MyTerminal.ShowMessageBox(player1 + " , choose your hero:");
-   MyTerminal.DrawMessageBox(player1 + " , choose your hero." , showMessage);
-   MyTerminal.Enter(showMessage);
+    MyTerminal.ShowMessageBox(player1 + " , choose your hero:");
     int player1Choice = MyTerminal.MenuGenerator(heroNames);
     auto player1Hero = availableHeroes[player1Choice];
     switch (player1Choice)
@@ -718,7 +779,7 @@ void Game::ChooseHero(std::string player1, std::string player2)
     PerkDeck.pop_back();
      }
     }
-    else if (heroNames[player2Choice] == "Archaeologist" )
+    else if (heroNames[player2Choice] == "Archaeologist")
     {
         heroes.push_back(std ::make_shared<Archaeologist>(startArchloc));
          if(!PerkDeck.empty()){
@@ -726,7 +787,7 @@ void Game::ChooseHero(std::string player1, std::string player2)
         PerkDeck.pop_back();
          }
     }
-    else if (heroNames[player2Choice] == "Courier" )
+    else if (heroNames[player2Choice] == "Courier")
     {
         heroes.push_back(std::make_shared<Courier>(startCourierloc));
          if(!PerkDeck.empty()){
@@ -740,6 +801,7 @@ void Game::ChooseHero(std::string player1, std::string player2)
          if(!PerkDeck.empty()){
         heroes[1]->GetPerkCard(PerkDeck.back());
         PerkDeck.pop_back();
+
          }
 
     }
@@ -814,100 +876,7 @@ void Game::GameStart()
 
     
     
-// void Game::GameStart()
-// {
-//     MyTerminal.LoadAssets();
-//     int StartMenuSelected = -1;
-//     while (StartMenuSelected != 0)
-//     {
 
-//         // Start menue:
-//     const int screenWidth = 800;
-//     const int screenHeight = 600;
-
-//     InitWindow(screenWidth, screenHeight, "Horrified Game");
-//     SetTargetFPS(60);
-
-//     BeginDrawing();
-//     ClearBackground(RAYWHITE);
-//     DrawText("Loading...", 350, 280, 20, DARKGRAY);
-//     EndDrawing();
-
-//     std::string message;
-//         int StartMenuSelected = MyTerminal.MenuGenerator(std::vector<std::string>{"Start", "Load Game", "Exit"} , message );
-//         std::string p1, p2;
-//         int lastTime1, lastTime2;
-
-//         switch (StartMenuSelected)
-//         {
-//         case 0:
-//         {
-//             // Garlic questions :
-
-//         std :: string name1 , name2;
-//         int days1 = 0 , days2 = 0 ;
-//         if(!MyTerminal.GetPlayerInfo(name1 , days1 )) continue;
-//         if(!MyTerminal.GetPlayerInfo(name2 , days2 )) continue;
-//         std :: string p1 , p2 ;
-//         if(days1 > days2){
-//              p1 = name2;
-//              p2 = name1;
-//         }
-//         else{
-//             p1 = name1;
-//             p2 = name2;
-//         }
-
-//         message = p1 + " choose your hero.";
-//         int HeroChoose1 = MyTerminal.MenuGenerator({"Mayor", "Archaeologist" , "Courier" ,"Scientist"}, message, bg2, font);
-//         message = p2 + " choose your hero.";
-//         int HeroChoose2 =  MyTerminal.MenuGenerator({"Mayor", "Archaeologist" , "Courier" , "Scientist"} , message , bg2 , font);
-
-           
-//             heroPlayer = heroes[HeroChoose1];
-
-//             p1 = MyTerminal.GetInput("What's Your Name Player 1? ", String);
-//             lastTime1 = stoi(MyTerminal.GetInput("When was the last time that you ate garlic " + p1 + "? (Ex: 2 days): ", Int));
-//             p2 = MyTerminal.GetInput("What's Your Name Player 2? ", String);
-//             lastTime2 = stoi(MyTerminal.GetInput("When was the last time that you ate garlic " + p2 + "? (Ex: 2 days): ", Int));
-//             MyTerminal.Refresh();
-//             std::string starter;
-//             if (lastTime1 >= lastTime2)
-//             {
-//                 ChooseHero(p2, p1);
-//             }
-//             else
-//             {
-//                 ChooseHero(p1, p2);
-//             }
-
-//         }
-//         case 1:
-
-//         case 2:
-//         MyTerminal.ShowExitScreen();
-//         default:
-//             break;
-//         }
-//         if (StartMenuSelected == 0)
-//         {
-//             break;
-//         }
-
-//     }
-//     while (!CheckGameEnd())
-//     {
-//         HeroPhase();
-//         if (!skipMonsterPhase && !CheckGameEnd())
-//         {
-//             MonsterPhase();
-//         }
-//         else
-//         {
-//             skipMonsterPhase = false;
-//         }
-//     }
-// }
 
     // MyTerminal.ShowMessageBox(
     //     "======================== HORRIFIED GAME INSTRUCTIONS ========================\n"
