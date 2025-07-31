@@ -12,6 +12,7 @@
 
 class Map
 {
+    // test
 private:
     std::unordered_map<std::string, std::shared_ptr<Location>> MapPlan;
 
@@ -23,5 +24,6 @@ public:
     std :: string GetRandomLocation()const;
     const std :: shared_ptr<Location>&  GetLocationptr(const std :: string )const ;
     Location & GetLocation(const std :: string &);
+    void Clear();
 };
 #endif

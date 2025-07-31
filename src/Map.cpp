@@ -54,4 +54,7 @@ std :: string Map :: GetRandomLocation()const{
 Location & Map :: GetLocation(const std :: string & name){
     return *MapPlan.at(name);
 
+}// test
+void Map::Clear() {
+    MapPlan.clear();
 }
