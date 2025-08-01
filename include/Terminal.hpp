@@ -22,6 +22,7 @@ class ShowInTerminal{
   std :: unordered_map<std :: string , Texture2D> backgroundTextures;
   std :: unordered_map<std :: string , Texture2D> monsterCardTextures;
   std :: unordered_map<std :: string , Texture2D> villagerTextures;
+  std :: unordered_map<std :: string , Texture2D> frenzyMark;
   std :: map<std :: string, Vector2> locationPositions;
   std :: map<std :: string, Rectangle> locationBounds;
   Texture2D mapTexture;
@@ -33,7 +34,6 @@ class ShowInTerminal{
   bool showInventoryPopup = false;
   Rectangle inventoryPopupBounds = {0 , 0 , 400 , 300};
    
-
   public :
   ShowInTerminal()= default;
   void ShowMessageBox(const std :: string&);
@@ -72,9 +72,8 @@ class ShowInTerminal{
    // std::vector<std::string> ShowDiceRollAnimation(Dice &dice, Font font);
   int ShowHeroPhase( Game& game, const std::vector<std::string>& options);
   void ShowMonsterPhase( Game & game , std :: shared_ptr<MonsterCard>);
+  void ShowPopupMessages(Game & game ,const std::string lines);
   Font GetFont();
-  void AddLogMessage(const std::string msg);
-
 
 };
 #endif
