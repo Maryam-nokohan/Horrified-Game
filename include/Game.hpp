@@ -24,6 +24,7 @@ class Game{
     friend class Dracula;
     friend class Courier;
     friend class InvisibleMan;
+    friend class GameFileHandler;
     private :
     Map mapPlan;
     int terrorLevel;
