@@ -101,8 +101,6 @@ void Game ::InitializeLocations()
 
     mapPlan.addEdge(Graveyard, Church);
 
-    mapPlan.addEdge(Graveyard, Hospital);
-
     mapPlan.addEdge(Church, Shop);
 
     mapPlan.addEdge(Shop, Theater);
