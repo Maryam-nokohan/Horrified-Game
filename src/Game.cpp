@@ -739,9 +739,8 @@ void Game::ChooseHero(std::string player1, std::string player2)
     for (const auto &hero : availableHeroes)
         heroNames.push_back(hero->getName());
 
-    // MyTerminal.ShowMessageBox(player1 + " , choose your hero:");
-    MyTerminal.DrawMessageBox(player1 + " , choose your hero.", showMessage);
-    MyTerminal.Enter(showMessage);
+     MyTerminal.ShowMessageBox(player1 + " , choose your hero:");
+   
     int player1Choice = MyTerminal.MenuGenerator(heroNames);
     auto player1Hero = availableHeroes[player1Choice];
     switch (player1Choice)
@@ -829,7 +828,6 @@ void Game::ChooseHero(std::string player1, std::string player2)
         }
     }
     heroPlayer = heroes[0];
-    std ::cout << heroes[0] << "--------------\n";
 }
 void Game::GameStart()
 {
@@ -837,12 +835,13 @@ void Game::GameStart()
     const int screenHeight = 700;
     InitWindow(screenWidth, screenHeight, "Horrified Game");
     SetTargetFPS(60);
-    MyTerminal.LoadAssets();
+   
 
     BeginDrawing();
-    ClearBackground(RAYWHITE);
-    DrawText("Loading...", 350, 280, 20, DARKGRAY);
+    ClearBackground(BLACK);
+    DrawText("Loading...", 385, 340, 30, WHITE);
     EndDrawing();
+    MyTerminal.LoadAssets();
     while (true)
     {
 
@@ -888,13 +887,13 @@ void Game::GameStart()
 
     while (!CheckGameEnd())
     {
-        MonsterPhase();
-        // HeroPhase();
 
-        // if (!skipMonsterPhase && !CheckGameEnd()) {
-        // } else {
-        //     skipMonsterPhase = false;
-        // }
+        if (!skipMonsterPhase && !CheckGameEnd()) {
+            HeroPhase();
+         } else {
+            MonsterPhase();
+             skipMonsterPhase = false;
+         }
     }
 
     MyTerminal.UnloadAssets();

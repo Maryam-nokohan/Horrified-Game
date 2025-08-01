@@ -111,6 +111,7 @@ void ShowInTerminal ::LoadAssets()
     backgroundTextures["input"] = LoadTexture("../assets/Background/Background2.png");
     backgroundTextures["exit"] = LoadTexture("../assets/Background/Background3.png");
     backgroundTextures["back"] = LoadTexture("../assets/Background/Background4.jpg");
+    backgroundTextures["msg"] = LoadTexture("../assets/Background/Background7.png");
 
     // Map
     mapTexture = LoadTexture("../assets/map.png");
@@ -190,44 +191,112 @@ void ShowInTerminal ::UnloadAssets()
     UnloadTexture(coffinBrokenTexture);
     UnloadTexture(coffinIntactTexture);
 }
-void ShowInTerminal :: DrawMessageBox(const std :: string& message , bool& showMessage)
-{
-if(showMessage){
-    Rectangle box = { 100, 500, 600, 70 };
 
-    DrawRectangleRounded(box, 0.3f, 12, DARKGRAY);
-    DrawRectangleRoundedLines(box, 0.3f, 12, RAYWHITE);
 
-    int textWidth = MeasureText(message.c_str(), 20);
-    DrawText(message.c_str(), box.x + (box.width - textWidth) / 2, box.y + 25, 20, WHITE);
-}}
-void ShowInTerminal :: Enter(bool& showMessage){
-        
-        if (IsKeyPressed(KEY_ENTER) || IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-            showMessage = false;
-        }
-
-}
 void ShowInTerminal::ShowMessageBox(const std::string& message) {
-    Rectangle box = { 100, 500, 600, 70 };
+\
+    const int windowWidth = 900;
+    const int windowHeight = 700;
+    
+ 
+    const float boxWidth = 600;
+    const float boxHeight = 150;
+    const float boxX = (windowWidth - boxWidth) / 2;
+    const float boxY = (windowHeight - boxHeight) / 2;
+    
+    Rectangle box = { boxX, boxY, boxWidth, boxHeight };
+    
 
+    float boxScale = 0.9f;
+    float targetScale = 1.0f;
+
+    Color boxColor = { 15, 25, 40, 200 }; 
+    Color borderColor = { 0, 220, 255, 255 };
+    Color textColor = { 220, 240, 255, 255 };   
+    Color hintColor = { 150, 200, 220, 200 };   
+    
     bool waiting = true;
     while (!WindowShouldClose() && waiting) {
+        
+        boxScale += (targetScale - boxScale) * 0.1f;
+        
         BeginDrawing();
-        ClearBackground(BLANK);
+        
+        if (backgroundTextures["msg"].id != 0) {
+            DrawTexturePro(backgroundTextures["msg"],
+                         Rectangle{0, 0, (float)backgroundTextures["msg"].width, (float)backgroundTextures["msg"].height},
+                         Rectangle{0, 0, (float)windowWidth, (float)windowHeight},
+                         Vector2{0, 0}, 0.0f, WHITE);
+        } else {
+    
+            DrawRectangleGradientV(0, 0, windowWidth, windowHeight, 
+                                 Color{ 240, 240, 250, 255 }, 
+                                 Color{ 200, 200, 220, 255 });
+        }
+        
+    
+        Rectangle scaledBox = {
+            box.x + (box.width * (1 - boxScale)) / 2,
+            box.y + (box.height * (1 - boxScale)) / 2,
+            box.width * boxScale,
+            box.height * boxScale
+        };
+        
+        
+        DrawRectangleRounded(scaledBox, 0.2f, 16, Fade(boxColor, boxScale));
 
-        DrawRectangleRounded(box, 0.3f, 12, DARKGRAY);
-        DrawRectangleRoundedLines(box, 0.3f, 12, RAYWHITE);
-
-        int textWidth = MeasureText(message.c_str(), 20);
-        DrawText(message.c_str(), box.x + (box.width - textWidth)/2, box.y + 25, 20, WHITE);
-
+        DrawRectangleRoundedLines(scaledBox, 0.2f, 16, Fade(borderColor, boxScale));
+        
+        int fontSize = 24;
+        
+        const float maxTextWidth = boxWidth - 40;
+        Vector2 textSize = MeasureTextEx(font, message.c_str(), fontSize, 1.0f);
+        
+        if (textSize.x > maxTextWidth) {
+            std::string wrappedText;
+            std::string currentLine;
+            std::istringstream iss(message);
+            std::string word;
+            
+            while (iss >> word) {
+                if (MeasureTextEx(font, (currentLine + word).c_str(), fontSize, 1.0f).x < maxTextWidth) {
+                    currentLine += word + " ";
+                } else {
+                    wrappedText += currentLine + "\n";
+                    currentLine = word + " ";
+                }
+            }
+            wrappedText += currentLine;
+            
+            DrawTextEx(font, wrappedText.c_str(), 
+                      Vector2{ scaledBox.x + 20,
+                               scaledBox.y + (scaledBox.height - fontSize * (1 + std::count(wrappedText.begin(), wrappedText.end(), '\n'))) / 2 },
+                      fontSize, 1.0f, Fade(textColor, boxScale));
+        } else {
+            DrawTextEx(font, message.c_str(), 
+                      Vector2{ scaledBox.x + (scaledBox.width - textSize.x) / 2,
+                               scaledBox.y + (scaledBox.height - textSize.y) / 2 },fontSize, 1.0f, Fade(textColor, boxScale)); // استفاده از رنگ متن جدید
+        }
+        
+        if (boxScale > 0.98f) {
+            const char* hintText = "Press ENTER or click to continue...";
+            int hintFontSize = 16;
+            Vector2 hintSize = MeasureTextEx(font, hintText, hintFontSize, 1.0f);
+            DrawTextEx(font, hintText, 
+                       Vector2{ windowWidth/2 - hintSize.x/2, boxY + boxHeight + 20 },
+                       hintFontSize, 1.0f, WHITE);
+        }
+        
         EndDrawing();
-
-        if (IsKeyPressed(KEY_ENTER) || IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
-            waiting = false;
+        
+        if ((IsKeyPressed(KEY_ENTER) || IsMouseButtonPressed(MOUSE_LEFT_BUTTON))) {
+            if (boxScale > 0.98f) {
+                waiting = false;
+            }
+        }
     }
 }
+    
 int ShowInTerminal :: MenuGenerator(const std::vector<std::string>& options) {
     int selected = -1;
     Texture2D bg = backgroundTextures["menu"];
@@ -1051,128 +1120,7 @@ void ShowInTerminal::DrawLocationItemsPopup(std::shared_ptr<Location> location) 
     DrawRectangleRounded(closeBtn, 0.2f, 4, RED);
     DrawTextEx(font, "X", {closeBtn.x + 8, closeBtn.y + 4}, 24, 1, WHITE);
 }
-// int ShowInTerminal::ShowHeroPhase(Game& game, const std::vector<std::string>& options) {
-//     int selected = -1;
 
-
-//     float mapW = 545;
-//     float mapH = 542;
-//     Vector2 mapPos = {0, 0};
-
-    
-//     const int buttonsPerRow = 6 ;
-//     const float buttonWidth = 130;
-//     const float buttonHeight = 35;
-//     const float spacing = 10;
-//     const Color buttonColor = {100, 140, 255, 255};
-//     const Color hoverColor = {130, 170, 255, 255};
-
-//     Rectangle optionRects[options.size()];
-// for (int i = 0; i < options.size(); i++) {
-//     int row = (i < 6) ? 0 : 1;
-//     int col = (i < 6) ? i : i - 6;
-
-//     int colsThisRow = (row == 0) ? 6 : 5;
-
-//     float totalWidth = colsThisRow * buttonWidth + (colsThisRow - 1) * spacing;
-//     float x = (GetScreenWidth() - totalWidth) / 2 + col * (buttonWidth + spacing);
-//     float y = GetScreenHeight() - 120 + row * (buttonHeight + spacing);
-
-//     optionRects[i] = {x, y, buttonWidth, buttonHeight};
-// }
-
-//     while (!WindowShouldClose()) {
-//         Vector2 mouse = GetMousePosition();
-
-//         BeginDrawing();
-//         ClearBackground(BLACK);
-
-        
-//         DrawRectangleLines(mapPos.x - 5, mapPos.y - 5, mapW + 10, mapH + 10, DARKGRAY);
-//         DrawTexturePro(mapTexture,
-//                      {0, 0, (float)mapTexture.width, (float)mapTexture.height},
-//                      {mapPos.x, mapPos.y, mapW, mapH},
-//                      {0, 0}, 0.0f, WHITE);
-
-        
-//         DrawCharactersOnMap(game.heroes,
-//                           game.Monsters,
-//                           game.villagers,
-//                           game.Items,
-//                           30, {0, 0});
-
-        
-//         DrawTerrorLevel(game.terrorLevel, font, {8, 484});
-        
-// if (auto dracula = game.GetDracula())
-//     DrawDraculaMat(game, {(float)GetScreenWidth() - 165.0f , 40.0f });
-
-// if (auto invisible = game.GetInvisibleMan()) {
-//     Vector2 inMatPos = {(float)GetScreenWidth() - 330.0f, 40.0f};
-//     DrawInvisibleManMat(invisible->GetEvidence(), font, inMatPos);
-
-//     Rectangle inventoryClickZone = {0};
-//     if (game.heroPlayer)
-//         DrawHeroInfo(game.heroPlayer, font, {inMatPos.x, inMatPos.y + 50.0f * (float)invisible->GetEvidence().size() + 40.0f} , &inventoryClickZone);
-//     if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) &&
-//     CheckCollisionPointRec(GetMousePosition(), inventoryClickZone)) {
-//     showInventoryPopup = true;
-// }
-// }
-
-// if (game.heroPlayer && game.heroPlayer->PeekPerkCard()) {
-//     Vector2 perkCardPos = {(float)GetScreenWidth() - 165.0f, 301.0f};
-//     DrawPerkCard(game.heroPlayer->PeekPerkCard(), font, perkCardPos);
-// }
-
-        
-//         for (int i = 0; i < options.size(); i++) {
-//             bool hover = CheckCollisionPointRec(mouse, optionRects[i]);
-//             DrawRectangleRounded(optionRects[i], 0.3f, 8, hover ? hoverColor : buttonColor);
-            
-//             const char* text = options[i].c_str();
-//             int fontSize = 18;
-//             int tw = MeasureText(text, fontSize);
-            
-//             while (tw > buttonWidth - 10 && fontSize > 12) {
-//                 fontSize--;
-//                 tw = MeasureText(text, fontSize);
-//             }
-//         Vector2 textSize = MeasureTextEx(font, text, fontSize, 1);
-//             DrawTextEx(font, text, 
-//            {optionRects[i].x + (buttonWidth - textSize.x) / 2,
-//             optionRects[i].y + (buttonHeight - textSize.y) / 2},
-//            fontSize, 1, WHITE);
-//         }
-//         if (showInventoryPopup) {
-//     DrawInventoryPopup(game.heroPlayer);
-
-//     Vector2 mouse = GetMousePosition();
-//     Rectangle closeBtn = {inventoryPopupBounds.x + inventoryPopupBounds.width - 40, inventoryPopupBounds.y + 10, 30, 30};
-//     if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && CheckCollisionPointRec(mouse, closeBtn)) {
-//         showInventoryPopup = false;
-//     }
-
-//     // بستن با Escape
-//     if (IsKeyPressed(KEY_ESCAPE)) {
-//         showInventoryPopup = false;
-//     }
-// }
-
-//         EndDrawing();
-
-//         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-//             for (int i = 0; i < options.size(); i++) {
-//                 if (CheckCollisionPointRec(mouse, optionRects[i])) {
-//                     selected = i;
-//                     return selected;
-//                 }
-//             }
-//         }
-//     }
-
-//     return selected;
-// }
 int ShowInTerminal::ShowHeroPhase(Game& game, const std::vector<std::string>& options) {
     int selected = -1;
 
@@ -1187,23 +1135,22 @@ int ShowInTerminal::ShowHeroPhase(Game& game, const std::vector<std::string>& op
     const Color buttonColor = {100, 140, 255, 255};
     const Color hoverColor = {130, 170, 255, 255};
 
-    Rectangle optionRects[options.size()];
-    for (int i = 0; i < options.size(); i++) {
-        int row = (i < 6) ? 0 : 1;
-        int col = (i < 6) ? i : i - 6;
-        int colsThisRow = (row == 0) ? 6 : 5;
-        float totalWidth = colsThisRow * buttonWidth + (colsThisRow - 1) * spacing;
-        float x = (GetScreenWidth() - totalWidth) / 2 + col * (buttonWidth + spacing);
-        float y = GetScreenHeight() - 120 + row * (buttonHeight + spacing);
-        optionRects[i] = {x, y, buttonWidth, buttonHeight};
-    }
+Rectangle optionRects[options.size()];
+for (int i = 0; i < options.size(); i++) {
+    int row = i / 6; 
+    int col = i % 6; 
+    float totalWidth = 6 * buttonWidth + (6 - 1) * spacing;
+    float x = (GetScreenWidth() - totalWidth) / 2 + col * (buttonWidth + spacing);
+    float y = GetScreenHeight() - 120 + row * (buttonHeight + spacing);
+    optionRects[i] = {x, y, buttonWidth, buttonHeight};
+}
 
     while (!WindowShouldClose()) {
         Vector2 mouse = GetMousePosition();
 
-        // * NEW: Handle mouse clicks for pop-ups *
+        
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-            // If the location pop-up is open, check if the close button was clicked
+            
             if (showLocationItemsPopup) {
                 Rectangle closeBtn = {locationPopupBounds.x + locationPopupBounds.width - 40, locationPopupBounds.y + 10, 30, 30};
                 if (CheckCollisionPointRec(mouse, closeBtn)) {
@@ -1211,21 +1158,21 @@ int ShowInTerminal::ShowHeroPhase(Game& game, const std::vector<std::string>& op
                     clickedLocation = nullptr;
                 }
             }
-            // If the inventory pop-up is open, check its close button
+            
             else if (showInventoryPopup) {
                  Rectangle closeBtn = {inventoryPopupBounds.x + inventoryPopupBounds.width - 40, inventoryPopupBounds.y + 10, 30, 30};
                  if (CheckCollisionPointRec(mouse, closeBtn)) {
                     showInventoryPopup = false;
                  }
             }
-            // Otherwise, check for clicks on the map locations or action buttons
+            
             else {
                 bool buttonClicked = false;
                 for (int i = 0; i < options.size(); i++) {
                     if (CheckCollisionPointRec(mouse, optionRects[i])) {
                         selected = i;
                         buttonClicked = true;
-                        break; // Exit the loop once a button is found
+                        break; 
                     }
                 }
 
@@ -1233,18 +1180,18 @@ int ShowInTerminal::ShowHeroPhase(Game& game, const std::vector<std::string>& op
                     return selected;
                 }
 
-                // * NEW: Check for clicks on map locations *
+                
                 for (auto const& [name, bounds] : locationBounds) {
                     if (CheckCollisionPointRec(mouse, bounds)) {
                         clickedLocation = game.getMapPlan().GetLocationptr(name);
                         showLocationItemsPopup = true;
-                        break; // Stop after finding the first clicked location
+                        break;
                     }
                 }
             }
         }
 
-        // Handle closing popups with the ESCAPE key
+        
         if (IsKeyPressed(KEY_ESCAPE)) {
             showInventoryPopup = false;
             showLocationItemsPopup = false;
@@ -1283,7 +1230,7 @@ int ShowInTerminal::ShowHeroPhase(Game& game, const std::vector<std::string>& op
             DrawPerkCard(game.heroPlayer->PeekPerkCard(), font, perkCardPos);
         }
 
-        // Draw action buttons only if no pop-up is active
+        
         if (!showInventoryPopup && !showLocationItemsPopup) {
             for (int i = 0; i < options.size(); i++) {
                 bool hover = CheckCollisionPointRec(mouse, optionRects[i]);
@@ -1304,7 +1251,7 @@ int ShowInTerminal::ShowHeroPhase(Game& game, const std::vector<std::string>& op
             }
         }
 
-        // * NEW: Draw the pop-ups if they are active *
+        
         if (showInventoryPopup) {
             DrawInventoryPopup(game.heroPlayer);
         }
