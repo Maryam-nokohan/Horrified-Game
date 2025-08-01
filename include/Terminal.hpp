@@ -22,9 +22,9 @@ class ShowInTerminal{
   std :: unordered_map<std :: string , Texture2D> backgroundTextures;
   std :: unordered_map<std :: string , Texture2D> monsterCardTextures;
   std :: unordered_map<std :: string , Texture2D> villagerTextures;
-  std :: unordered_map<std :: string , Texture2D> frenzyMark;
   std :: map<std :: string, Vector2> locationPositions;
   std :: map<std :: string, Rectangle> locationBounds;
+  Texture2D frenzyMark;
   Texture2D mapTexture;
   Texture2D coffinBrokenTexture;
   Texture2D coffinIntactTexture;
@@ -54,12 +54,6 @@ class ShowInTerminal{
   void DrawDraculaMat(Game& , Vector2);
   void DrawInvisibleManMat(const std::vector<std::pair<bool, std::string>>& evidences, Font font, Vector2 position);
   void DrawItemsList(const std::vector<std::shared_ptr<Item>>& items, Font font, Vector2 position);
-  void DrawLocationOverview(const std::unordered_map<std::string, std::shared_ptr<Location>>& locations,
-                          const std::vector<std::shared_ptr<Monster>>& monsters,
-                          const std::vector<std::shared_ptr<Villager>>& villagers,
-                          const std::vector<std::shared_ptr<Item>>& items,
-                          const std::vector<std::shared_ptr<Hero>>& heroes,
-                          Font font, Vector2 startPos);
   void DrawCharactersOnMap(
        const std::vector<std::shared_ptr<Hero>> &heroes,
     const std::vector<std::shared_ptr<Monster>> &monsters,
