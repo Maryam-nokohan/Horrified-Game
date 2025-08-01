@@ -123,7 +123,7 @@ void ShowInTerminal ::LoadAssets()
     coffinIntactTexture = LoadTexture("../assets/Items/Coffins/Coffin.png");
 
     // Frenzy Mark
-    frenzyMark["frenzy"] = LoadTexture("../assets/Monster_Mat/FrenzyMark.png");
+    frenzyMark = LoadTexture("../assets/Monster_Mat/FrenzyMark.png");
     // Location
 
     locationPositions[Cave] = {43, 133};
@@ -191,6 +191,7 @@ void ShowInTerminal ::UnloadAssets()
     UnloadFont(font);
     UnloadTexture(coffinBrokenTexture);
     UnloadTexture(coffinIntactTexture);
+    UnloadTexture(frenzyMark);
 }
 void ShowInTerminal :: DrawMessageBox(const std :: string& message , bool& showMessage)
 {
@@ -881,7 +882,7 @@ void ShowInTerminal::DrawCharactersOnMap(
             DrawTextureEx(MonsterTex, position, 0.0f, Scale, WHITE);
             if(m->GetFrenzyMarker())
             {
-                Texture2D frenzyTex = frenzyMark["frenzy"];
+                Texture2D frenzyTex = frenzyMark;
                 Vector2 pos = {position.x+15 , position.y-20};
                 float s = GetBestScaleForCharacters(frenzyTex) / 2;
                 DrawTextureEx(frenzyTex , pos , 0.0f , s , WHITE);

@@ -22,9 +22,9 @@ class ShowInTerminal{
   std :: unordered_map<std :: string , Texture2D> backgroundTextures;
   std :: unordered_map<std :: string , Texture2D> monsterCardTextures;
   std :: unordered_map<std :: string , Texture2D> villagerTextures;
-  std :: unordered_map<std :: string , Texture2D> frenzyMark;
   std :: map<std :: string, Vector2> locationPositions;
   std :: map<std :: string, Rectangle> locationBounds;
+  Texture2D frenzyMark;
   Texture2D mapTexture;
   Texture2D coffinBrokenTexture;
   Texture2D coffinIntactTexture;
