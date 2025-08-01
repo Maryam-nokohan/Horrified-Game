@@ -11,6 +11,7 @@ class Game;
 
 class Hero : public std :: enable_shared_from_this<Hero>
 {
+    friend class GameFileHandler;
 protected:
     std::string name;
     int maxActions;
@@ -25,6 +26,7 @@ public:
     virtual ~Hero() = default;
     void UsePerkCard(Game&);
     void GetPerkCard(std :: shared_ptr<PerkCard>);
+    std::vector<std::shared_ptr<PerkCard>> & getPerks();
     void resetActions();
     void moveTo(std :: shared_ptr<Location>);
     bool PlayerGetHit(Game& game);

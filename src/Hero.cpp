@@ -305,3 +305,4 @@ const std::vector<std ::shared_ptr<Item>> &Hero::getInventory() const
 {
     return inventory;
 }
+std::vector<std::shared_ptr<PerkCard>> & Hero::getPerks(){return PerkCards;}
