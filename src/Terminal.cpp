@@ -123,6 +123,8 @@ void ShowInTerminal ::LoadAssets()
     coffinBrokenTexture = LoadTexture("../assets/Items/Coffins/SmashedCoffin.png");
     coffinIntactTexture = LoadTexture("../assets/Items/Coffins/Coffin.png");
 
+    // Frenzy Mark
+    frenzyMark = LoadTexture("../assets/Monster_Mat/FrenzyMark.png");
     // Location
 
     locationPositions[Cave] = {43, 133};
@@ -190,6 +192,7 @@ void ShowInTerminal ::UnloadAssets()
     UnloadFont(font);
     UnloadTexture(coffinBrokenTexture);
     UnloadTexture(coffinIntactTexture);
+    UnloadTexture(frenzyMark);
 }
 
 
@@ -791,102 +794,6 @@ void ShowInTerminal::DrawPerkCard(const std::shared_ptr<PerkCard>& card, Font fo
         DrawTextEx(font, "(No card)", {position.x, position.y + 30}, 18, 2, RED);
     }
 }
-
-void ShowInTerminal :: DrawLocationOverview(const std::unordered_map<std::string, std::shared_ptr<Location>>& locations,
-                          const std::vector<std::shared_ptr<Monster>>& monsters,
-                          const std::vector<std::shared_ptr<Villager>>& villagers,
-                          const std::vector<std::shared_ptr<Item>>& items,
-                          const std::vector<std::shared_ptr<Hero>>& heroes,
-                          Font font, Vector2 startPos) {
-    float rowHeight = 24;
-    float spacing = 2;
-    float y = startPos.y;
-
-    float colWidths[5] = {130, 170, 130, 170, 130};
-    const char* headers[] = {"Location", "Items", "Monsters", "Villagers", "Heroes"};
-
-
-    float x = startPos.x;
-    for (int i = 0; i < 5; i++) {
-        DrawTextEx(font, headers[i], {x, y}, 18, spacing, GOLD);
-        x += colWidths[i];
-    }
-    y += rowHeight;
-
-
-    for (const auto& [name, loc] : locations) {
-        x = startPos.x;
-
-
-        DrawTextEx(font, loc->GetCityName().c_str(), {x, y}, 16, spacing, WHITE);
-        x += colWidths[0];
-
-
-        float itemX = x;
-        bool hasItem = false;
-        for (auto& i : items) {
-            if (i->getLocation() == loc) {
-                std::string str = i->getName() + "(" + std::to_string(i->getPower()) + ")";
-                Color c = (i->getColor() == ItemColor::Red) ? RED :
-                          (i->getColor() == ItemColor::Yellow) ? YELLOW : SKYBLUE;
-                DrawTextEx(font, str.c_str(), {itemX, y}, 16, spacing, c);
-                itemX += MeasureTextEx(font, str.c_str(), 16, spacing).x + 10;
-                hasItem = true;
-            }
-        }
-        if (!hasItem)
-            DrawTextEx(font, "-", {x, y}, 16, spacing, DARKGRAY);
-        x += colWidths[1];
-
-    
-        float monsterX = x;
-        bool hasMonster = false;
-        for (auto& m : monsters) {
-            if (m->GetLocation() == loc) {
-                std::string name = m->GetName();
-                if (m->GetFrenzyMarker()) name += "*";
-                DrawTextEx(font, name.c_str(), {monsterX, y}, 16, spacing, RED);
-                monsterX += MeasureTextEx(font, name.c_str(), 16, spacing).x + 10;
-                hasMonster = true;
-            }
-        }
-        if (!hasMonster)
-            DrawTextEx(font, "-", {x, y}, 16, spacing, DARKGRAY);
-        x += colWidths[2];
-
-        float villagerX = x;
-        bool hasVillager = false;
-        for (auto& v : villagers) {
-            if (v->getCurrentLocation() == loc) {
-                std::string name = v->getName() + "(" + v->getSafeLocation()->GetCityName() + ")";
-                DrawTextEx(font, name.c_str(), {villagerX, y}, 16, spacing, LIME);
-                villagerX += MeasureTextEx(font, name.c_str(), 16, spacing).x + 10;
-                hasVillager = true;
-            }
-        }
-        if (!hasVillager)
-            DrawTextEx(font, "-", {x, y}, 16, spacing, DARKGRAY);
-        x += colWidths[3];
-
-        float heroX = x;
-        bool hasHero = false;
-        for (auto& h : heroes) {
-            if (h->getLocation() == loc) {
-                DrawTextEx(font, h->getName().c_str(), {heroX, y}, 16, spacing, GRAY);
-                heroX += MeasureTextEx(font, h->getName().c_str(), 16, spacing).x + 10;
-                hasHero = true;
-            }
-        }
-        if (!hasHero)
-            DrawTextEx(font, "-", {x, y}, 16, spacing, DARKGRAY);
-
-        
-        y += rowHeight;
-    }
-
-    DrawRectangleLinesEx({startPos.x - 10, startPos.y - 10, 730, y - startPos.y + 20}, 2, Fade(DARKGRAY, 0.5f));
-}
-
 void ShowInTerminal::DrawCharactersOnMap(
     const std::vector<std::shared_ptr<Hero>> &heroes,
     const std::vector<std::shared_ptr<Monster>> &monsters,
@@ -941,11 +848,18 @@ void ShowInTerminal::DrawCharactersOnMap(
         {
             Texture2D MonsterTex = iconIt->second;
             Vector2 position = locationPositions[m->GetLocation()->GetCityName()];
-            position.y -= 60;
-            position.x -= 30;
+            position.y -= 80;
+            position.x -= 50;
 
             float Scale = ShowInTerminal:: GetBestScaleForCharacters(MonsterTex);
             DrawTextureEx(MonsterTex, position, 0.0f, Scale, WHITE);
+            if(m->GetFrenzyMarker())
+            {
+                Texture2D frenzyTex = frenzyMark;
+                Vector2 pos = {position.x+15 , position.y-20};
+                float s = GetBestScaleForCharacters(frenzyTex) / 2;
+                DrawTextureEx(frenzyTex , pos , 0.0f , s , WHITE);
+            }
         }
     }
 
@@ -961,7 +875,7 @@ void ShowInTerminal::DrawCharactersOnMap(
                 Texture2D VillagerTex = iconIt->second;
                 Vector2 position = locationPositions[v->getCurrentLocation()->GetCityName()];
                 position.y -= 60;
-                position.x -= 30;
+                position.x -= 5;
 
                 float Scale = ShowInTerminal:: GetBestScaleForCharacters(VillagerTex);
                 DrawTextureEx(VillagerTex, position, 0.0f, Scale, WHITE);
@@ -1000,10 +914,9 @@ std::vector<std::string> ShowInTerminal::ShowDiceRollAnimation(Dice &dice, Font 
         }
 
         EndDrawing();
-        WaitTime(0.09); // simple delay
+        WaitTime(0.09); // delay
     }
 
-    // Final result
     BeginDrawing();
     ClearBackground(DARKBLUE);
     for (int i = 0; i < numDice; ++i)
@@ -1011,7 +924,7 @@ std::vector<std::string> ShowInTerminal::ShowDiceRollAnimation(Dice &dice, Font 
         resultFaces[i] = dice.DiceRoll();
 
         Rectangle box = {startPos.x + i * (boxSize + spacing), startPos.y, boxSize, boxSize};
-        DrawRectangleRounded(box, 0.3f, 12, GREEN);
+        DrawRectangleRounded(box, 0.3f, 12, SKYBLUE);
         DrawRectangleRoundedLines(box, 0.3f, 12, WHITE);
 
         int faceWidth = MeasureText(resultFaces[i].c_str(), fontSize);
@@ -1021,6 +934,44 @@ std::vector<std::string> ShowInTerminal::ShowDiceRollAnimation(Dice &dice, Font 
     WaitTime(1.0);
 
     return resultFaces;
+}
+void ShowInTerminal::ShowPopupMessages(Game &game , const std::string message)
+{
+    float screenW = (float)GetScreenWidth();
+    float screenH = (float)GetScreenHeight();
+
+    const float boxW = 900;
+    const float boxH = 138;
+    const float padding = 20;
+
+    Rectangle popupBox = {
+        0 , 543,boxW , boxH  
+    };
+
+    bool waiting = true;
+    while (!WindowShouldClose() && waiting)
+    {
+        BeginDrawing();
+
+
+        DrawRectangleRec(popupBox, Fade(DARKBLUE, 0.58f));
+        DrawRectangleLinesEx(popupBox, 3, SKYBLUE);
+
+        DrawTextEx(font, message.c_str(),
+        {popupBox.x + padding, popupBox.y + padding},
+        20, 2, RAYWHITE);
+        
+        std::string hint = "(Press Enter or click)";
+        Vector2 hintSize = MeasureTextEx(font, hint.c_str(), 16, 1);
+        DrawTextEx(font, hint.c_str(),
+        {popupBox.x + popupBox.width - hintSize.x - 12, popupBox.y + popupBox.height - 24},
+        16, 1, GRAY);
+        
+        EndDrawing();
+        
+        if (IsKeyPressed(KEY_ENTER) || IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+        waiting = false;
+    }
 }
 void ShowInTerminal::DrawInventoryPopup(std::shared_ptr<Hero> hero) {
     if (!hero) return;
@@ -1270,82 +1221,45 @@ void ShowInTerminal::ShowMonsterPhase(Game &game, std::shared_ptr<MonsterCard> c
     float screenW = (float)GetScreenWidth();
     float screenH = (float)GetScreenHeight();
 
-    // Define map size and position
+    // Map
     float mapW = 545;
     float mapH = 542;
     Vector2 mapPos = {0, 0};
 
-    // Define monster card size
+    // Monster Card
     float cardW = 265;
     float cardH = 370;
     Texture2D monsterTexture = monsterCardTextures[card->GetName()];
     float cardScale = cardW / (float)monsterTexture.width;
     Vector2 cardPos = {mapPos.x + mapW + 45, 0};
 
-    // Define action menu (optional)
-    Vector2 actionPos = {0, mapPos.y + mapH + 10}; // place it below the map
-    Rectangle actionMenu = {actionPos.x, actionPos.y, 280, 180};
+    BeginDrawing();
+    // === Backgound 
+     Texture2D bg = backgroundTextures["menu"];
+    DrawTexturePro(bg, {0, 0, (float)bg.width, (float)bg.height}, {0, 0, (float)GetScreenWidth(), (float)GetScreenHeight()}, {0, 0}, 0.0f, WHITE);
 
-    // Define message bar at the bottom
-    float messageBarHeight = 40;
-    Rectangle messageBar = {0, screenH - messageBarHeight, screenW, messageBarHeight};
 
-    while (!WindowShouldClose())
-    {
+    // === Map
+    DrawRectangleLines(mapPos.x - 5, mapPos.y - 5, mapW + 10, mapH + 10, DARKGRAY);
+    DrawTexturePro(
+        mapTexture,
+        {0, 0, (float)mapTexture.width, (float)mapTexture.height},
+        {mapPos.x, mapPos.y, mapW, mapH},
+        {0, 0}, 0.0f, WHITE);
 
-        BeginDrawing();
-        ClearBackground(BLACK);
-        // ==Draw Map
-        DrawRectangleLines(mapPos.x - 5, mapPos.y - 5, mapW + 10, mapH + 10, DARKGRAY);
-        DrawTexturePro(mapTexture,
-                       {0, 0, (float)mapTexture.width, (float)mapTexture.height},
-                       {mapPos.x, mapPos.y, mapW, mapH},
-                       {0, 0}, 0.0f, WHITE);
+    // === Characters on Map
+    DrawCharactersOnMap(game.heroes,
+                        game.Monsters,
+                        game.villagers,
+                        game.GetItemsInGame(),
+                        30,
+                        {0, 0});
 
-        // === Draw Monster Card
-        DrawRectangleLines(cardPos.x - 5, cardPos.y - 5, cardW + 10, cardH + 10, DARKGRAY);
-        DrawMonsterCard(card, cardPos, cardScale);
-
-        // == Draw Character in map
-        DrawCharactersOnMap(game.heroes,
-                            game.Monsters,
-                            game.villagers,
-                            game.Items,
-                            30, {0, 0});
-
-        // DrawLocationOverview(game.mapPlan.getLocations(), game.Monsters, game.villagers, game.Items, game.heroes, font, {0, 0});
-
-        // === Action Menu Placeholder
-        DrawRectangleRec(actionMenu, Fade(LIGHTGRAY, 0.3f));
-        DrawRectangleLinesEx(actionMenu, 2, GRAY);
-        DrawTextEx(font, "Action Menu:", {actionMenu.x + 10, actionMenu.y + 10}, 20, 2, DARKGRAY);
-        DrawTextEx(font, "(info will appear here)", {actionMenu.x + 10, actionMenu.y + 40}, 18, 2, DARKGRAY);
-
-        // === Draw Log Message Bar
-        float messageHeight = 80;
-        Rectangle messageBar = {0, screenH - messageHeight, screenW, messageHeight};
-        DrawRectangleRec(messageBar, DARKGRAY);
-        DrawRectangleLinesEx(messageBar, 2, BLACK);
-
-        float y = messageBar.y + 5;
-        for (const auto &msg : logMessages)
-        {
-            DrawTextEx(font, msg.c_str(), {20, y}, 18, 2, RAYWHITE);
-            y += 18;
-        }
-
-        EndDrawing();
-    }
-
-    logMessages.clear();
-    ShowMessageBox("Monster phase complete. Pre ss Enter to continue.");
+    // === Monster Card
+    DrawRectangleLines(cardPos.x - 5, cardPos.y - 5, cardW + 10, cardH + 10, DARKGRAY);
+    DrawMonsterCard(card, cardPos, cardScale);
+    EndDrawing();
 }
 
 Font ShowInTerminal::GetFont() { return font; }
 
-void ShowInTerminal::AddLogMessage(const std::string msg)
-{
-    logMessages.push_back(msg);
-    if (logMessages.size() > maxLogLines)
-        logMessages.erase(logMessages.begin()); // keep only recent N
-} 

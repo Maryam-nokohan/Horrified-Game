@@ -101,8 +101,6 @@ void Game ::InitializeLocations()
 
     mapPlan.addEdge(Graveyard, Church);
 
-    mapPlan.addEdge(Graveyard, Hospital);
-
     mapPlan.addEdge(Church, Shop);
 
     mapPlan.addEdge(Shop, Theater);
@@ -229,19 +227,19 @@ void Game ::InitializeCards()
         PerkDeck.push_back(std ::make_shared<PerkCard>(Hurry));
     }
     std ::shuffle(PerkDeck.begin(), PerkDeck.end(), std ::mt19937(std ::random_device()()));
-    // Monster Card
-    // for (int i = 0; i < 3; ++i)
-    // {
-    //     MonsterDeck.push_back(std ::make_shared<MonsterCard>(FromTheBat, 2, "Place Dracula in the hero feild", MonsterStrike("I", 1, 2)));
-    // }
-    // for (int i = 0; i < 3; ++i)
-    // {
-    //     MonsterDeck.push_back(std ::make_shared<MonsterCard>(Sunrise, 0, "Put Dracula in Crypt", MonsterStrike("I", 1, 2)));
-    // }
-    // for (int i = 0; i < 2; ++i)
-    // {
-    //     MonsterDeck.push_back(std ::make_shared<MonsterCard>(Thief, 2, "put Invisible man in a location with the most items and remove all the item from that location", MonsterStrike("ID", 1, 3)));
-    // }
+   // Monster Card
+    for (int i = 0; i < 3; ++i)
+    {
+        MonsterDeck.push_back(std ::make_shared<MonsterCard>(FromTheBat, 2, "Place Dracula in the hero feild", MonsterStrike("I", 1, 2)));
+    }
+    for (int i = 0; i < 3; ++i)
+    {
+        MonsterDeck.push_back(std ::make_shared<MonsterCard>(Sunrise, 0, "Put Dracula in Crypt", MonsterStrike("I", 1, 2)));
+    }
+    for (int i = 0; i < 2; ++i)
+    {
+        MonsterDeck.push_back(std ::make_shared<MonsterCard>(Thief, 2, "put Invisible man in a location with the most items and remove all the item from that location", MonsterStrike("ID", 1, 3)));
+    }
     MonsterDeck.push_back(std ::make_shared<MonsterCard>(TheDelivery, 3, "Put Chick and Wilbur in Dock", MonsterStrike("F", 1, 3)));
     MonsterDeck.push_back(std ::make_shared<MonsterCard>(FortuneTeller, 3, "put maleva in camp", MonsterStrike("F", 1, 2)));
     MonsterDeck.push_back(std ::make_shared<MonsterCard>(FormerEmployer, 3, "put dr.cranly in Lab", MonsterStrike("IF", 1, 2)));
@@ -249,14 +247,14 @@ void Game ::InitializeCards()
     MonsterDeck.push_back(std ::make_shared<MonsterCard>(TheInnocent, 3, "put Maria in Barn", MonsterStrike("FDI", 1, 3)));
     MonsterDeck.push_back(std ::make_shared<MonsterCard>(EgyptianExpert, 3, "put prof.Pearson in cave", MonsterStrike("DF", 2, 2)));
     MonsterDeck.push_back(std ::make_shared<MonsterCard>(TheIchthyologist, 3, "put dr.Read in Institute", MonsterStrike("F", 1, 2)));
-    // for (int i = 0; i < 2; ++i)
-    // {
-    //     MonsterDeck.push_back(std ::make_shared<MonsterCard>(OnTheMove, 3, "give Frenzy to the next Monster and take each villager one move closer to their safe house", MonsterStrike("F", 3, 2)));
-    // }
-    // for (int i = 0; i < 2; ++i)
-    // {
-    //     MonsterDeck.push_back(std ::make_shared<MonsterCard>(HypnoticGaze, 2, "Closest Villager or Hero getting one move close to monster", MonsterStrike("I", 1, 2)));
-    // }
+    for (int i = 0; i < 2; ++i)
+    {
+        MonsterDeck.push_back(std ::make_shared<MonsterCard>(OnTheMove, 3, "give Frenzy to the next Monster and take each villager one move closer to their safe house", MonsterStrike("F", 3, 2)));
+    }
+    for (int i = 0; i < 2; ++i)
+    {
+        MonsterDeck.push_back(std ::make_shared<MonsterCard>(HypnoticGaze, 2, "Closest Villager or Hero getting one move close to monster", MonsterStrike("I", 1, 2)));
+    }
     std ::shuffle(MonsterDeck.begin(), MonsterDeck.end(), std ::mt19937(std ::random_device()()));
 }
 void Game ::InitializeCharacters()
@@ -425,15 +423,15 @@ void Game::HeroPhase()
                 MyTerminal.ShowMessageBox("No villagers in nearby locations to guide.\n");
             }
         }
-        //test
         // Pick up
         else if (selected == 2)
         {
             if (!heroPlayer->getLocation()->GetItems().empty())
             {
                 auto items = heroPlayer->getLocation()->GetItems();
-                for (const auto &i : items)
+                for (const auto &i : items){
                     heroPlayer->pickUpItems(i);
+                }
                 MyTerminal.ShowMessageBox(heroPlayer->getName() + " Pick up all the Items!");
                 auto invisible = GetInvisibleMan();
                 if (invisible)
@@ -443,6 +441,7 @@ void Game::HeroPhase()
                         MyTerminal.ShowMessageBox("You pick up one of the evidences in city " + heroPlayer->getLocation()->GetCityName());
                     }
                 }
+                heroPlayer->DecreaseAction();
             }
             else
             {
@@ -659,44 +658,20 @@ void Game::MonsterPhase()
 {
     if (MonsterDeck.empty())
     {
-        MyTerminal.AddLogMessage("No Monster card left in the deck");
+        MyTerminal.ShowPopupMessages(*this ,"No Monster card left in the deck");
         return;
     }
-
     auto card = MonsterDeck.back();
+    
+    MyTerminal.ShowPopupMessages(*this ,"Monster Phase Begins!!!!!");
+    
+    MyTerminal.ShowMonsterPhase(*this, card);
+    card->ApplyEffect(*this);
+    
+    MyTerminal.ShowPopupMessages(*this ,"Monster phase complete. Press Enter to continue...");
     MonsterDeck.pop_back();
 
-    MyTerminal.AddLogMessage("Monster Phase Begins");
-    MyTerminal.AddLogMessage("Card: " + card->GetName());
-    MyTerminal.AddLogMessage("Event: " + card->GetEvent());
-
-    // Run the interactive frame:
-    for (int frame = 0; frame < 300; ++frame)
-    { // ~5s at 60fps
-        MyTerminal.ShowMonsterPhase(*this, card);
-    }
-
-    // Apply effect & strikes (which will push messages to log)
-    card->ApplyEffect(*this);
-
-    // Keep showing for interaction
-    MyTerminal.AddLogMessage("Monster phase complete. Press Enter to continue...");
-
-    bool waitingForContinue = true;
-
-    while (!WindowShouldClose() && waitingForContinue)
-    {
-        BeginDrawing();
-        MyTerminal.ShowMonsterPhase(*this, card);
-        EndDrawing();
-
-        if (IsKeyPressed(KEY_ENTER) || IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
-        {
-            waitingForContinue = false;
-        }
-    }
 }
-
 std::vector<std::shared_ptr<Villager>> &Game::getVillagers() { return villagers; }
 std::shared_ptr<Dracula> Game::GetDracula()
 {
@@ -887,112 +862,18 @@ void Game::GameStart()
 
     while (!CheckGameEnd())
     {
-
+        
+        HeroPhase();
         if (!skipMonsterPhase && !CheckGameEnd()) {
-            HeroPhase();
-         } else {
             MonsterPhase();
-             skipMonsterPhase = false;
-         }
+        } else {
+            skipMonsterPhase = false;
+        }
     }
 
     MyTerminal.UnloadAssets();
     CloseWindow();
 }
-
-// void Game::GameStart()
-// {
-//     MyTerminal.LoadAssets();
-//     int StartMenuSelected = -1;
-//     while (StartMenuSelected != 0)
-//     {
-
-//         // Start menue:
-//     const int screenWidth = 800;
-//     const int screenHeight = 600;
-
-//     InitWindow(screenWidth, screenHeight, "Horrified Game");
-//     SetTargetFPS(60);
-
-//     BeginDrawing();
-//     ClearBackground(RAYWHITE);
-//     DrawText("Loading...", 350, 280, 20, DARKGRAY);
-//     EndDrawing();
-
-//     std::string message;
-//         int StartMenuSelected = MyTerminal.MenuGenerator(std::vector<std::string>{"Start", "Load Game", "Exit"} , message );
-//         std::string p1, p2;
-//         int lastTime1, lastTime2;
-
-//         switch (StartMenuSelected)
-//         {
-//         case 0:
-//         {
-//             // Garlic questions :
-
-//         std :: string name1 , name2;
-//         int days1 = 0 , days2 = 0 ;
-//         if(!MyTerminal.GetPlayerInfo(name1 , days1 )) continue;
-//         if(!MyTerminal.GetPlayerInfo(name2 , days2 )) continue;
-//         std :: string p1 , p2 ;
-//         if(days1 > days2){
-//              p1 = name2;
-//              p2 = name1;
-//         }
-//         else{
-//             p1 = name1;
-//             p2 = name2;
-//         }
-
-//         message = p1 + " choose your hero.";
-//         int HeroChoose1 = MyTerminal.MenuGenerator({"Mayor", "Archaeologist" , "Courier" ,"Scientist"}, message, bg2, font);
-//         message = p2 + " choose your hero.";
-//         int HeroChoose2 =  MyTerminal.MenuGenerator({"Mayor", "Archaeologist" , "Courier" , "Scientist"} , message , bg2 , font);
-
-//             heroPlayer = heroes[HeroChoose1];
-
-//             p1 = MyTerminal.GetInput("What's Your Name Player 1? ", String);
-//             lastTime1 = stoi(MyTerminal.GetInput("When was the last time that you ate garlic " + p1 + "? (Ex: 2 days): ", Int));
-//             p2 = MyTerminal.GetInput("What's Your Name Player 2? ", String);
-//             lastTime2 = stoi(MyTerminal.GetInput("When was the last time that you ate garlic " + p2 + "? (Ex: 2 days): ", Int));
-//             MyTerminal.Refresh();
-//             std::string starter;
-//             if (lastTime1 >= lastTime2)
-//             {
-//                 ChooseHero(p2, p1);
-//             }
-//             else
-//             {
-//                 ChooseHero(p1, p2);
-//             }
-
-//         }
-//         case 1:
-
-//         case 2:
-//         MyTerminal.ShowExitScreen();
-//         default:
-//             break;
-//         }
-//         if (StartMenuSelected == 0)
-//         {
-//             break;
-//         }
-
-//     }
-//     while (!CheckGameEnd())
-//     {
-//         HeroPhase();
-//         if (!skipMonsterPhase && !CheckGameEnd())
-//         {
-//             MonsterPhase();
-//         }
-//         else
-//         {
-//             skipMonsterPhase = false;
-//         }
-//     }
-// }
 
 // MyTerminal.ShowMessageBox(
 //     "======================== HORRIFIED GAME INSTRUCTIONS ========================\n"

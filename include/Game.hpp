@@ -17,11 +17,13 @@
 #include <memory>
 class Game{
     friend class Hero;
+    friend class Monster;
     friend class ShowInTerminal;
     friend class PerkCard;
     friend class MonsterCard;
     friend class Dracula;
     friend class Courier;
+    friend class InvisibleMan;
     private :
     Map mapPlan;
     int terrorLevel;
@@ -66,6 +68,7 @@ class Game{
     std::shared_ptr<Dracula> GetDracula();
     std::shared_ptr<InvisibleMan> GetInvisibleMan();
     void Reset();
+    Game& GetGame(){return *this;};
     // test
 };
 #endif

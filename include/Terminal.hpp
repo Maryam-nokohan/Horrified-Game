@@ -24,6 +24,7 @@ class ShowInTerminal{
   std :: unordered_map<std :: string , Texture2D> villagerTextures;
   std :: map<std :: string, Vector2> locationPositions;
   std :: map<std :: string, Rectangle> locationBounds;
+  Texture2D frenzyMark;
   Texture2D mapTexture;
   Texture2D coffinBrokenTexture;
   Texture2D coffinIntactTexture;
@@ -36,7 +37,6 @@ bool showLocationItemsPopup = false;
 std::shared_ptr<Location> clickedLocation = nullptr;
 Rectangle locationPopupBounds = { 200, 100, 400, 500 };
    
-
   public :
   ShowInTerminal()= default;
   void ShowMessageBox(const std :: string&);
@@ -55,12 +55,6 @@ Rectangle locationPopupBounds = { 200, 100, 400, 500 };
   void DrawDraculaMat(Game& , Vector2);
   void DrawInvisibleManMat(const std::vector<std::pair<bool, std::string>>& evidences, Font font, Vector2 position);
   void DrawItemsList(const std::vector<std::shared_ptr<Item>>& items, Font font, Vector2 position);
-  void DrawLocationOverview(const std::unordered_map<std::string, std::shared_ptr<Location>>& locations,
-                          const std::vector<std::shared_ptr<Monster>>& monsters,
-                          const std::vector<std::shared_ptr<Villager>>& villagers,
-                          const std::vector<std::shared_ptr<Item>>& items,
-                          const std::vector<std::shared_ptr<Hero>>& heroes,
-                          Font font, Vector2 startPos);
   void DrawCharactersOnMap(
        const std::vector<std::shared_ptr<Hero>> &heroes,
     const std::vector<std::shared_ptr<Monster>> &monsters,
@@ -74,9 +68,8 @@ Rectangle locationPopupBounds = { 200, 100, 400, 500 };
   int ShowHeroPhase( Game& game, const std::vector<std::string>& options);
   void ShowMonsterPhase( Game & game , std :: shared_ptr<MonsterCard>);
   void DrawLocationItemsPopup(std :: shared_ptr<Location> location);
+  void ShowPopupMessages(Game & game ,const std::string lines);
   Font GetFont();
-  void AddLogMessage(const std::string msg);
-
 
 };
 #endif

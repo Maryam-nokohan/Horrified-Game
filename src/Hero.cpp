@@ -36,7 +36,6 @@ void Hero::SetAction(int NumOfAction)
     else
         throw std::invalid_argument("Number of actions can't be nagetive!\n");
 }
-// test
 // remove card from inventory
 void Hero::UsePerkCard(Game &game)
 {
@@ -77,25 +76,27 @@ bool Hero::PlayerGetHit(Game &game)
         case 1:
         {
             successe = true;
-            game.MyTerminal.ShowMessageBox("monster hits you you'll start from the hospital in the next hero phase");
+            game.MyTerminal.ShowPopupMessages(game,"monster hits you you'll start from the hospital in the next hero phase");
             currentLocation->RemoveHero(shared_from_this());
             SetLocation(game.mapPlan.GetLocationptr(Hospital));
             game.terrorLevel++;
+            game.MyTerminal.ShowMonsterPhase(game , game.MonsterDeck.back());
             return successe;
         }
         default:
-            return false;
-            break;
-        }
+        return false;
+        break;
     }
-    else
-    {
-        game.MyTerminal.ShowMessageBox("Not enaugth Items !!");
-        game.MyTerminal.ShowMessageBox("monster hits you you'll start from the hospital in the next hero phase");
-        successe = true;
-        currentLocation->RemoveHero(shared_from_this());
-        SetLocation(game.mapPlan.GetLocationptr(Hospital));
-        game.terrorLevel++;
+}
+else
+{
+    game.MyTerminal.ShowPopupMessages(game,"Not enaugth Items !!");
+    game.MyTerminal.ShowPopupMessages(game,"monster hits you you'll start from the hospital in the next hero phase");
+    successe = true;
+    currentLocation->RemoveHero(shared_from_this());
+    SetLocation(game.mapPlan.GetLocationptr(Hospital));
+    game.terrorLevel++;
+    game.MyTerminal.ShowMonsterPhase(game , game.MonsterDeck.back());
         return successe;
     }
 }
@@ -252,7 +253,7 @@ void Hero::pickUpItems(std::shared_ptr<Item> item)
     if (item)
     {
         inventory.push_back(item);
-        DecreaseAction();
+        item->getLocation()->RemoveItem(item);
         return;
     }
     else 
