@@ -12,11 +12,14 @@ Dracula :: Dracula() : Monster("Dracula",1,true){Table ={{false ,Crypt} ,{ false
 void Dracula :: DarkCharm(Game &game) {
 game.MyTerminal.ShowPopupMessages(game,"Dracula using Dark Charm !!");
 game.MyTerminal.ShowMonsterPhase(game , game.MonsterDeck.back());
-if(game.heroPlayer->getLocation()->GetCityName() == CurrentLocation->GetCityName())
+auto HerosInGame = game.heroes;
+for(const auto & h : HerosInGame){
+if(h->getLocation()->GetCityName() == CurrentLocation->GetCityName())
 {
-    game.MyTerminal.ShowPopupMessages(game, "Hero Already in Dracula's Location.");
+    game.MyTerminal.ShowPopupMessages(game,h->getName() + " Already in Dracula's Location.");
     game.MyTerminal.ShowMonsterPhase(game , game.MonsterDeck.back());
     return;
+}
 }
 auto HeroLocation = game.heroPlayer->getLocation();
 HeroLocation->RemoveHero(game.heroPlayer);
@@ -24,6 +27,7 @@ game.heroPlayer->moveTo(CurrentLocation);
 game.MyTerminal.ShowPopupMessages(game,game.heroPlayer->getName() + " moved to dracula spot!");
 game.MyTerminal.ShowMonsterPhase(game , game.MonsterDeck.back());
 }
+
 //Move :
 void Dracula :: Move(std :: shared_ptr<Location> NearestOppenent) {
     if(!CurrentLocation) return;
