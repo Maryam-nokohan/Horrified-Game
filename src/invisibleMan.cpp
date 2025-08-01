@@ -29,20 +29,23 @@ return false;
 }
 //Power
 void InvisibleMan::StalkUnseen(Game& game, int moves) {
-    game.MyTerminal.ShowMessageBox("Stalk Unseen Activated : ");
+    game.MyTerminal.ShowPopupMessages(game,"Stalk Unseen Activated : ");
+    game.MyTerminal.ShowMonsterPhase(game  , game.MonsterDeck.back());
     auto& villagers = game.getVillagers();
     auto& map = game.getMapPlan(); 
     if(villagers.empty())
     {
-        game.MyTerminal.ShowMessageBox("No villager in the map to use Stalk unseen!");
+        game.MyTerminal.ShowPopupMessages(game,"No villager in the map to use Stalk unseen!");
+        game.MyTerminal.ShowMonsterPhase(game  , game.MonsterDeck.back());
         return;
     }
     auto locals = CurrentLocation->GetVillager();
     if (!locals.empty()) {
         auto target = locals.back();
-        game.MyTerminal.ShowMessageBox("Invisible Man is already in "+target->getCurrentLocation()->GetCityName()+ " uses Stalk Unseen and kills " + target->getName());
+        game.MyTerminal.ShowPopupMessages(game,"Invisible Man is already in "+target->getCurrentLocation()->GetCityName()+ " uses Stalk Unseen and kills " + target->getName());
         target->kill();
         game.RemoveVillagerFromGame(target);
+        game.MyTerminal.ShowMonsterPhase(game , game.MonsterDeck.back());
         return;
     }
 
@@ -77,7 +80,8 @@ void InvisibleMan::StalkUnseen(Game& game, int moves) {
     }
 
     if (!targetLoc) {
-        game.MyTerminal.ShowMessageBox("No villager found for Stalk Unseen!");
+        game.MyTerminal.ShowPopupMessages(game ,"No villager found for Stalk Unseen!");
+        game.MyTerminal.ShowMonsterPhase(game , game.MonsterDeck.back());
         return;
     }
 
@@ -97,13 +101,14 @@ void InvisibleMan::StalkUnseen(Game& game, int moves) {
     auto afterMove = CurrentLocation->GetVillager();
     if (!afterMove.empty()) {
         auto target = afterMove.back();
-        game.MyTerminal.ShowMessageBox("Invisible Man moved Toward " + target->getName());
+        game.MyTerminal.ShowPopupMessages(game ,"Invisible Man moved Toward " + target->getName());
         CurrentLocation->RemoveVillager(target);
+        game.MyTerminal.ShowMonsterPhase(game , game.MonsterDeck.back());
     } else {
         game.MyTerminal.ShowMessageBox("Invisible Man moved to " + CurrentLocation->GetCityName());
+        game.MyTerminal.ShowMonsterPhase(game , game.MonsterDeck.back());
     }
 }
-//Check if evidence already destroyed
  bool InvisibleMan:: IsEvidenceDestroyed(std :: string LocationName){
     for(auto & pair : Evidences)
     {

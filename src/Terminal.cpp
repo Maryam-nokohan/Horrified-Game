@@ -122,6 +122,8 @@ void ShowInTerminal ::LoadAssets()
     coffinBrokenTexture = LoadTexture("../assets/Items/Coffins/SmashedCoffin.png");
     coffinIntactTexture = LoadTexture("../assets/Items/Coffins/Coffin.png");
 
+    // Frenzy Mark
+    frenzyMark["frenzy"] = LoadTexture("../assets/Monster_Mat/FrenzyMark.png");
     // Location
 
     locationPositions[Cave] = {43, 133};
@@ -872,11 +874,18 @@ void ShowInTerminal::DrawCharactersOnMap(
         {
             Texture2D MonsterTex = iconIt->second;
             Vector2 position = locationPositions[m->GetLocation()->GetCityName()];
-            position.y -= 60;
-            position.x -= 30;
+            position.y -= 80;
+            position.x -= 50;
 
             float Scale = ShowInTerminal:: GetBestScaleForCharacters(MonsterTex);
             DrawTextureEx(MonsterTex, position, 0.0f, Scale, WHITE);
+            if(m->GetFrenzyMarker())
+            {
+                Texture2D frenzyTex = frenzyMark["frenzy"];
+                Vector2 pos = {position.x+15 , position.y-20};
+                float s = GetBestScaleForCharacters(frenzyTex) / 2;
+                DrawTextureEx(frenzyTex , pos , 0.0f , s , WHITE);
+            }
         }
     }
 
@@ -892,7 +901,7 @@ void ShowInTerminal::DrawCharactersOnMap(
                 Texture2D VillagerTex = iconIt->second;
                 Vector2 position = locationPositions[v->getCurrentLocation()->GetCityName()];
                 position.y -= 60;
-                position.x -= 30;
+                position.x -= 5;
 
                 float Scale = ShowInTerminal:: GetBestScaleForCharacters(VillagerTex);
                 DrawTextureEx(VillagerTex, position, 0.0f, Scale, WHITE);
@@ -934,7 +943,6 @@ std::vector<std::string> ShowInTerminal::ShowDiceRollAnimation(Dice &dice, Font 
         WaitTime(0.09); // simple delay
     }
 
-    // Final result
     BeginDrawing();
     ClearBackground(DARKBLUE);
     for (int i = 0; i < numDice; ++i)
@@ -952,6 +960,45 @@ std::vector<std::string> ShowInTerminal::ShowDiceRollAnimation(Dice &dice, Font 
     WaitTime(1.0);
 
     return resultFaces;
+}
+void ShowInTerminal::ShowPopupMessages(Game &game , const std::string message)
+{
+    float screenW = (float)GetScreenWidth();
+    float screenH = (float)GetScreenHeight();
+
+    const float boxW = 900;
+    const float boxH = 138;
+    const float padding = 20;
+
+    Rectangle popupBox = {
+        0 , 543,boxW , boxH  
+    };
+
+    bool waiting = true;
+    while (!WindowShouldClose() && waiting)
+    {
+        BeginDrawing();
+
+
+        // Draw overlay
+        DrawRectangleRec(popupBox, Fade(DARKBLUE, 0.58f));
+        DrawRectangleLinesEx(popupBox, 3, SKYBLUE);
+
+        DrawTextEx(font, message.c_str(),
+        {popupBox.x + padding, popupBox.y + padding},
+        20, 2, RAYWHITE);
+        
+        std::string hint = "(Press Enter or click)";
+        Vector2 hintSize = MeasureTextEx(font, hint.c_str(), 16, 1);
+        DrawTextEx(font, hint.c_str(),
+        {popupBox.x + popupBox.width - hintSize.x - 12, popupBox.y + popupBox.height - 24},
+        16, 1, GRAY);
+        
+        EndDrawing();
+        
+        if (IsKeyPressed(KEY_ENTER) || IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+        waiting = false;
+    }
 }
 void ShowInTerminal::DrawInventoryPopup(std::shared_ptr<Hero> hero) {
     if (!hero) return;
@@ -1045,7 +1092,7 @@ for (int i = 0; i < options.size(); i++) {
         DrawCharactersOnMap(game.heroes,
                           game.Monsters,
                           game.villagers,
-                          game.Items,
+                          game.GetItemsInGame(),
                           30, {0, 0});
 
         
@@ -1125,82 +1172,55 @@ void ShowInTerminal::ShowMonsterPhase(Game &game, std::shared_ptr<MonsterCard> c
     float screenW = (float)GetScreenWidth();
     float screenH = (float)GetScreenHeight();
 
-    // Define map size and position
+    // Map
     float mapW = 545;
     float mapH = 542;
     Vector2 mapPos = {0, 0};
 
-    // Define monster card size
+    // Monster Card
     float cardW = 265;
     float cardH = 370;
     Texture2D monsterTexture = monsterCardTextures[card->GetName()];
     float cardScale = cardW / (float)monsterTexture.width;
     Vector2 cardPos = {mapPos.x + mapW + 45, 0};
 
-    // Define action menu (optional)
-    Vector2 actionPos = {0, mapPos.y + mapH + 10}; // place it below the map
-    Rectangle actionMenu = {actionPos.x, actionPos.y, 280, 180};
+    // Action Menu (Optional)
+    // Rectangle actionMenu = {0, mapPos.y + mapH + 10, 280, 180};
 
-    // Define message bar at the bottom
-    float messageBarHeight = 40;
-    Rectangle messageBar = {0, screenH - messageBarHeight, screenW, messageBarHeight};
+    BeginDrawing();
+    // === Backgound 
+     Texture2D bg = backgroundTextures["menu"];
+    DrawTexturePro(bg, {0, 0, (float)bg.width, (float)bg.height}, {0, 0, (float)GetScreenWidth(), (float)GetScreenHeight()}, {0, 0}, 0.0f, WHITE);
 
-    while (!WindowShouldClose())
-    {
 
-        BeginDrawing();
-        ClearBackground(BLACK);
-        // ==Draw Map
-        DrawRectangleLines(mapPos.x - 5, mapPos.y - 5, mapW + 10, mapH + 10, DARKGRAY);
-        DrawTexturePro(mapTexture,
-                       {0, 0, (float)mapTexture.width, (float)mapTexture.height},
-                       {mapPos.x, mapPos.y, mapW, mapH},
-                       {0, 0}, 0.0f, WHITE);
+    // === Map
+    DrawRectangleLines(mapPos.x - 5, mapPos.y - 5, mapW + 10, mapH + 10, DARKGRAY);
+    DrawTexturePro(
+        mapTexture,
+        {0, 0, (float)mapTexture.width, (float)mapTexture.height},
+        {mapPos.x, mapPos.y, mapW, mapH},
+        {0, 0}, 0.0f, WHITE);
 
-        // === Draw Monster Card
-        DrawRectangleLines(cardPos.x - 5, cardPos.y - 5, cardW + 10, cardH + 10, DARKGRAY);
-        DrawMonsterCard(card, cardPos, cardScale);
+    // === Characters on Map
+    DrawCharactersOnMap(game.heroes,
+                        game.Monsters,
+                        game.villagers,
+                        game.GetItemsInGame(),
+                        30,
+                        {0, 0});
 
-        // == Draw Character in map
-        DrawCharactersOnMap(game.heroes,
-                            game.Monsters,
-                            game.villagers,
-                            game.Items,
-                            30, {0, 0});
+    // === Monster Card
+    DrawRectangleLines(cardPos.x - 5, cardPos.y - 5, cardW + 10, cardH + 10, DARKGRAY);
+    DrawMonsterCard(card, cardPos, cardScale);
 
-        // DrawLocationOverview(game.mapPlan.getLocations(), game.Monsters, game.villagers, game.Items, game.heroes, font, {0, 0});
+    // === Action Menu
+    // DrawRectangleRec(actionMenu, Fade(LIGHTGRAY, 0.3f));
+    // DrawRectangleLinesEx(actionMenu, 2, GRAY);
+    // DrawTextEx(font, "Action Menu:", {actionMenu.x + 10, actionMenu.y + 10}, 20, 2, DARKGRAY);
+    // DrawTextEx(font, "(info will appear here)", {actionMenu.x + 10, actionMenu.y + 40}, 18, 2, DARKGRAY);
 
-        // === Action Menu Placeholder
-        DrawRectangleRec(actionMenu, Fade(LIGHTGRAY, 0.3f));
-        DrawRectangleLinesEx(actionMenu, 2, GRAY);
-        DrawTextEx(font, "Action Menu:", {actionMenu.x + 10, actionMenu.y + 10}, 20, 2, DARKGRAY);
-        DrawTextEx(font, "(info will appear here)", {actionMenu.x + 10, actionMenu.y + 40}, 18, 2, DARKGRAY);
-
-        // === Draw Log Message Bar
-        float messageHeight = 80;
-        Rectangle messageBar = {0, screenH - messageHeight, screenW, messageHeight};
-        DrawRectangleRec(messageBar, DARKGRAY);
-        DrawRectangleLinesEx(messageBar, 2, BLACK);
-
-        float y = messageBar.y + 5;
-        for (const auto &msg : logMessages)
-        {
-            DrawTextEx(font, msg.c_str(), {20, y}, 18, 2, RAYWHITE);
-            y += 18;
-        }
-
-        EndDrawing();
-    }
-
-    logMessages.clear();
-    ShowMessageBox("Monster phase complete. Pre ss Enter to continue.");
+    EndDrawing();
 }
 
 Font ShowInTerminal::GetFont() { return font; }
 
-void ShowInTerminal::AddLogMessage(const std::string msg)
-{
-    logMessages.push_back(msg);
-    if (logMessages.size() > maxLogLines)
-        logMessages.erase(logMessages.begin()); // keep only recent N
-} 

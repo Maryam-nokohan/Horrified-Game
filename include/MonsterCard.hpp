@@ -16,7 +16,7 @@ struct MonsterStrike
 };
 
 
-class MonsterCard : public Card{
+class MonsterCard : public Card, public std::enable_shared_from_this<MonsterCard> {
     private :
     bool EndStrike;
     int item;
@@ -31,6 +31,8 @@ class MonsterCard : public Card{
     MonsterCard(const std :: string &name , int item , const std :: string & event , const MonsterStrike& strike);
     void ApplyEffect(Game &) override;
     void ApplyMonsterStrike(Game & game , std ::shared_ptr<Monster> monsterName);
+    ~MonsterCard() override = default;
+
 };
 
 #endif
