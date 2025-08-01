@@ -845,7 +845,7 @@ std::vector<std::string> ShowInTerminal::ShowDiceRollAnimation(Dice &dice, Font 
         }
 
         EndDrawing();
-        WaitTime(0.09); // simple delay
+        WaitTime(0.09); // delay
     }
 
     BeginDrawing();
@@ -855,7 +855,7 @@ std::vector<std::string> ShowInTerminal::ShowDiceRollAnimation(Dice &dice, Font 
         resultFaces[i] = dice.DiceRoll();
 
         Rectangle box = {startPos.x + i * (boxSize + spacing), startPos.y, boxSize, boxSize};
-        DrawRectangleRounded(box, 0.3f, 12, GREEN);
+        DrawRectangleRounded(box, 0.3f, 12, SKYBLUE);
         DrawRectangleRoundedLines(box, 0.3f, 12, WHITE);
 
         int faceWidth = MeasureText(resultFaces[i].c_str(), fontSize);
@@ -885,7 +885,6 @@ void ShowInTerminal::ShowPopupMessages(Game &game , const std::string message)
         BeginDrawing();
 
 
-        // Draw overlay
         DrawRectangleRec(popupBox, Fade(DARKBLUE, 0.58f));
         DrawRectangleLinesEx(popupBox, 3, SKYBLUE);
 
@@ -1052,7 +1051,6 @@ if (game.heroPlayer && game.heroPlayer->PeekPerkCard()) {
         showInventoryPopup = false;
     }
 
-    // بستن با Escape
     if (IsKeyPressed(KEY_ESCAPE)) {
         showInventoryPopup = false;
     }
@@ -1089,9 +1087,6 @@ void ShowInTerminal::ShowMonsterPhase(Game &game, std::shared_ptr<MonsterCard> c
     float cardScale = cardW / (float)monsterTexture.width;
     Vector2 cardPos = {mapPos.x + mapW + 45, 0};
 
-    // Action Menu (Optional)
-    // Rectangle actionMenu = {0, mapPos.y + mapH + 10, 280, 180};
-
     BeginDrawing();
     // === Backgound 
      Texture2D bg = backgroundTextures["menu"];
@@ -1117,13 +1112,6 @@ void ShowInTerminal::ShowMonsterPhase(Game &game, std::shared_ptr<MonsterCard> c
     // === Monster Card
     DrawRectangleLines(cardPos.x - 5, cardPos.y - 5, cardW + 10, cardH + 10, DARKGRAY);
     DrawMonsterCard(card, cardPos, cardScale);
-
-    // === Action Menu
-    // DrawRectangleRec(actionMenu, Fade(LIGHTGRAY, 0.3f));
-    // DrawRectangleLinesEx(actionMenu, 2, GRAY);
-    // DrawTextEx(font, "Action Menu:", {actionMenu.x + 10, actionMenu.y + 10}, 20, 2, DARKGRAY);
-    // DrawTextEx(font, "(info will appear here)", {actionMenu.x + 10, actionMenu.y + 40}, 18, 2, DARKGRAY);
-
     EndDrawing();
 }
 
