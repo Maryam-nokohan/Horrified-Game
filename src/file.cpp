@@ -75,7 +75,7 @@ void GameFileHandler::SaveGame(Game &game, const std::string &filename)
         out << "dice " << card->GetDiceRoll() << "\n";
     }
 
-    // =========== LOCATION STATES ============
+    // Location status
     out << "locationCount " << game.mapPlan.getLocations().size() << "\n";
 
     for (const auto &[name, loc] : game.mapPlan.getLocations())
@@ -126,7 +126,7 @@ void GameFileHandler::SaveGame(Game &game, const std::string &filename)
         }
     }
 
-    // InvisibleMan's collected evidence
+    // InvisibleMan collected evidence
     auto invisible = game.GetInvisibleMan();
     if (invisible)
     {
@@ -136,6 +136,15 @@ void GameFileHandler::SaveGame(Game &game, const std::string &filename)
         {
             out << destroyed << " " << name << "\n";
         }
+    }
+    // Save Villagers
+    out << "villagerCount " << game.villagers.size() << '\n';
+    for (const auto &village : game.villagers)
+    {
+        out << "villagerName " << village->getName() << '\n';
+        out << "currentLocation " << village->getCurrentLocationName() << '\n';
+        out << "safeHouse " << village->getSafeLocation()->GetCityName() << '\n';
+        out << "villagerState " << static_cast<int>(village->isAlive()) << '\n';
     }
 
     out.close();
@@ -150,7 +159,7 @@ void GameFileHandler::LoadGame(Game &game, const std::string &filename)
         throw std::invalid_argument("Failed to open save file: " + filename);
     }
 
-    // Clear existing state
+    // reset
     game.Reset();
 
     std::string token;
@@ -159,13 +168,13 @@ void GameFileHandler::LoadGame(Game &game, const std::string &filename)
     int currentPlayerIndex;
     in >> currentPlayerIndex;
 
-    // HEROES
+    // heros
     int heroCount;
     in >> token >> heroCount;
 
     for (int i = 0; i < heroCount; ++i)
     {
-        in >> token; // heroName   
+        in >> token;
         std::string heroName;
         in.ignore();
         std::getline(in, heroName);
@@ -178,7 +187,7 @@ void GameFileHandler::LoadGame(Game &game, const std::string &filename)
         int actions;
         in >> actions;
 
-        // Construct hero
+
         std::shared_ptr<Hero> hero;
         auto loc = game.mapPlan.GetLocationptr(locName);
         if (heroName == "Mayor")
@@ -227,27 +236,26 @@ void GameFileHandler::LoadGame(Game &game, const std::string &filename)
         game.heroes.push_back(hero);
     }
 
-    // Assign current player
+    // current player
     game.heroPlayer = game.heroes[currentPlayerIndex];
 
-    // PERK DECK
+    // Perk Deck
     int perkDeckSize;
     in >> token >> perkDeckSize;
     for (int i = 0; i < perkDeckSize; ++i)
     {
-        in >> token;
+        in >> token >> std::ws;
         std::string perkName;
-        in.ignore();
         std::getline(in, perkName);
         game.PerkDeck.push_back(std::make_shared<PerkCard>(perkName));
     }
 
-    // MONSTER DECK
+    // Monster Deck
     int monsterDeckSize;
     in >> token >> monsterDeckSize;
     for (int i = 0; i < monsterDeckSize; ++i)
     {
-        in >> token; // monsterCard
+        in >> token; 
         std::string name, event, order;
         int item, move, dice;
 
@@ -263,7 +271,9 @@ void GameFileHandler::LoadGame(Game &game, const std::string &filename)
         game.MonsterDeck.push_back(std::make_shared<MonsterCard>(name, item, event, MonsterStrike(order, move, dice)));
     }
 
-    // LOCATIONS
+    std::vector<std::pair<std::string, std::string>> villagerLocationPairs;
+
+    // Locs
     int locCount;
     in >> token >> locCount;
 
@@ -292,15 +302,13 @@ void GameFileHandler::LoadGame(Game &game, const std::string &filename)
 
         // Villagers
         in >> token >> count;
+
         for (int j = 0; j < count; ++j)
         {
-            in >> token;
+            in >> token >> std::ws;
             std::string name;
-            in.ignore();
             std::getline(in, name);
-            auto villager = std::make_shared<Villager>(name, loc);
-            game.villagers.push_back(villager);
-            loc->AddVillager(villager);
+            villagerLocationPairs.emplace_back(name, loc->GetCityName());
         }
 
         // Heroes
@@ -371,6 +379,38 @@ void GameFileHandler::LoadGame(Game &game, const std::string &filename)
             if (destroyed)
                 invisible->AddDetroyedEvidence(name);
         }
+    }
+    // Villagers
+    int villageCount;
+    in >> token >> villageCount;
+    for (int i = 0; i < villageCount; ++i)
+    {
+        in >> token >> std::ws;
+        std::string villagerName;
+        std::getline(in, villagerName);
+
+        in >> token >> std::ws;
+        std::string currentLocStr;
+        in >> currentLocStr;
+
+        in >> token >> std::ws;
+        std::string safeLoc;
+        in >> safeLoc;
+
+        in >> token;
+        int stateInt;
+        in >> stateInt;
+
+        auto safeLocation = game.mapPlan.GetLocationptr(safeLoc);
+        auto currentLoc = (currentLocStr == "NO_LOCATION") ? nullptr : game.mapPlan.GetLocationptr(currentLocStr);
+
+        auto villager = std::make_shared<Villager>(villagerName, safeLocation);
+        villager->SetState(static_cast<State>(stateInt));
+
+        if (currentLoc)
+            villager->SetLocation(currentLoc);
+
+        game.villagers.push_back(villager);
     }
 
     in.close();
