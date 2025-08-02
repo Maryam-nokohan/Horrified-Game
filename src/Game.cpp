@@ -15,6 +15,7 @@
 #include "../include/ErrorHandler.hpp"
 #include "../include/Villager.hpp"
 #include "../include/Names.hpp"
+#include "../include/file.hpp"
 #include <unordered_set>
 #include <queue>
 #include <iostream>
@@ -638,12 +639,12 @@ void Game::HeroPhase()
         else if (selected == 10)
         {
             int slot = MyTerminal.MenuGenerator({"Slot 1", "Slot 2", "Slot 3", "Slot 4", "Slot 5"});
-            // GameFileHandler::SaveGame(*this, "file_" + std::to_string(slot + 1));
+            GameFileHandler::SaveGame(*this, "file_" + std::to_string(slot + 1));
         }
         else if (selected == 11)
         {
             int slot = MyTerminal.MenuGenerator({"Slot 1", "Slot 2", "Slot 3", "Slot 4", "Slot 5"});
-            // GameFileHandler::LoadGame(*this, "file_" + std::to_string(slot + 1));
+            GameFileHandler::LoadGame(*this, "file_" + std::to_string(slot + 1));
         }
 
         if (CheckGameEnd())
@@ -830,8 +831,9 @@ void Game::GameStart()
 
         if (StartMenuSelected == 1)
         {
-
-            continue;
+            int slot = MyTerminal.MenuGenerator({"Slot 1", "Slot 2", "Slot 3", "Slot 4", "Slot 5"});
+            GameFileHandler::LoadGame(*this, "file_" + std::to_string(slot + 1));
+            break;
         }
         if (StartMenuSelected == 0)
         {
