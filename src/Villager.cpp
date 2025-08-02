@@ -7,7 +7,11 @@ Villager :: Villager(const std :: string Name , std :: shared_ptr<Location> Safe
     name = Name;
     safeLocation = SafeLoc;
 }
-const std::string  Villager ::getCurrentLocationName()const {return currentLocation->GetCityName(); }
+const std::string  Villager ::getCurrentLocationName()const {
+    if(currentLocation)
+    return currentLocation->GetCityName();
+    else return "NO_LOCATION";
+ }
 
 const std::string& Villager::getName() const{
     return name;
@@ -54,4 +58,7 @@ void Villager:: SetLocation(std :: shared_ptr <Location> location){
     }
     else 
      throw std::invalid_argument("null ptr for villager location!");
+}
+void Villager:: SetState(State s){
+    state =s;
 }

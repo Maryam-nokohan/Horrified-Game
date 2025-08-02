@@ -23,6 +23,7 @@ class Villager :public std :: enable_shared_from_this<Villager>
       const std :: shared_ptr<Location>& getCurrentLocation() const;
       const std :: shared_ptr<Location>& getSafeLocation() const;
       const std :: string  getCurrentLocationName() const;
+      void SetState(State s);
       State isAlive() const;
       void moveTo(std :: shared_ptr<Location>);
       void kill();
