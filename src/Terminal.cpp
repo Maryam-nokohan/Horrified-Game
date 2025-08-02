@@ -107,7 +107,7 @@ void ShowInTerminal ::LoadAssets()
     monstermatTextures["InvisibleMan"] = LoadTexture("../assets/Monster_Mat/InvisibleManMat.png");
 
     // Backgrounds
-    backgroundTextures["menu"] = LoadTexture("../assets/Background/Background1.png");
+    backgroundTextures["menu"] = LoadTexture("../assets/Background/Background13.png");
     backgroundTextures["input"] = LoadTexture("../assets/Background/Background2.png");
     backgroundTextures["exit"] = LoadTexture("../assets/Background/Background3.png");
     backgroundTextures["back"] = LoadTexture("../assets/Background/Background4.jpg");
@@ -299,42 +299,58 @@ void ShowInTerminal::ShowMessageBox(const std::string& message) {
         }
     }
 }
+
+int ShowInTerminal::MenuGenerator(const std::vector<std::string>& options) {
     
-int ShowInTerminal :: MenuGenerator(const std::vector<std::string>& options) {
-    int selected = -1;
+    const Color BG_COLOR = { 21, 30, 39, 255 };
+    const Color BUTTON_COLOR = { 70, 85, 105, 255 };
+    const Color BUTTON_BORDER_COLOR = { 100, 120, 140, 255 };
+    const Color HOVER_COLOR = { 120, 145, 175, 255 };
+    const Color TEXT_COLOR = { 230, 230, 230, 255 };
+
     Texture2D bg = backgroundTextures["menu"];
     Font& font = this->font;
 
-    const float buttonWidth = 160;
-    const float buttonHeight = 40;
+    const float buttonWidth = 200;
+    const float buttonHeight = 50;
     const float spacing = 20;
-    const float totalHeight = options.size() * buttonHeight + (options.size() - 1) * spacing;
+    const int maxButtonsPerColumn = 10;
+
+    int numColumns = 1;
+    if (options.size() > maxButtonsPerColumn) {
+        numColumns = 2;
+    }
+
+    int numRows = (numColumns == 1) ? options.size() : static_cast<int>(ceil(options.size() / 2.0));
+
+    const float totalHeight = numRows * buttonHeight + (numRows > 1 ? (numRows - 1) * spacing : 0);
     const float startY = (GetScreenHeight() - totalHeight) / 2;
 
-    Rectangle optionRects[options.size()];
+    std::vector<Rectangle> optionRects(options.size());
+
     for (int i = 0; i < options.size(); i++) {
-        float x = (GetScreenWidth() - buttonWidth) / 2;
-        float y = startY + i * (buttonHeight + spacing);
+        float x, y;
+        if (numColumns == 1) {
+            x = (GetScreenWidth() - buttonWidth) / 2.0f;
+            y = startY + i * (buttonHeight + spacing);
+        } else {
+            int column = i / numRows;
+            int row = i % numRows;
+
+            float column1_x = (GetScreenWidth() / 2.0f) - buttonWidth - (spacing / 2.0f);
+            float column2_x = (GetScreenWidth() / 2.0f) + (spacing / 2.0f);
+
+            x = (column == 0) ? column1_x : column2_x;
+            y = startY + row * (buttonHeight + spacing);
+        }
         optionRects[i] = { x, y, buttonWidth, buttonHeight };
     }
+
 
     while (!WindowShouldClose()) {
         Vector2 mouse = GetMousePosition();
 
-        BeginDrawing();
-        ClearBackground(RAYWHITE);
-        DrawTexturePro(bg, {0, 0, (float)bg.width, (float)bg.height}, {0, 0, (float)GetScreenWidth(), (float)GetScreenHeight()}, {0, 0}, 0.0f, WHITE);
-
-        for (int i = 0; i < options.size(); i++) {
-            bool hovered = CheckCollisionPointRec(mouse, optionRects[i]);
-            DrawRectangleRounded(optionRects[i], 0.3f, 10, hovered ? LIGHTGRAY : BEIGE);
-
-            int textWidth = MeasureText(options[i].c_str(), 20);
-            DrawText(options[i].c_str(), optionRects[i].x + (buttonWidth - textWidth)/2, optionRects[i].y + 10, 20, BLACK);
-        }
-
-
-        EndDrawing();
+    
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
             for (int i = 0; i < options.size(); i++) {
                 if (CheckCollisionPointRec(mouse, optionRects[i])) {
@@ -342,11 +358,45 @@ int ShowInTerminal :: MenuGenerator(const std::vector<std::string>& options) {
                 }
             }
         }
+
+        BeginDrawing();
+        ClearBackground(BG_COLOR);
+        
+        DrawTexturePro(bg, {0, 0, (float)bg.width, (float)bg.height}, {0, 0, (float)GetScreenWidth(), (float)GetScreenHeight()}, {0, 0}, 0.0f, WHITE);
+
+        for (int i = 0; i < options.size(); i++) {
+            bool hovered = CheckCollisionPointRec(mouse, optionRects[i]);
+
+            
+            DrawRectangleRounded(optionRects[i], 0.2f, 10, hovered ? HOVER_COLOR : BUTTON_COLOR);
+            DrawRectangleRoundedLines(optionRects[i], 0.2f, 10, hovered ? SKYBLUE : BUTTON_BORDER_COLOR);
+
+
+            float fontSize = 20.0f;
+            const float textPadding = 15.0f;
+            Vector2 textSize;
+
+            
+            do {
+                textSize = MeasureTextEx(font, options[i].c_str(), fontSize, 1);
+                if (textSize.x > buttonWidth - textPadding) {
+                    fontSize -= 1.0f;
+                }
+            } while (textSize.x > buttonWidth - textPadding && fontSize > 8);
+
+            
+            float textX = optionRects[i].x + (optionRects[i].width - textSize.x) / 2;
+            float textY = optionRects[i].y + (optionRects[i].height - textSize.y) / 2;
+
+            
+            DrawTextEx(font, options[i].c_str(), {textX, textY}, fontSize, 1, TEXT_COLOR);
+        }
+
+        EndDrawing();
     }
 
     return -1;
 }
-
 bool ShowInTerminal :: GetPlayerInfo(std::string& name, int& days) {
 
     Texture2D bg = backgroundTextures["input"];
