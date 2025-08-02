@@ -259,6 +259,13 @@ void Hero::pickUpItems(std::shared_ptr<Item> item)
     else 
     return;
 }
+void Hero::addItems(std::shared_ptr<Item> item)
+{
+    if(item)
+    {
+        inventory.push_back(item);
+    }
+}
 void Hero::SetLocation(std ::shared_ptr<Location> location)
 {
     if (currentLocation && currentLocation->GetCityName() == location->GetCityName())

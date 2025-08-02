@@ -165,7 +165,7 @@ void GameFileHandler::LoadGame(Game &game, const std::string &filename)
 
     for (int i = 0; i < heroCount; ++i)
     {
-        in >> token; // heroName
+        in >> token; // heroName   
         std::string heroName;
         in.ignore();
         std::getline(in, heroName);
@@ -209,7 +209,7 @@ void GameFileHandler::LoadGame(Game &game, const std::string &filename)
             std::getline(in, ItemName);
 
             auto item = std::make_shared<Item>((ItemColor)color, power, loc, ItemName);
-            hero->pickUpItems(item);
+            hero->addItems(item);
         }
 
         // Perk cards
@@ -217,7 +217,7 @@ void GameFileHandler::LoadGame(Game &game, const std::string &filename)
         in >> token >> perkSize;
         for (int j = 0; j < perkSize; ++j)
         {
-            in >> token;
+            in >> token >> std::ws;
             std::string perkName;
             in.ignore();
             std::getline(in, perkName);
