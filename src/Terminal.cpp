@@ -197,7 +197,7 @@ void ShowInTerminal ::UnloadAssets()
 
 
 void ShowInTerminal::ShowMessageBox(const std::string& message) {
-\
+
     const int windowWidth = 900;
     const int windowHeight = 700;
     

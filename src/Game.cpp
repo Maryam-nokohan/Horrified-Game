@@ -16,12 +16,13 @@
 #include "../include/Villager.hpp"
 #include "../include/Names.hpp"
 #include "../include/file.hpp"
+#include "../include/Terminal.hpp"
 #include <unordered_set>
 #include <queue>
 #include <iostream>
 #include "algorithm"
 #include <random>
-#include "../include/Terminal.hpp"
+#include <filesystem>
 #include <memory>
 namespace ErrorType
 {
@@ -228,7 +229,7 @@ void Game ::InitializeCards()
         PerkDeck.push_back(std ::make_shared<PerkCard>(Hurry));
     }
     std ::shuffle(PerkDeck.begin(), PerkDeck.end(), std ::mt19937(std ::random_device()()));
-   // Monster Card
+    // Monster Card
     // for (int i = 0; i < 3; ++i)
     // {
     //     MonsterDeck.push_back(std ::make_shared<MonsterCard>(FromTheBat, 2, "Place Dracula in the hero feild", MonsterStrike("I", 1, 2)));
@@ -430,7 +431,8 @@ void Game::HeroPhase()
             if (!heroPlayer->getLocation()->GetItems().empty())
             {
                 auto items = heroPlayer->getLocation()->GetItems();
-                for (const auto &i : items){
+                for (const auto &i : items)
+                {
                     heroPlayer->pickUpItems(i);
                 }
                 MyTerminal.ShowMessageBox(heroPlayer->getName() + " Pick up all the Items!");
@@ -490,94 +492,94 @@ void Game::HeroPhase()
                     while (true)
                     {
 
-                    MyTerminal.ShowMessageBox("Choose items:");
-                    selected = MyTerminal.MenuGenerator(redItemNames);
-                    if (selected == redItems.size()) // Exit option selected
+                        MyTerminal.ShowMessageBox("Choose items:");
+                        selected = MyTerminal.MenuGenerator(redItemNames);
+                        if (selected == redItems.size()) // Exit option selected
 
                             break;
 
-                    if (selected < 0 || selected >= redItemNames.size())
-                    {
-                        MyTerminal.ShowMessageBox("Invalid selection. Try again.");
-                        continue;
-                    }
-                    total += redItems[selected]->getPower();
-                    // Scientist logic :
-                    if (heroPlayer->getName() == "Scientist")
-                    {
-                        MyTerminal.ShowMessageBox("Would you like to use your ability on " + redItemNames[selected] + " Scientist?");
-                        int s = MyTerminal.MenuGenerator({"yes", "no"});
-                        if (s == 0)
+                        if (selected < 0 || selected >= redItemNames.size())
                         {
-                            total++;
-                            MyTerminal.ShowMessageBox("Added 1 power to " + redItemNames[selected]);
+                            MyTerminal.ShowMessageBox("Invalid selection. Try again.");
+                            continue;
+                        }
+                        total += redItems[selected]->getPower();
+                        // Scientist logic :
+                        if (heroPlayer->getName() == "Scientist")
+                        {
+                            MyTerminal.ShowMessageBox("Would you like to use your ability on " + redItemNames[selected] + " Scientist?");
+                            int s = MyTerminal.MenuGenerator({"yes", "no"});
+                            if (s == 0)
+                            {
+                                total++;
+                                MyTerminal.ShowMessageBox("Added 1 power to " + redItemNames[selected]);
+                            }
+                        }
+                        usedItems.push_back(redItems[selected]);
+                        redItems.erase(redItems.begin() + selected);
+                        // Update the item list
+                        redItemNames.clear();
+                        for (const auto &i : redItems)
+                            redItemNames.push_back(i->getName() + " (" + std::to_string(i->getPower()) + ")");
+                        redItemNames.push_back("Exit");
+                        if (redItems.empty())
+                        {
+                            MyTerminal.ShowMessageBox("No more items to choose from.");
+                            break;
                         }
                     }
-                    usedItems.push_back(redItems[selected]);
-                    redItems.erase(redItems.begin() + selected);
-                    // Update the item list
-                    redItemNames.clear();
-                    for (const auto &i : redItems)
-                        redItemNames.push_back(i->getName() + " (" + std::to_string(i->getPower()) + ")");
-                    redItemNames.push_back("Exit");
-                    if (redItems.empty())
+                    if (total >= requiredPower)
                     {
-                        MyTerminal.ShowMessageBox("No more items to choose from.");
-                        break;
-                    }
-                }
-                if (total >= requiredPower)
-                {
-                    dracula->AddDetroyedCoffin(city);
-                    for (auto &item : usedItems)
-                        heroPlayer->RemoveItem(item);
-                    heroPlayer->DecreaseAction();
-                    MyTerminal.ShowMessageBox("You smashed a Dracula coffin at " + city + "!");
-                }
-                else
-                {
-                    MyTerminal.ShowMessageBox("Not enough red item power.");
-                }
-            }
-            actionTaken = true;
-        }
-        if (!actionTaken && invisible && city == Precinct)
-        {
-            bool found = false;
-            for (const auto &item : inventory)
-        {
-                if (item->GetItemLocationName())
-                {
-                    std::string itemLoc = item->GetItemLocationName()->GetCityName();
-                    if (invisible->IsTasksLocation(itemLoc))
-                    {
-                        found = true;
-                    if (invisible->IsEvidenceDestroyed(itemLoc))
-                        {
-                            MyTerminal.ShowMessageBox("You already collected evidence at " + itemLoc + ".");
-                        }
-                        else
-                        {
+                        dracula->AddDetroyedCoffin(city);
+                        for (auto &item : usedItems)
                             heroPlayer->RemoveItem(item);
-                            invisible->AddDetroyedEvidence(itemLoc);
-                            heroPlayer->DecreaseAction();
-                            MyTerminal.ShowMessageBox("You collected Invisible Man evidence at " + itemLoc + " and put it into " + Precinct);
-                            break;
+                        heroPlayer->DecreaseAction();
+                        MyTerminal.ShowMessageBox("You smashed a Dracula coffin at " + city + "!");
+                    }
+                    else
+                    {
+                        MyTerminal.ShowMessageBox("Not enough red item power.");
+                    }
+                }
+                actionTaken = true;
+            }
+            if (!actionTaken && invisible && city == Precinct)
+            {
+                bool found = false;
+                for (const auto &item : inventory)
+                {
+                    if (item->GetItemLocationName())
+                    {
+                        std::string itemLoc = item->GetItemLocationName()->GetCityName();
+                        if (invisible->IsTasksLocation(itemLoc))
+                        {
+                            found = true;
+                            if (invisible->IsEvidenceDestroyed(itemLoc))
+                            {
+                                MyTerminal.ShowMessageBox("You already collected evidence at " + itemLoc + ".");
+                            }
+                            else
+                            {
+                                heroPlayer->RemoveItem(item);
+                                invisible->AddDetroyedEvidence(itemLoc);
+                                heroPlayer->DecreaseAction();
+                                MyTerminal.ShowMessageBox("You collected Invisible Man evidence at " + itemLoc + " and put it into " + Precinct);
+                                break;
+                            }
                         }
                     }
                 }
+                if (!found)
+                {
+                    MyTerminal.ShowMessageBox("You don't have any item to put in " + Precinct);
+                }
+                actionTaken = true;
             }
-            if (!found)
+            if (!actionTaken)
             {
-                MyTerminal.ShowMessageBox("You don't have any item to put in " + Precinct);
+                MyTerminal.ShowMessageBox("Nothing can be advanced at this location.");
             }
-            actionTaken = true;
         }
-        if (!actionTaken)
-        {
-            MyTerminal.ShowMessageBox("Nothing can be advanced at this location.");
-        }
-    }
 
         // Defeat
         else if (selected == 4)
@@ -620,9 +622,8 @@ void Game::HeroPhase()
         // help button
         else if (selected == 7)
         {
-    
-                MyTerminal.ShowHelpScreen();
-    
+
+            MyTerminal.ShowHelpScreen();
         }
         // exit button
         else if (selected == 8)
@@ -637,7 +638,7 @@ void Game::HeroPhase()
         {
             MyTerminal.ShowMessageBox("Logging Out ...");
             MyTerminal.ShowExitScreen();
-           exit(0);
+            exit(0);
         }
         else if (selected == 10)
         {
@@ -651,30 +652,30 @@ void Game::HeroPhase()
         }
 
         if (CheckGameEnd())
-            return;    }
-        if (CheckGameEnd())
             return;
-            heroPlayer->resetActions();
     }
+    if (CheckGameEnd())
+        return;
+    heroPlayer->resetActions();
+}
 
 void Game::increaseTerrorLevel() { terrorLevel++; }
 void Game::MonsterPhase()
 {
     if (MonsterDeck.empty())
     {
-        MyTerminal.ShowPopupMessages(*this ,"No Monster card left in the deck");
+        MyTerminal.ShowPopupMessages(*this, "No Monster card left in the deck");
         return;
     }
     auto card = MonsterDeck.back();
-    
-    MyTerminal.ShowPopupMessages(*this ,"Monster Phase Begins!!!!!");
-    
+
+    MyTerminal.ShowPopupMessages(*this, "Monster Phase Begins!!!!!");
+
     MyTerminal.ShowMonsterPhase(*this, card);
     card->ApplyEffect(*this);
-    
-    MyTerminal.ShowPopupMessages(*this ,"Monster phase complete. Press Enter to continue...");
-    MonsterDeck.pop_back();
 
+    MyTerminal.ShowPopupMessages(*this, "Monster phase complete. Press Enter to continue...");
+    MonsterDeck.pop_back();
 }
 std::vector<std::shared_ptr<Villager>> &Game::getVillagers() { return villagers; }
 std::shared_ptr<Dracula> Game::GetDracula()
@@ -718,8 +719,8 @@ void Game::ChooseHero(std::string player1, std::string player2)
     for (const auto &hero : availableHeroes)
         heroNames.push_back(hero->getName());
 
-     MyTerminal.ShowMessageBox(player1 + " , choose your hero:");
-   
+    MyTerminal.ShowMessageBox(player1 + " , choose your hero:");
+
     int player1Choice = MyTerminal.MenuGenerator(heroNames);
     auto player1Hero = availableHeroes[player1Choice];
     switch (player1Choice)
@@ -818,7 +819,7 @@ void Game::GameStart()
     InitAudioDevice();
     MyTerminal.music = LoadMusicStream("../assets/horror.mp3");
     PlayMusicStream(MyTerminal.music);
-   
+
     BeginDrawing();
     ClearBackground(BLACK);
     DrawText("Loading...", 385, 340, 30, WHITE);
@@ -839,9 +840,15 @@ void Game::GameStart()
 
         if (StartMenuSelected == 1)
         {
-            int slot = MyTerminal.MenuGenerator({"Slot 1", "Slot 2", "Slot 3", "Slot 4", "Slot 5"});
-            GameFileHandler::LoadGame(*this, "file_" + std::to_string(slot + 1));
-            break;
+             while (IsMouseButtonDown(MOUSE_LEFT_BUTTON)) {
+        BeginDrawing(); EndDrawing();
+    }
+
+    int selectedSlot = MyTerminal.MenuGenerator({"slot1", "slot2", "slot3", "slot4", "slot5"});
+    std::string FileName = "file_" + std::to_string(selectedSlot + 1);
+    GameFileHandler::LoadGame(*this, FileName);
+    break;
+
         }
         if (StartMenuSelected == 0)
         {
@@ -873,11 +880,14 @@ void Game::GameStart()
     while (!CheckGameEnd())
     {
         UpdateMusicStream(MyTerminal.music);
-        
+
         HeroPhase();
-        if (!skipMonsterPhase && !CheckGameEnd()) {
+        if (!skipMonsterPhase && !CheckGameEnd())
+        {
             MonsterPhase();
-        } else {
+        }
+        else
+        {
             skipMonsterPhase = false;
         }
     }
@@ -909,7 +919,8 @@ bool Game::CheckGameEnd()
         exit(0);
     return GameOver;
 }
-void Game::Reset() {
+void Game::Reset()
+{
     terrorLevel = 0;
     heroPlayer = nullptr;
     GameOver = false;
@@ -921,6 +932,6 @@ void Game::Reset() {
     EmptyBackUpItems.clear();
     PerkDeck.clear();
     MonsterDeck.clear();
-    mapPlan.Clear();  
-    SetUpGame();   
+    mapPlan.Clear();
+    SetUpGame();
 }
