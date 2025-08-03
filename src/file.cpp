@@ -228,7 +228,6 @@ void GameFileHandler::LoadGame(Game &game, const std::string &filename)
         {
             in >> token >> std::ws;
             std::string perkName;
-            in.ignore();
             std::getline(in, perkName);
             hero->GetPerkCard(std::make_shared<PerkCard>(perkName));
         }
@@ -255,14 +254,14 @@ void GameFileHandler::LoadGame(Game &game, const std::string &filename)
     in >> token >> monsterDeckSize;
     for (int i = 0; i < monsterDeckSize; ++i)
     {
-        in >> token; 
+        in >> token >> std::ws; 
         std::string name, event, order;
         int item, move, dice;
 
-        in >> token;
+        in >> token >> std::ws;
         std::getline(in, name);
         in >> token >> item;
-        in >> token;
+        in >> token >> std::ws;
         std::getline(in, event);
         in >> token >> order;
         in >> token >> move;
@@ -412,7 +411,7 @@ void GameFileHandler::LoadGame(Game &game, const std::string &filename)
 
         game.villagers.push_back(villager);
     }
-
+    
     in.close();
     std::cout << "✅ Game loaded from " << filename << "\n";
 }
