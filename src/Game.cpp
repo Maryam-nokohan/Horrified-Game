@@ -840,15 +840,16 @@ void Game::GameStart()
 
         if (StartMenuSelected == 1)
         {
-             while (IsMouseButtonDown(MOUSE_LEFT_BUTTON)) {
-        BeginDrawing(); EndDrawing();
-    }
+            while (IsMouseButtonDown(MOUSE_LEFT_BUTTON))
+            {
+                BeginDrawing();
+                EndDrawing();
+            }
 
-    int selectedSlot = MyTerminal.MenuGenerator({"slot1", "slot2", "slot3", "slot4", "slot5"});
-    std::string FileName = "file_" + std::to_string(selectedSlot + 1);
-    GameFileHandler::LoadGame(*this, FileName);
-    break;
-
+            int selectedSlot = MyTerminal.MenuGenerator({"slot1", "slot2", "slot3", "slot4", "slot5"});
+            std::string FileName = "file_" + std::to_string(selectedSlot + 1);
+            GameFileHandler::LoadGame(*this, FileName);
+            break;
         }
         if (StartMenuSelected == 0)
         {
