@@ -636,7 +636,8 @@ void Game::HeroPhase()
         else if (selected == 9)
         {
             MyTerminal.ShowMessageBox("Logging Out ...");
-            exit(0);
+            MyTerminal.ShowExitScreen();
+           exit(0);
         }
         else if (selected == 10)
         {
@@ -813,8 +814,11 @@ void Game::GameStart()
     const int screenHeight = 700;
     InitWindow(screenWidth, screenHeight, "Horrified Game");
     SetTargetFPS(60);
-   
 
+    InitAudioDevice();
+    MyTerminal.music = LoadMusicStream("../assets/horror.mp3");
+    PlayMusicStream(MyTerminal.music);
+   
     BeginDrawing();
     ClearBackground(BLACK);
     DrawText("Loading...", 385, 340, 30, WHITE);
@@ -822,12 +826,14 @@ void Game::GameStart()
     MyTerminal.LoadAssets();
     while (true)
     {
-
+        UpdateMusicStream(MyTerminal.music);
         int StartMenuSelected = MyTerminal.MenuGenerator({"Start", "Load Game", "Exit"});
 
         if (StartMenuSelected == 2)
         {
             MyTerminal.ShowExitScreen();
+            UnloadMusicStream(MyTerminal.music);
+            CloseAudioDevice();
             return;
         }
 
@@ -866,6 +872,7 @@ void Game::GameStart()
 
     while (!CheckGameEnd())
     {
+        UpdateMusicStream(MyTerminal.music);
         
         HeroPhase();
         if (!skipMonsterPhase && !CheckGameEnd()) {
@@ -876,6 +883,8 @@ void Game::GameStart()
     }
 
     MyTerminal.UnloadAssets();
+    UnloadMusicStream(MyTerminal.music);
+    CloseAudioDevice();
     CloseWindow();
 }
 
@@ -883,17 +892,17 @@ bool Game::CheckGameEnd()
 {
     if (MonsterDeck.empty() && !Monsters.empty())
     {
-        MyTerminal.ShowMessageBox("💀 Darkness Falls... The town is overrun! The monsters have prevailed.\n");
+        MyTerminal.ShowMessageBox("Darkness Falls... The town is overrun! The monsters have prevailed.\n");
         GameOver = true;
     }
     else if (terrorLevel >= 5)
     {
-        MyTerminal.ShowMessageBox("🩸 Terror Reigns! The townsfolk have lost all hope... Evil claims victory.\n");
+        MyTerminal.ShowMessageBox("Terror Reigns! The townsfolk have lost all hope... Evil claims victory.\n");
         GameOver = true;
     }
     else if (Monsters.empty())
     {
-        MyTerminal.ShowMessageBox("🎉 Victory! The Heroes have vanquished all the monsters!\n");
+        MyTerminal.ShowMessageBox("Victory! The Heroes have vanquished all the monsters!\n");
         GameOver = true;
     }
     if (GameOver)

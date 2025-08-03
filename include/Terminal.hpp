@@ -38,6 +38,7 @@ std::shared_ptr<Location> clickedLocation = nullptr;
 Rectangle locationPopupBounds = { 200, 100, 400, 500 };
    
   public :
+  Music music;
   ShowInTerminal()= default;
   void ShowMessageBox(const std :: string&);
   void LoadAssets();

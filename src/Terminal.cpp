@@ -108,11 +108,10 @@ void ShowInTerminal ::LoadAssets()
     monstermatTextures["InvisibleMan"] = LoadTexture("../assets/Monster_Mat/InvisibleManMat.png");
 
     // Backgrounds
-    backgroundTextures["menu"] = LoadTexture("../assets/Background/Background13.png");
+    backgroundTextures["menu"] = LoadTexture("../assets/Background/Background1.png");
     backgroundTextures["input"] = LoadTexture("../assets/Background/Background2.png");
     backgroundTextures["exit"] = LoadTexture("../assets/Background/Background3.png");
-    backgroundTextures["back"] = LoadTexture("../assets/Background/Background4.jpg");
-    backgroundTextures["msg"] = LoadTexture("../assets/Background/Background7.png");
+    backgroundTextures["msg"] = LoadTexture("../assets/Background/Background4.png");
 
     // Map
     mapTexture = LoadTexture("../assets/map.png");
@@ -221,6 +220,7 @@ void ShowInTerminal::ShowMessageBox(const std::string& message) {
     
     bool waiting = true;
     while (!WindowShouldClose() && waiting) {
+        UpdateMusicStream(music);
         
         boxScale += (targetScale - boxScale) * 0.1f;
         
@@ -366,6 +366,7 @@ void ShowInTerminal::ShowHelpScreen() {
 
     bool backClicked = false;
     while (!WindowShouldClose() && !backClicked) {
+        UpdateMusicStream(music);
         
         Vector2 mousePos = GetMousePosition();
         bool isMouseOverButton = CheckCollisionPointRec(mousePos, backButtonRec);
@@ -465,6 +466,7 @@ int ShowInTerminal::MenuGenerator(const std::vector<std::string>& options) {
 
 
     while (!WindowShouldClose()) {
+        UpdateMusicStream(music);
         Vector2 mouse = GetMousePosition();
 
     
@@ -552,6 +554,7 @@ bool ShowInTerminal::GetPlayerInfo(std::string& name, int& days) {
     bool backClicked = false;
 
     while (!WindowShouldClose() && !submitClicked && !backClicked) {
+        UpdateMusicStream(music);
         
         Vector2 mouse = GetMousePosition();
         int key = GetCharPressed();
@@ -629,43 +632,82 @@ bool ShowInTerminal::GetPlayerInfo(std::string& name, int& days) {
 
     return submitClicked;
 }
-void ShowInTerminal:: ShowExitScreen() {
-    
-    Texture2D bg = backgroundTextures["exit"] ;
+void ShowInTerminal::ShowExitScreen() {
+
     const int screenWidth = GetScreenWidth();
     const int screenHeight = GetScreenHeight();
 
-    double startTime = GetTime();
+    Texture2D bg = backgroundTextures["exit"];
+
+    const float boxWidth = 600;
+    const float boxHeight = 180;
+    const float boxX = (screenWidth - boxWidth) / 2;
+    const float boxY = (screenHeight - boxHeight) / 2;
+
+    Rectangle box = { boxX, boxY, boxWidth, boxHeight };
+
+    float boxScale = 0.9f;
+    float targetScale = 1.0f;
+    Color boxColor = { 15, 25, 40, 200 }; 
+    Color borderColor = { 0, 220, 255, 255 };
+    Color textColor = { 220, 240, 255, 255 };   
+
+    const std::string message = "THE DARKNESS AWAITS YOU...";
+    int fontSize = 32;
+
+double startTime = GetTime();
+    const float totalDuration = 4.0f;
 
     while (!WindowShouldClose()) {
+        UpdateMusicStream(music);
         double elapsed = GetTime() - startTime;
+        if (elapsed >= totalDuration) break;
 
-        if (elapsed >= 4.0) break;
+        // 🧠 Fade out music over time
+        float remaining = (float)(totalDuration - elapsed);
+        float volume = Clamp(remaining / totalDuration, 0.0f, 1.0f);
+        SetMusicVolume(music, volume);  // ← این خط ولوم رو کم می‌کنه تدریجی
+
+        boxScale += (targetScale - boxScale) * 0.1f;
 
         BeginDrawing();
+
+        // پس‌زمینه
         ClearBackground(BLACK);
+        if (bg.id != 0) {
+            DrawTexturePro(bg,
+                Rectangle{ 0, 0, (float)bg.width, (float)bg.height },
+                Rectangle{ 0, 0, (float)screenWidth, (float)screenHeight },
+                Vector2{ 0, 0 }, 0.0f, WHITE);
+        }
 
-
-        DrawTexturePro(bg,
-            {0, 0, (float)bg.width, (float)bg.height},
-            {0, 0, (float)screenWidth, (float)screenHeight},
-            {0, 0}, 0.0f, WHITE);
-
-    
-        std::string msg = "THE DARKNESS AWAITS YOU...";
-        Vector2 textSize = MeasureTextEx(font, msg.c_str(), 36, 2);
-        Vector2 pos = {
-            (screenWidth - textSize.x) / 2,
-            (screenHeight - textSize.y) / 2
+        // کادر و متن مثل قبل...
+        Rectangle scaledBox = {
+            box.x + (box.width * (1 - boxScale)) / 2,
+            box.y + (box.height * (1 - boxScale)) / 2,
+            box.width * boxScale,
+            box.height * boxScale
         };
 
-        
-            DrawTextEx(font, msg.c_str(), pos, 36, 2, RED);
+        DrawRectangleRounded(scaledBox, 0.2f, 16, Fade(boxColor, boxScale));
+        DrawRectangleRoundedLines(scaledBox, 0.2f, 16, Fade(borderColor, boxScale));
+
+        Vector2 textSize = MeasureTextEx(font, message.c_str(), fontSize, 1.0f);
+        Vector2 textPos = {
+            scaledBox.x + (scaledBox.width - textSize.x) / 2,
+            scaledBox.y + (scaledBox.height - textSize.y) / 2
+        };
+
+        if (boxScale > 0.98f) {
+            float shake = sin(GetTime() * 20) * 2.0f;
+            textPos.x += shake;
+        }
+
+        DrawTextEx(font, message.c_str(), textPos, fontSize, 1.0f, Fade(textColor, boxScale));
 
         EndDrawing();
     }
 }
-
 void ShowInTerminal :: DrawTerrorLevel(int terrorLevel, Font font, Vector2 position) {
     
     std::string label = "Terror Level: " + std::to_string(terrorLevel);
@@ -793,7 +835,7 @@ void ShowInTerminal::DrawInvisibleManMat(const std::vector<std::pair<bool, std::
     Vector2 titleSize = MeasureTextEx(font, title, titleFontSize, 1);
     DrawTextEx(font, title, 
               {startPos.x + (cellWidth - titleSize.x)/2, startPos.y - 25}, 
-              titleFontSize, 1, GOLD);
+              titleFontSize, 1, BLUE);
 
     float availableHeight = GetScreenHeight() - startPos.y - 30;
     int maxVisibleRows = std::floor(availableHeight / cellHeight);
@@ -1083,16 +1125,19 @@ std::vector<std::string> ShowInTerminal::ShowDiceRollAnimation(Dice &dice, Font 
     const float fontSize = 48;
 
     std::vector<std::string> resultFaces(numDice);
-    Vector2 startPos = {(float)GetScreenWidth() / 2 - (numDice * boxSize + (numDice - 1) * spacing) / 2, (float)GetScreenHeight() / 2 - boxSize / 2};
+    Vector2 startPos = {(float)GetScreenWidth() / 2 - (numDice * boxSize + (numDice - 1) * spacing) / 2,
+                        (float)GetScreenHeight() / 2 - boxSize / 2};
 
     // Animation loop
     for (int frame = 0; frame < rollFrames; ++frame)
     {
+        UpdateMusicStream(music);
         BeginDrawing();
         ClearBackground(DARKGRAY);
 
         for (int i = 0; i < numDice; ++i)
         {
+            UpdateMusicStream(music);
             std::string face = dice.DiceRoll();
             Rectangle box = {startPos.x + i * (boxSize + spacing), startPos.y, boxSize, boxSize};
 
@@ -1104,13 +1149,23 @@ std::vector<std::string> ShowInTerminal::ShowDiceRollAnimation(Dice &dice, Font 
         }
 
         EndDrawing();
-        WaitTime(0.09); // delay
+
+        
+        float delay = 0.09f;
+        float elapsed = 0.0f;
+        while (elapsed < delay)
+        {
+            float delta = GetFrameTime();
+            elapsed += delta;
+            UpdateMusicStream(music);
+        }
     }
 
     BeginDrawing();
     ClearBackground(DARKBLUE);
     for (int i = 0; i < numDice; ++i)
     {
+        UpdateMusicStream(music);
         resultFaces[i] = dice.DiceRoll();
 
         Rectangle box = {startPos.x + i * (boxSize + spacing), startPos.y, boxSize, boxSize};
@@ -1121,7 +1176,15 @@ std::vector<std::string> ShowInTerminal::ShowDiceRollAnimation(Dice &dice, Font 
         DrawText(resultFaces[i].c_str(), box.x + (boxSize - faceWidth) / 2, box.y + boxSize / 3, fontSize, BLACK);
     }
     EndDrawing();
-    WaitTime(1.0);
+
+    float finalDelay = 1.0f;
+    float finalElapsed = 0.0f;
+    while (finalElapsed < finalDelay)
+    {
+        float delta = GetFrameTime();
+        finalElapsed += delta;
+        UpdateMusicStream(music);
+    }
 
     return resultFaces;
 }
@@ -1141,6 +1204,7 @@ void ShowInTerminal::ShowPopupMessages(Game &game , const std::string message)
     bool waiting = true;
     while (!WindowShouldClose() && waiting)
     {
+        UpdateMusicStream(music);
         BeginDrawing();
 
 
@@ -1287,6 +1351,7 @@ for (int i = 0; i < options.size(); i++) {
 }
 
     while (!WindowShouldClose()) {
+        UpdateMusicStream(music);
         Vector2 mouse = GetMousePosition();
 
         
@@ -1341,7 +1406,10 @@ for (int i = 0; i < options.size(); i++) {
 
 
         BeginDrawing();
-        ClearBackground(BLACK);
+       // ClearBackground(BLACK);
+        Texture2D bg = backgroundTextures["manu"];
+ DrawTexturePro(bg, {0, 0, (float)bg.width, (float)bg.height}, {0, 0, (float)GetScreenWidth(), (float)GetScreenHeight()}, {0, 0}, 0.0f, WHITE);
+
 
         DrawRectangleLines(mapPos.x - 5, mapPos.y - 5, mapW + 10, mapH + 10, DARKGRAY);
         DrawTexturePro(mapTexture,
@@ -1349,7 +1417,7 @@ for (int i = 0; i < options.size(); i++) {
                      {mapPos.x, mapPos.y, mapW, mapH},
                      {0, 0}, 0.0f, WHITE);
 
-        DrawCharactersOnMap(game.heroes, game.Monsters, game.villagers, game.Items, 30, {0, 0});
+        DrawCharactersOnMap(game.heroes, game.Monsters, game.villagers, game.GetItemsInGame(), 30, {0, 0});
         DrawTerrorLevel(game.terrorLevel, font, {8, 484});
 
         if (auto dracula = game.GetDracula())
