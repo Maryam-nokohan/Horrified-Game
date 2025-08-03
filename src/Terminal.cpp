@@ -656,23 +656,23 @@ void ShowInTerminal::ShowExitScreen() {
     int fontSize = 32;
 
 double startTime = GetTime();
-    const float totalDuration = 4.0f;
+    const float totalDuration = 3.0f;
 
     while (!WindowShouldClose()) {
         UpdateMusicStream(music);
         double elapsed = GetTime() - startTime;
         if (elapsed >= totalDuration) break;
 
-        // 🧠 Fade out music over time
+        
         float remaining = (float)(totalDuration - elapsed);
         float volume = Clamp(remaining / totalDuration, 0.0f, 1.0f);
-        SetMusicVolume(music, volume);  // ← این خط ولوم رو کم می‌کنه تدریجی
+        SetMusicVolume(music, volume);
 
         boxScale += (targetScale - boxScale) * 0.1f;
 
         BeginDrawing();
 
-        // پس‌زمینه
+        
         ClearBackground(BLACK);
         if (bg.id != 0) {
             DrawTexturePro(bg,
@@ -681,7 +681,7 @@ double startTime = GetTime();
                 Vector2{ 0, 0 }, 0.0f, WHITE);
         }
 
-        // کادر و متن مثل قبل...
+    
         Rectangle scaledBox = {
             box.x + (box.width * (1 - boxScale)) / 2,
             box.y + (box.height * (1 - boxScale)) / 2,
@@ -1406,8 +1406,8 @@ for (int i = 0; i < options.size(); i++) {
 
 
         BeginDrawing();
-       // ClearBackground(BLACK);
-        Texture2D bg = backgroundTextures["manu"];
+        ClearBackground(BLACK);
+        Texture2D bg = backgroundTextures["menu"];
  DrawTexturePro(bg, {0, 0, (float)bg.width, (float)bg.height}, {0, 0, (float)GetScreenWidth(), (float)GetScreenHeight()}, {0, 0}, 0.0f, WHITE);
 
 
