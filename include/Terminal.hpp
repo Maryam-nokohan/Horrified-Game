@@ -69,6 +69,7 @@ Rectangle locationPopupBounds = { 200, 100, 400, 500 };
   void ShowMonsterPhase( Game & game , std :: shared_ptr<MonsterCard>);
   void DrawLocationItemsPopup(std :: shared_ptr<Location> location);
   void ShowPopupMessages(Game & game ,const std::string lines);
+  void ShowHelpScreen();
   Font GetFont();
 
 };

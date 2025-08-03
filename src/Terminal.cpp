@@ -9,6 +9,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <sstream>
 #include <iomanip>
 #include <cstring>
 #include "raymath.h"
@@ -300,6 +301,122 @@ void ShowInTerminal::ShowMessageBox(const std::string& message) {
     }
 }
 
+void ShowInTerminal::ShowHelpScreen() {
+    Texture2D bg = backgroundTextures["msg"];
+    const int screenWidth = GetScreenWidth();
+    const int screenHeight = GetScreenHeight();
+
+    
+    Color panelColor = { 25, 30, 45, 235 };
+    Color borderColor = { 70, 130, 220, 255 };
+    Color titleColor = { 220, 220, 220, 255 };
+    Color textColor = { 200, 200, 200, 255 };
+    Color buttonColor = { 80, 85, 100, 255 };
+    Color buttonHoverColor = { 100, 110, 130, 255 };
+
+    const char* instructionsText =
+        "Welcome to the Horrified Game! Here are the basics you need to know:\n\n"
+        "1. Goal:\n"
+        "   - Work with the other heroes to defeat the monsters (Dracula, Invisible Man, etc.) by\n"
+        "     completing their objectives (destroying coffins, collecting evidence, etc.).\n"
+        "   - Protect the villagers by guiding them to their safe locations.\n"
+        "   - Prevent the terror level from reaching its maximum.\n\n"
+        "2. Hero Actions:\n"
+        "   - Move: Travel between connected locations.\n"
+        "   - Guide: Move villagers from adjacent locations to your location.\n"
+        "   - Pick Up: Collect available items at your current location.\n"
+        "   - Advance: Perform special tasks like destroying Dracula's coffin.\n"
+        "   - Defeat: Attempt to defeat a monster when in the same location.\n"
+        "   - Use Perks: Play a perk card for special bonuses.\n"
+        "   - Special Action: Perform unique character abilities.\n\n"
+        "3. Monsters:\n"
+        "   - Each monster has unique abilities and special tasks required to defeat them.\n"
+        "   - Monsters move and attack every monster phase.\n\n"
+        "4. Terror Level:\n"
+        "   - The terror level increases when monsters kill heroes or villagers.\n"
+        "   - If the terror level reaches the maximum, you lose the game.\n\n"
+        "5. Win the Game:\n"
+        "   - Complete the objectives for all monsters.\n\n"
+        "Remember:\n"
+        "   - Plan your moves strategically.\n"
+        "   - Protect the villagers.\n"
+        "   - Use your perk cards wisely.\n"
+        "   - Defeat the monsters and save the town!\n\n"
+        "Good luck, hero!";
+
+    
+    std::vector<std::string> lines;
+    std::stringstream ss(instructionsText);
+    std::string line;
+    while (std::getline(ss, line, '\n')) {
+        lines.push_back(line);
+    }
+
+    
+    float padding = 50.0f;
+    Rectangle panelRec = { padding, padding, screenWidth - (padding * 2), screenHeight - (padding * 2) };
+    Rectangle backButtonRec = { screenWidth / 2.0f - 100, panelRec.y + panelRec.height - 60, 200, 45 };
+
+    
+    float scrollY = 0.0f;
+    float textFontSize = 18.0f;
+    float textLineSpacing = 10.0f;
+    float totalTextHeight = lines.size() * (textFontSize + textLineSpacing);
+    Rectangle viewArea = { panelRec.x + 30, panelRec.y + 80, panelRec.width - 60, panelRec.height - 150 };
+
+    bool backClicked = false;
+    while (!WindowShouldClose() && !backClicked) {
+        
+        Vector2 mousePos = GetMousePosition();
+        bool isMouseOverButton = CheckCollisionPointRec(mousePos, backButtonRec);
+
+        if (isMouseOverButton && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+            backClicked = true;
+        }
+
+        
+        float wheelMove = GetMouseWheelMove();
+        if (wheelMove != 0) {
+            scrollY += wheelMove * 20;
+            if (scrollY > 0) scrollY = 0;
+            if (scrollY < viewArea.height - totalTextHeight) scrollY = viewArea.height - totalTextHeight;
+        }
+
+
+        
+        BeginDrawing();
+        ClearBackground(BLACK);
+
+        
+        DrawTexturePro(bg, { 0, 0, (float)bg.width, (float)bg.height }, { 0, 0, (float)screenWidth, (float)screenHeight }, { 0, 0 }, 0.0f, DARKGRAY);
+        DrawRectangleRec(panelRec, panelColor);
+        DrawRectangleLinesEx(panelRec, 3.0f, borderColor);
+
+        
+        const char* titleText = "INSTRUCTIONS";
+        float titleFontSize = 32.0f;
+        Vector2 titleSize = MeasureTextEx(font, titleText, titleFontSize, 2);
+        DrawTextEx(font, titleText, { screenWidth / 2.0f - titleSize.x / 2, panelRec.y + 25 }, titleFontSize, 2, titleColor);
+
+        BeginScissorMode(viewArea.x, viewArea.y, viewArea.width, viewArea.height);
+        
+        float currentY = viewArea.y + scrollY;
+        for (const auto& textLine : lines) {
+            DrawTextEx(font, textLine.c_str(), { viewArea.x, currentY }, textFontSize, 2.0f, textColor);
+            currentY += textFontSize + textLineSpacing;
+        }
+
+        EndScissorMode();
+
+        DrawRectangleRec(backButtonRec, isMouseOverButton ? buttonHoverColor : buttonColor);
+        const char* backText = "Back to Game";
+        float backTextFontSize = 20.0f;
+        Vector2 backTextSize = MeasureTextEx(font, backText, backTextFontSize, 2);
+        DrawTextEx(font, backText, { backButtonRec.x + (backButtonRec.width - backTextSize.x) / 2, backButtonRec.y + (backButtonRec.height - backTextSize.y) / 2 }, backTextFontSize, 2, titleColor);
+
+        EndDrawing();
+    }
+}
 int ShowInTerminal::MenuGenerator(const std::vector<std::string>& options) {
     
     const Color BG_COLOR = { 21, 30, 39, 255 };
@@ -397,45 +514,58 @@ int ShowInTerminal::MenuGenerator(const std::vector<std::string>& options) {
 
     return -1;
 }
-bool ShowInTerminal :: GetPlayerInfo(std::string& name, int& days) {
 
+bool ShowInTerminal::GetPlayerInfo(std::string& name, int& days) {
+    
+    const int screenWidth = GetScreenWidth();
+    const int screenHeight = GetScreenHeight();
+
+    
     Texture2D bg = backgroundTextures["input"];
 
-    std :: string nameInput = "";
-    std :: string daysInput = "";
+    
+    std::string nameInput = "";
+    std::string daysInput = "";
+    std::string errorMsg = "";
 
-    Rectangle nameBox = {200, 180, 400, 40};
-    Rectangle daysBox = {200, 260, 400, 40};
-    Rectangle submitBtn = {430, 350, 120, 40};
-    Rectangle backBtn = {250, 350, 120, 40};
+    
+    Color bgColor = (Color){23, 28, 41, 255};
+    Color textColor = (Color){220, 220, 220, 255};
+    Color boxColor = (Color){40, 45, 60, 255};       
+    Color boxActiveBorderColor = (Color){70, 130, 220, 255};
+    Color btnBackColor = (Color){80, 85, 100, 255};
+    Color btnSubmitColor = (Color){60, 140, 90, 255}; 
+    Color placeholderColor = (Color){150, 150, 150, 255}; 
+
+
+    float formWidth = 450;
+    float formX = (screenWidth - formWidth) / 2.0f;
+
+    Rectangle nameBox = { formX, 240, formWidth, 50 };
+    Rectangle daysBox = { formX, 350, formWidth, 50 };
+    Rectangle backBtn = { formX, 450, 150, 50 };
+    Rectangle submitBtn = { formX + formWidth - 150, 450, 150, 50 };
 
     bool typingName = true;
     bool typingDays = false;
     bool submitClicked = false;
     bool backClicked = false;
-    std::string errorMsg = "";
 
     while (!WindowShouldClose() && !submitClicked && !backClicked) {
+        
         Vector2 mouse = GetMousePosition();
-
-
         int key = GetCharPressed();
-       if (key > 0 && isprint(key)) {
-    if (typingName && nameInput.size() < 30) {
-        nameInput.push_back((char)key);
-    } else if (typingDays && daysInput.size() < 5 && isdigit(key)) {
-        daysInput.push_back((char)key);
-    }
-}
-
-        if (IsKeyPressed(KEY_BACKSPACE)) {
-            if (typingName && !nameInput.empty()) {
-                nameInput.pop_back();
-            } else if (typingDays && !daysInput.empty()) {
-                daysInput.pop_back();
+        if (key > 0 && isprint(key)) {
+            if (typingName && nameInput.size() < 30) {
+                nameInput.push_back((char)key);
+            } else if (typingDays && daysInput.size() < 5 && isdigit(key)) {
+                daysInput.push_back((char)key);
             }
         }
-
+        if (IsKeyPressed(KEY_BACKSPACE)) {
+            if (typingName && !nameInput.empty()) nameInput.pop_back();
+            else if (typingDays && !daysInput.empty()) daysInput.pop_back();
+        }
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
             typingName = CheckCollisionPointRec(mouse, nameBox);
             typingDays = CheckCollisionPointRec(mouse, daysBox);
@@ -443,45 +573,55 @@ bool ShowInTerminal :: GetPlayerInfo(std::string& name, int& days) {
             if (CheckCollisionPointRec(mouse, submitBtn)) {
                 if (nameInput.empty() || daysInput.empty()) {
                     errorMsg = "Both fields must be filled!";
-                } else if(!CheckInt(daysInput)){
-                    errorMsg ="Days must be a number!";
-                }
-                 else {
+                } else if (!CheckInt(daysInput)) {
+                    errorMsg = "Days must be a number!";
+                } else {
                     name = nameInput;
                     days = std::stoi(daysInput);
                     submitClicked = true;
                 }
             }
-
             if (CheckCollisionPointRec(mouse, backBtn)) {
                 backClicked = true;
             }
         }
 
+
         BeginDrawing();
-        ClearBackground(RAYWHITE);
- 
+        ClearBackground(bgColor); 
 
- DrawTexturePro(bg, {0, 0, (float)bg.width, (float)bg.height}, {0, 0, (float)GetScreenWidth(), (float)GetScreenHeight()}, {0, 0}, 0.0f, WHITE);
+    
+        DrawTexturePro(bg, {0, 0, (float)bg.width, (float)bg.height}, {0, 0, (float)screenWidth, (float)screenHeight}, {0, 0}, 0.0f, WHITE);
+
+        
+        float fontSize = 22.0f;
+        float spacing = 2.0f;
+
+    
+        DrawTextEx(font, "Enter your name:", {nameBox.x, nameBox.y - 30}, fontSize, spacing, textColor);
+        DrawRectangleRec(nameBox, boxColor);
+        if (typingName) DrawRectangleLinesEx(nameBox, 2, boxActiveBorderColor); // حاشیه برای کادر فعال
+        DrawTextEx(font, nameInput.empty() ? "Type name..." : nameInput.c_str(), {nameBox.x + 15, nameBox.y + 15}, fontSize, spacing, nameInput.empty() ? placeholderColor : textColor);// لیبل و کادر روزها
+        DrawTextEx(font, "Days since last garlic:", {daysBox.x, daysBox.y - 30}, fontSize, spacing, textColor);
+        DrawRectangleRec(daysBox, boxColor);
+        if (typingDays) DrawRectangleLinesEx(daysBox, 2, boxActiveBorderColor); // حاشیه برای کادر فعال
+        DrawTextEx(font, daysInput.empty() ? "0" : daysInput.c_str(), {daysBox.x + 15, daysBox.y + 15}, fontSize, spacing, daysInput.empty() ? placeholderColor : textColor);
 
 
-        DrawTextEx(font, "Enter your name:", {nameBox.x, nameBox.y - 30}, 20, 2, WHITE);
-        DrawRectangleRec(nameBox, typingName ? LIGHTGRAY : GRAY);
-        DrawText(nameInput.empty() ? "Type name..." : nameInput.c_str() , nameBox.x +5 , nameBox.y + 10, 20, BLACK);
+        const char* backText = "Back";
+        const char* submitText = "Submit";
+        Vector2 backTextSize = MeasureTextEx(font, backText, fontSize, spacing);
+        Vector2 submitTextSize = MeasureTextEx(font, submitText, fontSize, spacing);
 
-        DrawTextEx(font, "Days since last garlic:", {daysBox.x, daysBox.y - 30}, 20, 2, WHITE);
-        DrawRectangleRec(daysBox, typingDays ? LIGHTGRAY : GRAY);
-        DrawText(daysInput.empty() ? "0" : daysInput.c_str() , daysBox.x +5 , daysBox.y + 10, 20, BLACK);
+        DrawRectangleRec(backBtn, btnBackColor);
+        DrawTextEx(font, backText, {backBtn.x + (backBtn.width - backTextSize.x) / 2, backBtn.y + (backBtn.height - backTextSize.y) / 2}, fontSize, spacing, textColor);
 
+        DrawRectangleRec(submitBtn, btnSubmitColor);
+        DrawTextEx(font, submitText, {submitBtn.x + (submitBtn.width - submitTextSize.x) / 2, submitBtn.y + (submitBtn.height - submitTextSize.y) / 2}, fontSize, spacing, textColor);
 
-        DrawRectangleRec(submitBtn, SKYBLUE);
-        DrawText("Submit", submitBtn.x + 20, submitBtn.y + 10, 20, BLACK);
-
-        DrawRectangleRec(backBtn, ORANGE); 
-        DrawText("Back", backBtn.x + 30, backBtn.y + 10, 20, BLACK);
-
+        
         if (!errorMsg.empty()) {
-            DrawTextEx(font , errorMsg.c_str(), {200, 400}, 20 , 2 , RED);
+            DrawTextEx(font, errorMsg.c_str(), {formX, 520}, 20, spacing, RED);
         }
 
         EndDrawing();
