@@ -32,17 +32,19 @@ class ShowInTerminal{
   std::vector<std::string> logMessages;
   const int maxLogLines = 5;
   bool showInventoryPopup = false;
-  Rectangle inventoryPopupBounds = {0 , 0 , 400 , 300};
+  Rectangle inventoryPopupBounds = {0 , 0 , 545 , 450};
+bool showLocationItemsPopup = false;
+std::shared_ptr<Location> clickedLocation = nullptr;
+Rectangle locationPopupBounds = { 200, 100, 400, 500 };
    
   public :
+  Music music;
   ShowInTerminal()= default;
   void ShowMessageBox(const std :: string&);
   void LoadAssets();
   void UnloadAssets();
   void DrawInventoryPopup(std::shared_ptr<Hero> hero);
   std::vector<std::string> ShowDiceRollAnimation(Dice &dice, Font font);
-  void DrawMessageBox(const std :: string& message , bool&);
-  void Enter(bool&);
   int MenuGenerator(const std::vector<std::string>& options);
   bool GetPlayerInfo(std::string& name, int& days);
   void ShowExitScreen();
@@ -66,7 +68,9 @@ class ShowInTerminal{
    // std::vector<std::string> ShowDiceRollAnimation(Dice &dice, Font font);
   int ShowHeroPhase( Game& game, const std::vector<std::string>& options);
   void ShowMonsterPhase( Game & game , std :: shared_ptr<MonsterCard>);
+  void DrawLocationItemsPopup(std :: shared_ptr<Location> location);
   void ShowPopupMessages(Game & game ,const std::string lines);
+  void ShowHelpScreen();
   Font GetFont();
 
 };

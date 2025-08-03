@@ -620,7 +620,9 @@ void Game::HeroPhase()
         // help button
         else if (selected == 7)
         {
-            // Help();
+    
+                MyTerminal.ShowHelpScreen();
+    
         }
         // exit button
         else if (selected == 8)
@@ -634,7 +636,8 @@ void Game::HeroPhase()
         else if (selected == 9)
         {
             MyTerminal.ShowMessageBox("Logging Out ...");
-            exit(0);
+            MyTerminal.ShowExitScreen();
+           exit(0);
         }
         else if (selected == 10)
         {
@@ -715,8 +718,8 @@ void Game::ChooseHero(std::string player1, std::string player2)
     for (const auto &hero : availableHeroes)
         heroNames.push_back(hero->getName());
 
-    MyTerminal.DrawMessageBox(player1 + " , choose your hero.", showMessage);
-    MyTerminal.Enter(showMessage);
+     MyTerminal.ShowMessageBox(player1 + " , choose your hero:");
+   
     int player1Choice = MyTerminal.MenuGenerator(heroNames);
     auto player1Hero = availableHeroes[player1Choice];
     switch (player1Choice)
@@ -804,7 +807,6 @@ void Game::ChooseHero(std::string player1, std::string player2)
         }
     }
     heroPlayer = heroes[0];
-    std ::cout << heroes[0] << "--------------\n";
 }
 void Game::GameStart()
 {
@@ -812,20 +814,26 @@ void Game::GameStart()
     const int screenHeight = 700;
     InitWindow(screenWidth, screenHeight, "Horrified Game");
     SetTargetFPS(60);
-    MyTerminal.LoadAssets();
 
+    InitAudioDevice();
+    MyTerminal.music = LoadMusicStream("../assets/horror.mp3");
+    PlayMusicStream(MyTerminal.music);
+   
     BeginDrawing();
-    ClearBackground(RAYWHITE);
-    DrawText("Loading...", 350, 280, 20, DARKGRAY);
+    ClearBackground(BLACK);
+    DrawText("Loading...", 385, 340, 30, WHITE);
     EndDrawing();
+    MyTerminal.LoadAssets();
     while (true)
     {
-
+        UpdateMusicStream(MyTerminal.music);
         int StartMenuSelected = MyTerminal.MenuGenerator({"Start", "Load Game", "Exit"});
 
         if (StartMenuSelected == 2)
         {
             MyTerminal.ShowExitScreen();
+            UnloadMusicStream(MyTerminal.music);
+            CloseAudioDevice();
             return;
         }
 
@@ -864,6 +872,7 @@ void Game::GameStart()
 
     while (!CheckGameEnd())
     {
+        UpdateMusicStream(MyTerminal.music);
         
         HeroPhase();
         if (!skipMonsterPhase && !CheckGameEnd()) {
@@ -874,67 +883,26 @@ void Game::GameStart()
     }
 
     MyTerminal.UnloadAssets();
+    UnloadMusicStream(MyTerminal.music);
+    CloseAudioDevice();
     CloseWindow();
 }
-
-// MyTerminal.ShowMessageBox(
-//     "======================== HORRIFIED GAME INSTRUCTIONS ========================\n"
-//     "Welcome to the Horrified Game! Here are the basics you need to know:\n\n"
-
-//     "1. Goal:\n"
-//     "   - Work with the other heroes to defeat the monsters (Dracula, Invisible Man, etc.) by\n"
-//     "     completing their objectives (destroying coffins, collecting evidence, defeating monsters, etc.).\n"
-//     "   - Protect the villagers by guiding or moving them to their safe locations.\n"
-//     "   - Prevent the terror level from reaching its maximum.\n\n"
-
-//     "2. Hero Actions:\n"
-//     "   - Move: Travel between connected locations.\n"
-//     "   - Guide: Move villagers from adjacent locations to your location.\n"
-//     "   - Pick Up: Collect available items at your current location.\n"
-//     "   - Advance: Perform special tasks like destroying Dracula's coffin or collecting evidence for the Invisible Man.\n"
-//     "   - Defeat: Attempt to defeat a monster when in the same location.\n"
-//     "   - Use Perks: Play a perk card for special bonuses.\n"
-//     "   - Special Action: Perform unique character abilities.\n"
-//     "   - End Turn: Finish your hero phase.\n\n"
-
-//     "3. Monsters:\n"
-//     "   - Each monster has unique abilities and special tasks required to defeat them.\n"
-//     "   - Monsters move and attack every monster phase, causing terror and defeating heroes and villagers.\n\n"
-
-//     "4. Terror Level:\n"
-//     "   - The terror level increases when monsters kill heroes or villagers.\n"
-//     "   - If the terror level reaches the maximum, you lose the game.\n\n"
-
-//     "5. Win the Game:\n"
-//     "   - Complete the objectives for all monsters.\n"
-//     "   - Maintain a low terror level.\n\n"
-
-//     "Remember:\n"
-//     "   - Plan your moves strategically.\n"
-//     "   - Protect the villagers.\n"
-//     "   - Use your perk cards wisely.\n"
-//     "   - Defeat the monsters and save the town!\n\n"
-
-//     "Good luck, hero!\n"
-//     "==========================================================================\n");
-
-// return;
 
 bool Game::CheckGameEnd()
 {
     if (MonsterDeck.empty() && !Monsters.empty())
     {
-        MyTerminal.ShowMessageBox("💀 Darkness Falls... The town is overrun! The monsters have prevailed.\n");
+        MyTerminal.ShowMessageBox("Darkness Falls... The town is overrun! The monsters have prevailed.\n");
         GameOver = true;
     }
     else if (terrorLevel >= 5)
     {
-        MyTerminal.ShowMessageBox("🩸 Terror Reigns! The townsfolk have lost all hope... Evil claims victory.\n");
+        MyTerminal.ShowMessageBox("Terror Reigns! The townsfolk have lost all hope... Evil claims victory.\n");
         GameOver = true;
     }
     else if (Monsters.empty())
     {
-        MyTerminal.ShowMessageBox("🎉 Victory! The Heroes have vanquished all the monsters!\n");
+        MyTerminal.ShowMessageBox("Victory! The Heroes have vanquished all the monsters!\n");
         GameOver = true;
     }
     if (GameOver)

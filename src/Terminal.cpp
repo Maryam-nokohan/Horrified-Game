@@ -9,6 +9,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <sstream>
 #include <iomanip>
 #include <cstring>
 #include "raymath.h"
@@ -110,7 +111,7 @@ void ShowInTerminal ::LoadAssets()
     backgroundTextures["menu"] = LoadTexture("../assets/Background/Background1.png");
     backgroundTextures["input"] = LoadTexture("../assets/Background/Background2.png");
     backgroundTextures["exit"] = LoadTexture("../assets/Background/Background3.png");
-    backgroundTextures["back"] = LoadTexture("../assets/Background/Background4.jpg");
+    backgroundTextures["msg"] = LoadTexture("../assets/Background/Background4.png");
 
     // Map
     mapTexture = LoadTexture("../assets/map.png");
@@ -146,27 +147,27 @@ void ShowInTerminal ::LoadAssets()
     locationPositions[Hospital] = {210, 497};
     locationPositions[Graveyard] = {328, 488};
 
-    float r = 30.0f;
+float r = 20.0f;
 
-    locationBounds[Cave] = {116.0f - r, 397.0f - r, r * 2, r * 2};
-    locationBounds[Camp] = {377.0f - r, 391.0f - r, r * 2, r * 2};
-    locationBounds[Precinct] = {653.0f - r, 262.0f - r, r * 2, r * 2};
-    locationBounds[Inn] = {937.0f - r, 248.0f - r, r * 2, r * 2};
-    locationBounds[Abbey] = {152.0f - r, 964.0f - r, r * 2, r * 2};
-    locationBounds[Crypt] = {113.0f - r, 1262.0f - r, r * 2, r * 2};
-    locationBounds[Mansion] = {444.0f - r, 851.0f - r, r * 2, r * 2};
-    locationBounds[Theater] = {1052.0f - r, 590.0f - r, r * 2, r * 2};
-    locationBounds[Barn] = {1245.0f - r, 284.0f - r, r * 2, r * 2};
-    locationBounds[Tower] = {1391.0f - r, 557.0f - r, r * 2, r * 2};
-    locationBounds[Dungeon] = {1526.0f - r, 298.0f - r, r * 2, r * 2};
-    locationBounds[Docks] = {1488.0f - r, 862.0f - r, r * 2, r * 2};
-    locationBounds[Institute] = {1344.0f - r, 1482.0f - r, r * 2, r * 2};
-    locationBounds[Laboratory] = {1146.0f - r, 1226.0f - r, r * 2, r * 2};
-    locationBounds[Shop] = {906.0f - r, 1030.0f - r, r * 2, r * 2};
-    locationBounds[Museum] = {377.0f - r, 1237.0f - r, r * 2, r * 2};
-    locationBounds[Church] = {755.0f - r, 1284.0f - r, r * 2, r * 2};
-    locationBounds[Hospital] = {622.0f - r, 1501.0f - r, r * 2, r * 2};
-    locationBounds[Graveyard] = {992.0f - r, 1485.0f - r, r * 2, r * 2};
+locationBounds[Cave] = {43.0f - r, 133.0f - r, 2*r, 2*r};
+locationBounds[Camp] = {123.0f - r, 115.0f - r, 2*r, 2*r};
+locationBounds[Precinct] = {219.0f - r, 104.0f - r, 2*r, 2*r};
+locationBounds[Inn] = {306.0f - r, 89.0f - r, 2*r, 2*r};
+locationBounds[Abbey] = {58.0f - r, 319.0f - r, 2*r, 2*r};
+locationBounds[Crypt] = {40.0f - r, 419.0f - r, 2*r, 2*r};
+locationBounds[Mansion] = {157.0f - r, 277.0f - r, 2*r, 2*r};
+locationBounds[Theater] = {348.0f - r, 198.0f - r, 2*r, 2*r};
+locationBounds[Barn] = {415.0f - r, 101.0f - r, 2*r, 2*r};
+locationBounds[Tower] = {454.0f - r, 191.0f - r, 2*r, 2*r};
+locationBounds[Dungeon] = {502.0f - r, 101.0f - r, 2*r, 2*r};
+locationBounds[Docks] = {488.0f - r, 279.0f - r, 2*r, 2*r};
+locationBounds[Institute] = {443.0f - r, 495.0f - r, 2*r, 2*r};
+locationBounds[Laboratory] = {377.0f - r, 405.0f - r, 2*r, 2*r};
+locationBounds[Shop] = {302.0f - r, 342.0f - r, 2*r, 2*r};
+locationBounds[Museum] = {126.0f - r, 406.0f - r, 2*r, 2*r};
+locationBounds[Church] = {248.0f - r, 431.0f - r, 2*r, 2*r};
+locationBounds[Hospital] = {210.0f - r, 497.0f - r, 2*r, 2*r};
+locationBounds[Graveyard] = {328.0f - r, 488.0f - r, 2*r, 2*r};
 }
 void ShowInTerminal ::UnloadAssets()
 {
@@ -193,79 +194,282 @@ void ShowInTerminal ::UnloadAssets()
     UnloadTexture(coffinIntactTexture);
     UnloadTexture(frenzyMark);
 }
-void ShowInTerminal :: DrawMessageBox(const std :: string& message , bool& showMessage)
-{
-if(showMessage){
-    Rectangle box = { 100, 500, 600, 70 };
 
-    DrawRectangleRounded(box, 0.3f, 12, DARKGRAY);
-    DrawRectangleRoundedLines(box, 0.3f, 12, RAYWHITE);
 
-    int textWidth = MeasureText(message.c_str(), 20);
-    DrawText(message.c_str(), box.x + (box.width - textWidth) / 2, box.y + 25, 20, WHITE);
-}}
-void ShowInTerminal :: Enter(bool& showMessage){
-        
-        if (IsKeyPressed(KEY_ENTER) || IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-            showMessage = false;
-        }
-
-}
 void ShowInTerminal::ShowMessageBox(const std::string& message) {
-    Rectangle box = { 100, 500, 600, 70 };
+\
+    const int windowWidth = 900;
+    const int windowHeight = 700;
+    
+ 
+    const float boxWidth = 600;
+    const float boxHeight = 150;
+    const float boxX = (windowWidth - boxWidth) / 2;
+    const float boxY = (windowHeight - boxHeight) / 2;
+    
+    Rectangle box = { boxX, boxY, boxWidth, boxHeight };
+    
 
+    float boxScale = 0.9f;
+    float targetScale = 1.0f;
+
+    Color boxColor = { 15, 25, 40, 200 }; 
+    Color borderColor = { 0, 220, 255, 255 };
+    Color textColor = { 220, 240, 255, 255 };   
+    Color hintColor = { 150, 200, 220, 200 };   
+    
     bool waiting = true;
     while (!WindowShouldClose() && waiting) {
+        UpdateMusicStream(music);
+        
+        boxScale += (targetScale - boxScale) * 0.1f;
+        
         BeginDrawing();
-        ClearBackground(BLANK);
+        
+        if (backgroundTextures["msg"].id != 0) {
+            DrawTexturePro(backgroundTextures["msg"],
+                         Rectangle{0, 0, (float)backgroundTextures["msg"].width, (float)backgroundTextures["msg"].height},
+                         Rectangle{0, 0, (float)windowWidth, (float)windowHeight},
+                         Vector2{0, 0}, 0.0f, WHITE);
+        } else {
+    
+            DrawRectangleGradientV(0, 0, windowWidth, windowHeight, 
+                                 Color{ 240, 240, 250, 255 }, 
+                                 Color{ 200, 200, 220, 255 });
+        }
+        
+    
+        Rectangle scaledBox = {
+            box.x + (box.width * (1 - boxScale)) / 2,
+            box.y + (box.height * (1 - boxScale)) / 2,
+            box.width * boxScale,
+            box.height * boxScale
+        };
+        
+        
+        DrawRectangleRounded(scaledBox, 0.2f, 16, Fade(boxColor, boxScale));
 
-        DrawRectangleRounded(box, 0.3f, 12, DARKGRAY);
-        DrawRectangleRoundedLines(box, 0.3f, 12, RAYWHITE);
-
-        int textWidth = MeasureText(message.c_str(), 20);
-        DrawText(message.c_str(), box.x + (box.width - textWidth)/2, box.y + 25, 20, WHITE);
-
+        DrawRectangleRoundedLines(scaledBox, 0.2f, 16, Fade(borderColor, boxScale));
+        
+        int fontSize = 24;
+        
+        const float maxTextWidth = boxWidth - 40;
+        Vector2 textSize = MeasureTextEx(font, message.c_str(), fontSize, 1.0f);
+        
+        if (textSize.x > maxTextWidth) {
+            std::string wrappedText;
+            std::string currentLine;
+            std::istringstream iss(message);
+            std::string word;
+            
+            while (iss >> word) {
+                if (MeasureTextEx(font, (currentLine + word).c_str(), fontSize, 1.0f).x < maxTextWidth) {
+                    currentLine += word + " ";
+                } else {
+                    wrappedText += currentLine + "\n";
+                    currentLine = word + " ";
+                }
+            }
+            wrappedText += currentLine;
+            
+            DrawTextEx(font, wrappedText.c_str(), 
+                      Vector2{ scaledBox.x + 20,
+                               scaledBox.y + (scaledBox.height - fontSize * (1 + std::count(wrappedText.begin(), wrappedText.end(), '\n'))) / 2 },
+                      fontSize, 1.0f, Fade(textColor, boxScale));
+        } else {
+            DrawTextEx(font, message.c_str(), 
+                      Vector2{ scaledBox.x + (scaledBox.width - textSize.x) / 2,
+                               scaledBox.y + (scaledBox.height - textSize.y) / 2 },fontSize, 1.0f, Fade(textColor, boxScale)); // استفاده از رنگ متن جدید
+        }
+        
+        if (boxScale > 0.98f) {
+            const char* hintText = "Press ENTER or click to continue...";
+            int hintFontSize = 16;
+            Vector2 hintSize = MeasureTextEx(font, hintText, hintFontSize, 1.0f);
+            DrawTextEx(font, hintText, 
+                       Vector2{ windowWidth/2 - hintSize.x/2, boxY + boxHeight + 20 },
+                       hintFontSize, 1.0f, WHITE);
+        }
+        
         EndDrawing();
-
-        if (IsKeyPressed(KEY_ENTER) || IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
-            waiting = false;
+        
+        if ((IsKeyPressed(KEY_ENTER) || IsMouseButtonPressed(MOUSE_LEFT_BUTTON))) {
+            if (boxScale > 0.98f) {
+                waiting = false;
+            }
+        }
     }
 }
-int ShowInTerminal :: MenuGenerator(const std::vector<std::string>& options) {
-    int selected = -1;
+
+void ShowInTerminal::ShowHelpScreen() {
+    Texture2D bg = backgroundTextures["msg"];
+    const int screenWidth = GetScreenWidth();
+    const int screenHeight = GetScreenHeight();
+
+    
+    Color panelColor = { 25, 30, 45, 235 };
+    Color borderColor = { 70, 130, 220, 255 };
+    Color titleColor = { 220, 220, 220, 255 };
+    Color textColor = { 200, 200, 200, 255 };
+    Color buttonColor = { 80, 85, 100, 255 };
+    Color buttonHoverColor = { 100, 110, 130, 255 };
+
+    const char* instructionsText =
+        "Welcome to the Horrified Game! Here are the basics you need to know:\n\n"
+        "1. Goal:\n"
+        "   - Work with the other heroes to defeat the monsters (Dracula, Invisible Man, etc.) by\n"
+        "     completing their objectives (destroying coffins, collecting evidence, etc.).\n"
+        "   - Protect the villagers by guiding them to their safe locations.\n"
+        "   - Prevent the terror level from reaching its maximum.\n\n"
+        "2. Hero Actions:\n"
+        "   - Move: Travel between connected locations.\n"
+        "   - Guide: Move villagers from adjacent locations to your location.\n"
+        "   - Pick Up: Collect available items at your current location.\n"
+        "   - Advance: Perform special tasks like destroying Dracula's coffin.\n"
+        "   - Defeat: Attempt to defeat a monster when in the same location.\n"
+        "   - Use Perks: Play a perk card for special bonuses.\n"
+        "   - Special Action: Perform unique character abilities.\n\n"
+        "3. Monsters:\n"
+        "   - Each monster has unique abilities and special tasks required to defeat them.\n"
+        "   - Monsters move and attack every monster phase.\n\n"
+        "4. Terror Level:\n"
+        "   - The terror level increases when monsters kill heroes or villagers.\n"
+        "   - If the terror level reaches the maximum, you lose the game.\n\n"
+        "5. Win the Game:\n"
+        "   - Complete the objectives for all monsters.\n\n"
+        "Remember:\n"
+        "   - Plan your moves strategically.\n"
+        "   - Protect the villagers.\n"
+        "   - Use your perk cards wisely.\n"
+        "   - Defeat the monsters and save the town!\n\n"
+        "Good luck, hero!";
+
+    
+    std::vector<std::string> lines;
+    std::stringstream ss(instructionsText);
+    std::string line;
+    while (std::getline(ss, line, '\n')) {
+        lines.push_back(line);
+    }
+
+    
+    float padding = 50.0f;
+    Rectangle panelRec = { padding, padding, screenWidth - (padding * 2), screenHeight - (padding * 2) };
+    Rectangle backButtonRec = { screenWidth / 2.0f - 100, panelRec.y + panelRec.height - 60, 200, 45 };
+
+    
+    float scrollY = 0.0f;
+    float textFontSize = 18.0f;
+    float textLineSpacing = 10.0f;
+    float totalTextHeight = lines.size() * (textFontSize + textLineSpacing);
+    Rectangle viewArea = { panelRec.x + 30, panelRec.y + 80, panelRec.width - 60, panelRec.height - 150 };
+
+    bool backClicked = false;
+    while (!WindowShouldClose() && !backClicked) {
+        UpdateMusicStream(music);
+        
+        Vector2 mousePos = GetMousePosition();
+        bool isMouseOverButton = CheckCollisionPointRec(mousePos, backButtonRec);
+
+        if (isMouseOverButton && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+            backClicked = true;
+        }
+
+        
+        float wheelMove = GetMouseWheelMove();
+        if (wheelMove != 0) {
+            scrollY += wheelMove * 20;
+            if (scrollY > 0) scrollY = 0;
+            if (scrollY < viewArea.height - totalTextHeight) scrollY = viewArea.height - totalTextHeight;
+        }
+
+
+        
+        BeginDrawing();
+        ClearBackground(BLACK);
+
+        
+        DrawTexturePro(bg, { 0, 0, (float)bg.width, (float)bg.height }, { 0, 0, (float)screenWidth, (float)screenHeight }, { 0, 0 }, 0.0f, DARKGRAY);
+        DrawRectangleRec(panelRec, panelColor);
+        DrawRectangleLinesEx(panelRec, 3.0f, borderColor);
+
+        
+        const char* titleText = "INSTRUCTIONS";
+        float titleFontSize = 32.0f;
+        Vector2 titleSize = MeasureTextEx(font, titleText, titleFontSize, 2);
+        DrawTextEx(font, titleText, { screenWidth / 2.0f - titleSize.x / 2, panelRec.y + 25 }, titleFontSize, 2, titleColor);
+
+        BeginScissorMode(viewArea.x, viewArea.y, viewArea.width, viewArea.height);
+        
+        float currentY = viewArea.y + scrollY;
+        for (const auto& textLine : lines) {
+            DrawTextEx(font, textLine.c_str(), { viewArea.x, currentY }, textFontSize, 2.0f, textColor);
+            currentY += textFontSize + textLineSpacing;
+        }
+
+        EndScissorMode();
+
+        DrawRectangleRec(backButtonRec, isMouseOverButton ? buttonHoverColor : buttonColor);
+        const char* backText = "Back to Game";
+        float backTextFontSize = 20.0f;
+        Vector2 backTextSize = MeasureTextEx(font, backText, backTextFontSize, 2);
+        DrawTextEx(font, backText, { backButtonRec.x + (backButtonRec.width - backTextSize.x) / 2, backButtonRec.y + (backButtonRec.height - backTextSize.y) / 2 }, backTextFontSize, 2, titleColor);
+
+        EndDrawing();
+    }
+}
+int ShowInTerminal::MenuGenerator(const std::vector<std::string>& options) {
+    
+    const Color BG_COLOR = { 21, 30, 39, 255 };
+    const Color BUTTON_COLOR = { 70, 85, 105, 255 };
+    const Color BUTTON_BORDER_COLOR = { 100, 120, 140, 255 };
+    const Color HOVER_COLOR = { 120, 145, 175, 255 };
+    const Color TEXT_COLOR = { 230, 230, 230, 255 };
+
     Texture2D bg = backgroundTextures["menu"];
     Font& font = this->font;
 
-    const float buttonWidth = 160;
-    const float buttonHeight = 40;
+    const float buttonWidth = 200;
+    const float buttonHeight = 50;
     const float spacing = 20;
-    const float totalHeight = options.size() * buttonHeight + (options.size() - 1) * spacing;
+    const int maxButtonsPerColumn = 10;
+
+    int numColumns = 1;
+    if (options.size() > maxButtonsPerColumn) {
+        numColumns = 2;
+    }
+
+    int numRows = (numColumns == 1) ? options.size() : static_cast<int>(ceil(options.size() / 2.0));
+
+    const float totalHeight = numRows * buttonHeight + (numRows > 1 ? (numRows - 1) * spacing : 0);
     const float startY = (GetScreenHeight() - totalHeight) / 2;
 
-    Rectangle optionRects[options.size()];
+    std::vector<Rectangle> optionRects(options.size());
+
     for (int i = 0; i < options.size(); i++) {
-        float x = (GetScreenWidth() - buttonWidth) / 2;
-        float y = startY + i * (buttonHeight + spacing);
+        float x, y;
+        if (numColumns == 1) {
+            x = (GetScreenWidth() - buttonWidth) / 2.0f;
+            y = startY + i * (buttonHeight + spacing);
+        } else {
+            int column = i / numRows;
+            int row = i % numRows;
+
+            float column1_x = (GetScreenWidth() / 2.0f) - buttonWidth - (spacing / 2.0f);
+            float column2_x = (GetScreenWidth() / 2.0f) + (spacing / 2.0f);
+
+            x = (column == 0) ? column1_x : column2_x;
+            y = startY + row * (buttonHeight + spacing);
+        }
         optionRects[i] = { x, y, buttonWidth, buttonHeight };
     }
 
+
     while (!WindowShouldClose()) {
+        UpdateMusicStream(music);
         Vector2 mouse = GetMousePosition();
 
-        BeginDrawing();
-        ClearBackground(RAYWHITE);
-        DrawTexturePro(bg, {0, 0, (float)bg.width, (float)bg.height}, {0, 0, (float)GetScreenWidth(), (float)GetScreenHeight()}, {0, 0}, 0.0f, WHITE);
-
-        for (int i = 0; i < options.size(); i++) {
-            bool hovered = CheckCollisionPointRec(mouse, optionRects[i]);
-            DrawRectangleRounded(optionRects[i], 0.3f, 10, hovered ? LIGHTGRAY : BEIGE);
-
-            int textWidth = MeasureText(options[i].c_str(), 20);
-            DrawText(options[i].c_str(), optionRects[i].x + (buttonWidth - textWidth)/2, optionRects[i].y + 10, 20, BLACK);
-        }
-
-
-        EndDrawing();
+    
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
             for (int i = 0; i < options.size(); i++) {
                 if (CheckCollisionPointRec(mouse, optionRects[i])) {
@@ -273,50 +477,98 @@ int ShowInTerminal :: MenuGenerator(const std::vector<std::string>& options) {
                 }
             }
         }
+
+        BeginDrawing();
+        ClearBackground(BG_COLOR);
+        
+        DrawTexturePro(bg, {0, 0, (float)bg.width, (float)bg.height}, {0, 0, (float)GetScreenWidth(), (float)GetScreenHeight()}, {0, 0}, 0.0f, WHITE);
+
+        for (int i = 0; i < options.size(); i++) {
+            bool hovered = CheckCollisionPointRec(mouse, optionRects[i]);
+
+            
+            DrawRectangleRounded(optionRects[i], 0.2f, 10, hovered ? HOVER_COLOR : BUTTON_COLOR);
+            DrawRectangleRoundedLines(optionRects[i], 0.2f, 10, hovered ? SKYBLUE : BUTTON_BORDER_COLOR);
+
+
+            float fontSize = 20.0f;
+            const float textPadding = 15.0f;
+            Vector2 textSize;
+
+            
+            do {
+                textSize = MeasureTextEx(font, options[i].c_str(), fontSize, 1);
+                if (textSize.x > buttonWidth - textPadding) {
+                    fontSize -= 1.0f;
+                }
+            } while (textSize.x > buttonWidth - textPadding && fontSize > 8);
+
+            
+            float textX = optionRects[i].x + (optionRects[i].width - textSize.x) / 2;
+            float textY = optionRects[i].y + (optionRects[i].height - textSize.y) / 2;
+
+            
+            DrawTextEx(font, options[i].c_str(), {textX, textY}, fontSize, 1, TEXT_COLOR);
+        }
+
+        EndDrawing();
     }
 
     return -1;
 }
 
-bool ShowInTerminal :: GetPlayerInfo(std::string& name, int& days) {
+bool ShowInTerminal::GetPlayerInfo(std::string& name, int& days) {
+    
+    const int screenWidth = GetScreenWidth();
+    const int screenHeight = GetScreenHeight();
 
+    
     Texture2D bg = backgroundTextures["input"];
 
-    std :: string nameInput = "";
-    std :: string daysInput = "";
+    
+    std::string nameInput = "";
+    std::string daysInput = "";
+    std::string errorMsg = "";
 
-    Rectangle nameBox = {200, 180, 400, 40};
-    Rectangle daysBox = {200, 260, 400, 40};
-    Rectangle submitBtn = {430, 350, 120, 40};
-    Rectangle backBtn = {250, 350, 120, 40};
+    
+    Color bgColor = (Color){23, 28, 41, 255};
+    Color textColor = (Color){220, 220, 220, 255};
+    Color boxColor = (Color){40, 45, 60, 255};       
+    Color boxActiveBorderColor = (Color){70, 130, 220, 255};
+    Color btnBackColor = (Color){80, 85, 100, 255};
+    Color btnSubmitColor = (Color){60, 140, 90, 255}; 
+    Color placeholderColor = (Color){150, 150, 150, 255}; 
+
+
+    float formWidth = 450;
+    float formX = (screenWidth - formWidth) / 2.0f;
+
+    Rectangle nameBox = { formX, 240, formWidth, 50 };
+    Rectangle daysBox = { formX, 350, formWidth, 50 };
+    Rectangle backBtn = { formX, 450, 150, 50 };
+    Rectangle submitBtn = { formX + formWidth - 150, 450, 150, 50 };
 
     bool typingName = true;
     bool typingDays = false;
     bool submitClicked = false;
     bool backClicked = false;
-    std::string errorMsg = "";
 
     while (!WindowShouldClose() && !submitClicked && !backClicked) {
+        UpdateMusicStream(music);
+        
         Vector2 mouse = GetMousePosition();
-
-
         int key = GetCharPressed();
-       if (key > 0 && isprint(key)) {
-    if (typingName && nameInput.size() < 30) {
-        nameInput.push_back((char)key);
-    } else if (typingDays && daysInput.size() < 5 && isdigit(key)) {
-        daysInput.push_back((char)key);
-    }
-}
-
-        if (IsKeyPressed(KEY_BACKSPACE)) {
-            if (typingName && !nameInput.empty()) {
-                nameInput.pop_back();
-            } else if (typingDays && !daysInput.empty()) {
-                daysInput.pop_back();
+        if (key > 0 && isprint(key)) {
+            if (typingName && nameInput.size() < 30) {
+                nameInput.push_back((char)key);
+            } else if (typingDays && daysInput.size() < 5 && isdigit(key)) {
+                daysInput.push_back((char)key);
             }
         }
-
+        if (IsKeyPressed(KEY_BACKSPACE)) {
+            if (typingName && !nameInput.empty()) nameInput.pop_back();
+            else if (typingDays && !daysInput.empty()) daysInput.pop_back();
+        }
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
             typingName = CheckCollisionPointRec(mouse, nameBox);
             typingDays = CheckCollisionPointRec(mouse, daysBox);
@@ -324,45 +576,55 @@ bool ShowInTerminal :: GetPlayerInfo(std::string& name, int& days) {
             if (CheckCollisionPointRec(mouse, submitBtn)) {
                 if (nameInput.empty() || daysInput.empty()) {
                     errorMsg = "Both fields must be filled!";
-                } else if(!CheckInt(daysInput)){
-                    errorMsg ="Days must be a number!";
-                }
-                 else {
+                } else if (!CheckInt(daysInput)) {
+                    errorMsg = "Days must be a number!";
+                } else {
                     name = nameInput;
                     days = std::stoi(daysInput);
                     submitClicked = true;
                 }
             }
-
             if (CheckCollisionPointRec(mouse, backBtn)) {
                 backClicked = true;
             }
         }
 
+
         BeginDrawing();
-        ClearBackground(RAYWHITE);
- 
+        ClearBackground(bgColor); 
 
- DrawTexturePro(bg, {0, 0, (float)bg.width, (float)bg.height}, {0, 0, (float)GetScreenWidth(), (float)GetScreenHeight()}, {0, 0}, 0.0f, WHITE);
+    
+        DrawTexturePro(bg, {0, 0, (float)bg.width, (float)bg.height}, {0, 0, (float)screenWidth, (float)screenHeight}, {0, 0}, 0.0f, WHITE);
+
+        
+        float fontSize = 22.0f;
+        float spacing = 2.0f;
+
+    
+        DrawTextEx(font, "Enter your name:", {nameBox.x, nameBox.y - 30}, fontSize, spacing, textColor);
+        DrawRectangleRec(nameBox, boxColor);
+        if (typingName) DrawRectangleLinesEx(nameBox, 2, boxActiveBorderColor); // حاشیه برای کادر فعال
+        DrawTextEx(font, nameInput.empty() ? "Type name..." : nameInput.c_str(), {nameBox.x + 15, nameBox.y + 15}, fontSize, spacing, nameInput.empty() ? placeholderColor : textColor);// لیبل و کادر روزها
+        DrawTextEx(font, "Days since last garlic:", {daysBox.x, daysBox.y - 30}, fontSize, spacing, textColor);
+        DrawRectangleRec(daysBox, boxColor);
+        if (typingDays) DrawRectangleLinesEx(daysBox, 2, boxActiveBorderColor); // حاشیه برای کادر فعال
+        DrawTextEx(font, daysInput.empty() ? "0" : daysInput.c_str(), {daysBox.x + 15, daysBox.y + 15}, fontSize, spacing, daysInput.empty() ? placeholderColor : textColor);
 
 
-        DrawTextEx(font, "Enter your name:", {nameBox.x, nameBox.y - 30}, 20, 2, WHITE);
-        DrawRectangleRec(nameBox, typingName ? LIGHTGRAY : GRAY);
-        DrawText(nameInput.empty() ? "Type name..." : nameInput.c_str() , nameBox.x +5 , nameBox.y + 10, 20, BLACK);
+        const char* backText = "Back";
+        const char* submitText = "Submit";
+        Vector2 backTextSize = MeasureTextEx(font, backText, fontSize, spacing);
+        Vector2 submitTextSize = MeasureTextEx(font, submitText, fontSize, spacing);
 
-        DrawTextEx(font, "Days since last garlic:", {daysBox.x, daysBox.y - 30}, 20, 2, WHITE);
-        DrawRectangleRec(daysBox, typingDays ? LIGHTGRAY : GRAY);
-        DrawText(daysInput.empty() ? "0" : daysInput.c_str() , daysBox.x +5 , daysBox.y + 10, 20, BLACK);
+        DrawRectangleRec(backBtn, btnBackColor);
+        DrawTextEx(font, backText, {backBtn.x + (backBtn.width - backTextSize.x) / 2, backBtn.y + (backBtn.height - backTextSize.y) / 2}, fontSize, spacing, textColor);
 
+        DrawRectangleRec(submitBtn, btnSubmitColor);
+        DrawTextEx(font, submitText, {submitBtn.x + (submitBtn.width - submitTextSize.x) / 2, submitBtn.y + (submitBtn.height - submitTextSize.y) / 2}, fontSize, spacing, textColor);
 
-        DrawRectangleRec(submitBtn, SKYBLUE);
-        DrawText("Submit", submitBtn.x + 20, submitBtn.y + 10, 20, BLACK);
-
-        DrawRectangleRec(backBtn, ORANGE); 
-        DrawText("Back", backBtn.x + 30, backBtn.y + 10, 20, BLACK);
-
+        
         if (!errorMsg.empty()) {
-            DrawTextEx(font , errorMsg.c_str(), {200, 400}, 20 , 2 , RED);
+            DrawTextEx(font, errorMsg.c_str(), {formX, 520}, 20, spacing, RED);
         }
 
         EndDrawing();
@@ -370,43 +632,82 @@ bool ShowInTerminal :: GetPlayerInfo(std::string& name, int& days) {
 
     return submitClicked;
 }
-void ShowInTerminal:: ShowExitScreen() {
-    
-    Texture2D bg = backgroundTextures["exit"] ;
+void ShowInTerminal::ShowExitScreen() {
+
     const int screenWidth = GetScreenWidth();
     const int screenHeight = GetScreenHeight();
 
-    double startTime = GetTime();
+    Texture2D bg = backgroundTextures["exit"];
+
+    const float boxWidth = 600;
+    const float boxHeight = 180;
+    const float boxX = (screenWidth - boxWidth) / 2;
+    const float boxY = (screenHeight - boxHeight) / 2;
+
+    Rectangle box = { boxX, boxY, boxWidth, boxHeight };
+
+    float boxScale = 0.9f;
+    float targetScale = 1.0f;
+    Color boxColor = { 15, 25, 40, 200 }; 
+    Color borderColor = { 0, 220, 255, 255 };
+    Color textColor = { 220, 240, 255, 255 };   
+
+    const std::string message = "THE DARKNESS AWAITS YOU...";
+    int fontSize = 32;
+
+double startTime = GetTime();
+    const float totalDuration = 4.0f;
 
     while (!WindowShouldClose()) {
+        UpdateMusicStream(music);
         double elapsed = GetTime() - startTime;
+        if (elapsed >= totalDuration) break;
 
-        if (elapsed >= 4.0) break;
+        // 🧠 Fade out music over time
+        float remaining = (float)(totalDuration - elapsed);
+        float volume = Clamp(remaining / totalDuration, 0.0f, 1.0f);
+        SetMusicVolume(music, volume);  // ← این خط ولوم رو کم می‌کنه تدریجی
+
+        boxScale += (targetScale - boxScale) * 0.1f;
 
         BeginDrawing();
+
+        // پس‌زمینه
         ClearBackground(BLACK);
+        if (bg.id != 0) {
+            DrawTexturePro(bg,
+                Rectangle{ 0, 0, (float)bg.width, (float)bg.height },
+                Rectangle{ 0, 0, (float)screenWidth, (float)screenHeight },
+                Vector2{ 0, 0 }, 0.0f, WHITE);
+        }
 
-
-        DrawTexturePro(bg,
-            {0, 0, (float)bg.width, (float)bg.height},
-            {0, 0, (float)screenWidth, (float)screenHeight},
-            {0, 0}, 0.0f, WHITE);
-
-    
-        std::string msg = "THE DARKNESS AWAITS YOU...";
-        Vector2 textSize = MeasureTextEx(font, msg.c_str(), 36, 2);
-        Vector2 pos = {
-            (screenWidth - textSize.x) / 2,
-            (screenHeight - textSize.y) / 2
+        // کادر و متن مثل قبل...
+        Rectangle scaledBox = {
+            box.x + (box.width * (1 - boxScale)) / 2,
+            box.y + (box.height * (1 - boxScale)) / 2,
+            box.width * boxScale,
+            box.height * boxScale
         };
 
-        
-            DrawTextEx(font, msg.c_str(), pos, 36, 2, RED);
+        DrawRectangleRounded(scaledBox, 0.2f, 16, Fade(boxColor, boxScale));
+        DrawRectangleRoundedLines(scaledBox, 0.2f, 16, Fade(borderColor, boxScale));
+
+        Vector2 textSize = MeasureTextEx(font, message.c_str(), fontSize, 1.0f);
+        Vector2 textPos = {
+            scaledBox.x + (scaledBox.width - textSize.x) / 2,
+            scaledBox.y + (scaledBox.height - textSize.y) / 2
+        };
+
+        if (boxScale > 0.98f) {
+            float shake = sin(GetTime() * 20) * 2.0f;
+            textPos.x += shake;
+        }
+
+        DrawTextEx(font, message.c_str(), textPos, fontSize, 1.0f, Fade(textColor, boxScale));
 
         EndDrawing();
     }
 }
-
 void ShowInTerminal :: DrawTerrorLevel(int terrorLevel, Font font, Vector2 position) {
     
     std::string label = "Terror Level: " + std::to_string(terrorLevel);
@@ -534,7 +835,7 @@ void ShowInTerminal::DrawInvisibleManMat(const std::vector<std::pair<bool, std::
     Vector2 titleSize = MeasureTextEx(font, title, titleFontSize, 1);
     DrawTextEx(font, title, 
               {startPos.x + (cellWidth - titleSize.x)/2, startPos.y - 25}, 
-              titleFontSize, 1, GOLD);
+              titleFontSize, 1, BLUE);
 
     float availableHeight = GetScreenHeight() - startPos.y - 30;
     int maxVisibleRows = std::floor(availableHeight / cellHeight);
@@ -824,16 +1125,19 @@ std::vector<std::string> ShowInTerminal::ShowDiceRollAnimation(Dice &dice, Font 
     const float fontSize = 48;
 
     std::vector<std::string> resultFaces(numDice);
-    Vector2 startPos = {(float)GetScreenWidth() / 2 - (numDice * boxSize + (numDice - 1) * spacing) / 2, (float)GetScreenHeight() / 2 - boxSize / 2};
+    Vector2 startPos = {(float)GetScreenWidth() / 2 - (numDice * boxSize + (numDice - 1) * spacing) / 2,
+                        (float)GetScreenHeight() / 2 - boxSize / 2};
 
     // Animation loop
     for (int frame = 0; frame < rollFrames; ++frame)
     {
+        UpdateMusicStream(music);
         BeginDrawing();
         ClearBackground(DARKGRAY);
 
         for (int i = 0; i < numDice; ++i)
         {
+            UpdateMusicStream(music);
             std::string face = dice.DiceRoll();
             Rectangle box = {startPos.x + i * (boxSize + spacing), startPos.y, boxSize, boxSize};
 
@@ -845,13 +1149,23 @@ std::vector<std::string> ShowInTerminal::ShowDiceRollAnimation(Dice &dice, Font 
         }
 
         EndDrawing();
-        WaitTime(0.09); // delay
+
+        
+        float delay = 0.09f;
+        float elapsed = 0.0f;
+        while (elapsed < delay)
+        {
+            float delta = GetFrameTime();
+            elapsed += delta;
+            UpdateMusicStream(music);
+        }
     }
 
     BeginDrawing();
     ClearBackground(DARKBLUE);
     for (int i = 0; i < numDice; ++i)
     {
+        UpdateMusicStream(music);
         resultFaces[i] = dice.DiceRoll();
 
         Rectangle box = {startPos.x + i * (boxSize + spacing), startPos.y, boxSize, boxSize};
@@ -862,7 +1176,15 @@ std::vector<std::string> ShowInTerminal::ShowDiceRollAnimation(Dice &dice, Font 
         DrawText(resultFaces[i].c_str(), box.x + (boxSize - faceWidth) / 2, box.y + boxSize / 3, fontSize, BLACK);
     }
     EndDrawing();
-    WaitTime(1.0);
+
+    float finalDelay = 1.0f;
+    float finalElapsed = 0.0f;
+    while (finalElapsed < finalDelay)
+    {
+        float delta = GetFrameTime();
+        finalElapsed += delta;
+        UpdateMusicStream(music);
+    }
 
     return resultFaces;
 }
@@ -882,6 +1204,7 @@ void ShowInTerminal::ShowPopupMessages(Game &game , const std::string message)
     bool waiting = true;
     while (!WindowShouldClose() && waiting)
     {
+        UpdateMusicStream(music);
         BeginDrawing();
 
 
@@ -949,123 +1272,204 @@ void ShowInTerminal::DrawInventoryPopup(std::shared_ptr<Hero> hero) {
     DrawRectangleRounded(closeBtn, 0.2f, 4, RED);
     DrawTextEx(font, "X", {closeBtn.x + 8, closeBtn.y + 4}, 24, 1, WHITE);
 }
+void ShowInTerminal::DrawLocationItemsPopup(std::shared_ptr<Location> location) {
+    if (!location) return;
+
+    // Draw the semi-transparent background
+    DrawRectangleRec(locationPopupBounds, Fade(BLACK, 0.9f));
+    DrawRectangleLinesEx(locationPopupBounds, 3, SKYBLUE);
+
+    const float padding = 15.0f;
+    const float columnSpacing = 200.0f;
+    const float iconSize = 32.0f;
+    const float itemSpacing = 40.0f;
+    const int maxItemsPerColumn = (int)((locationPopupBounds.height - 2 * padding - 40) / itemSpacing);
+
+    float xStart = locationPopupBounds.x + padding;
+    float yStart = locationPopupBounds.y + padding;
+
+    int fontSize = 20;
+
+    // Title of the popup
+    std::string title = "Items at " + location->GetCityName();
+    DrawTextEx(font, title.c_str(), {xStart, yStart}, fontSize, 1, GOLD);
+    yStart += fontSize + 20;
+
+    const auto& items = location->GetItems();
+    if (items.empty()) {
+        DrawTextEx(font, "No items found at this location.", {xStart, yStart}, fontSize, 1, LIGHTGRAY);
+    } else {
+        for (size_t i = 0; i < items.size(); i++) {
+            int col = i / maxItemsPerColumn;
+            int row = i % maxItemsPerColumn;
+
+            float x = xStart + col * columnSpacing;
+            float y = yStart + row * itemSpacing;
+
+            // Check if texture exists before trying to draw it
+            if (itemTextures.count(items[i]->getName())) {
+                Texture2D icon = itemTextures[items[i]->getName()];
+                DrawTexturePro(icon,
+                    {0, 0, (float)icon.width, (float)icon.height},
+                    {x, y, iconSize, iconSize},
+                    {0, 0}, 0.0f, WHITE);
+            }
+
+            std::string itemText = items[i]->getName() + " (" + std::to_string(items[i]->getPower()) + ")";
+            DrawTextEx(font, itemText.c_str(), {x + iconSize + 10, y + 4}, fontSize, 1, WHITE);
+        }
+    }
+
+    // Close Button
+    Rectangle closeBtn = {locationPopupBounds.x + locationPopupBounds.width - 40, locationPopupBounds.y + 10, 30, 30};
+    DrawRectangleRounded(closeBtn, 0.2f, 4, RED);
+    DrawTextEx(font, "X", {closeBtn.x + 8, closeBtn.y + 4}, 24, 1, WHITE);
+}
+
 int ShowInTerminal::ShowHeroPhase(Game& game, const std::vector<std::string>& options) {
     int selected = -1;
-
 
     float mapW = 545;
     float mapH = 542;
     Vector2 mapPos = {0, 0};
 
-    
-    const int buttonsPerRow = 6 ;
+    const int buttonsPerRow = 6;
     const float buttonWidth = 130;
     const float buttonHeight = 35;
     const float spacing = 10;
     const Color buttonColor = {100, 140, 255, 255};
     const Color hoverColor = {130, 170, 255, 255};
 
-    Rectangle optionRects[options.size()];
+Rectangle optionRects[options.size()];
 for (int i = 0; i < options.size(); i++) {
-    int row = (i < 6) ? 0 : 1;
-    int col = (i < 6) ? i : i - 6;
-
-    int colsThisRow = (row == 0) ? 6 : 5;
-
-    float totalWidth = colsThisRow * buttonWidth + (colsThisRow - 1) * spacing;
+    int row = i / 6; 
+    int col = i % 6; 
+    float totalWidth = 6 * buttonWidth + (6 - 1) * spacing;
     float x = (GetScreenWidth() - totalWidth) / 2 + col * (buttonWidth + spacing);
     float y = GetScreenHeight() - 120 + row * (buttonHeight + spacing);
-
     optionRects[i] = {x, y, buttonWidth, buttonHeight};
 }
 
     while (!WindowShouldClose()) {
+        UpdateMusicStream(music);
         Vector2 mouse = GetMousePosition();
 
-        BeginDrawing();
-        ClearBackground(BLACK);
+        
+        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+            
+            if (showLocationItemsPopup) {
+                Rectangle closeBtn = {locationPopupBounds.x + locationPopupBounds.width - 40, locationPopupBounds.y + 10, 30, 30};
+                if (CheckCollisionPointRec(mouse, closeBtn)) {
+                    showLocationItemsPopup = false;
+                    clickedLocation = nullptr;
+                }
+            }
+            
+            else if (showInventoryPopup) {
+                 Rectangle closeBtn = {inventoryPopupBounds.x + inventoryPopupBounds.width - 40, inventoryPopupBounds.y + 10, 30, 30};
+                 if (CheckCollisionPointRec(mouse, closeBtn)) {
+                    showInventoryPopup = false;
+                 }
+            }
+            
+            else {
+                bool buttonClicked = false;
+                for (int i = 0; i < options.size(); i++) {
+                    if (CheckCollisionPointRec(mouse, optionRects[i])) {
+                        selected = i;
+                        buttonClicked = true;
+                        break; 
+                    }
+                }
+
+                if (buttonClicked) {
+                    return selected;
+                }
+
+                
+                for (auto const& [name, bounds] : locationBounds) {
+                    if (CheckCollisionPointRec(mouse, bounds)) {
+                        clickedLocation = game.getMapPlan().GetLocationptr(name);
+                        showLocationItemsPopup = true;
+                        break;
+                    }
+                }
+            }
+        }
 
         
+        if (IsKeyPressed(KEY_ESCAPE)) {
+            showInventoryPopup = false;
+            showLocationItemsPopup = false;
+            clickedLocation = nullptr;
+        }
+
+
+        BeginDrawing();
+       // ClearBackground(BLACK);
+        Texture2D bg = backgroundTextures["manu"];
+ DrawTexturePro(bg, {0, 0, (float)bg.width, (float)bg.height}, {0, 0, (float)GetScreenWidth(), (float)GetScreenHeight()}, {0, 0}, 0.0f, WHITE);
+
+
         DrawRectangleLines(mapPos.x - 5, mapPos.y - 5, mapW + 10, mapH + 10, DARKGRAY);
         DrawTexturePro(mapTexture,
                      {0, 0, (float)mapTexture.width, (float)mapTexture.height},
                      {mapPos.x, mapPos.y, mapW, mapH},
                      {0, 0}, 0.0f, WHITE);
 
-        
-        DrawCharactersOnMap(game.heroes,
-                          game.Monsters,
-                          game.villagers,
-                          game.GetItemsInGame(),
-                          30, {0, 0});
-
-        
+        DrawCharactersOnMap(game.heroes, game.Monsters, game.villagers, game.GetItemsInGame(), 30, {0, 0});
         DrawTerrorLevel(game.terrorLevel, font, {8, 484});
-        
-if (auto dracula = game.GetDracula())
-    DrawDraculaMat(game, {(float)GetScreenWidth() - 165.0f , 40.0f });
 
-if (auto invisible = game.GetInvisibleMan()) {
-    Vector2 inMatPos = {(float)GetScreenWidth() - 330.0f, 40.0f};
-    DrawInvisibleManMat(invisible->GetEvidence(), font, inMatPos);
+        if (auto dracula = game.GetDracula())
+            DrawDraculaMat(game, {(float)GetScreenWidth() - 165.0f , 40.0f });
+            if (auto invisible = game.GetInvisibleMan()) {
+            Vector2 inMatPos = {(float)GetScreenWidth() - 330.0f, 40.0f};
+            DrawInvisibleManMat(invisible->GetEvidence(), font, inMatPos);
 
-    Rectangle inventoryClickZone = {0};
-    if (game.heroPlayer)
-        DrawHeroInfo(game.heroPlayer, font, {inMatPos.x, inMatPos.y + 50.0f * (float)invisible->GetEvidence().size() + 40.0f} , &inventoryClickZone);
-    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) &&
-    CheckCollisionPointRec(GetMousePosition(), inventoryClickZone)) {
-    showInventoryPopup = true;
-}
-}
-
-if (game.heroPlayer && game.heroPlayer->PeekPerkCard()) {
-    Vector2 perkCardPos = {(float)GetScreenWidth() - 165.0f, 301.0f};
-    DrawPerkCard(game.heroPlayer->PeekPerkCard(), font, perkCardPos);
-}
-
-        
-        for (int i = 0; i < options.size(); i++) {
-            bool hover = CheckCollisionPointRec(mouse, optionRects[i]);
-            DrawRectangleRounded(optionRects[i], 0.3f, 8, hover ? hoverColor : buttonColor);
-            
-            const char* text = options[i].c_str();
-            int fontSize = 18;
-            int tw = MeasureText(text, fontSize);
-            
-            while (tw > buttonWidth - 10 && fontSize > 12) {
-                fontSize--;
-                tw = MeasureText(text, fontSize);
+            Rectangle inventoryClickZone = {0};
+            if (game.heroPlayer)
+                DrawHeroInfo(game.heroPlayer, font, {inMatPos.x, inMatPos.y + 50.0f * (float)invisible->GetEvidence().size() + 40.0f} , &inventoryClickZone);
+            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && CheckCollisionPointRec(GetMousePosition(), inventoryClickZone)) {
+                showInventoryPopup = true;
             }
-        Vector2 textSize = MeasureTextEx(font, text, fontSize, 1);
-            DrawTextEx(font, text, 
-           {optionRects[i].x + (buttonWidth - textSize.x) / 2,
-            optionRects[i].y + (buttonHeight - textSize.y) / 2},
-           fontSize, 1, WHITE);
         }
+
+        if (game.heroPlayer && game.heroPlayer->PeekPerkCard()) {
+            Vector2 perkCardPos = {(float)GetScreenWidth() - 165.0f, 301.0f};
+            DrawPerkCard(game.heroPlayer->PeekPerkCard(), font, perkCardPos);
+        }
+
+        
+        if (!showInventoryPopup && !showLocationItemsPopup) {
+            for (int i = 0; i < options.size(); i++) {
+                bool hover = CheckCollisionPointRec(mouse, optionRects[i]);
+                DrawRectangleRounded(optionRects[i], 0.3f, 8, hover ? hoverColor : buttonColor);
+
+                const char* text = options[i].c_str();
+                int fontSize = 18;
+                int tw = MeasureText(text, fontSize);
+                while (tw > buttonWidth - 10 && fontSize > 12) {
+                    fontSize--;
+                    tw = MeasureText(text, fontSize);
+                }
+                Vector2 textSize = MeasureTextEx(font, text, fontSize, 1);
+                DrawTextEx(font, text,
+                       {optionRects[i].x + (buttonWidth - textSize.x) / 2,
+                        optionRects[i].y + (buttonHeight - textSize.y) / 2},
+                       fontSize, 1, WHITE);
+            }
+        }
+
+        
         if (showInventoryPopup) {
-    DrawInventoryPopup(game.heroPlayer);
+            DrawInventoryPopup(game.heroPlayer);
+        }
 
-    Vector2 mouse = GetMousePosition();
-    Rectangle closeBtn = {inventoryPopupBounds.x + inventoryPopupBounds.width - 40, inventoryPopupBounds.y + 10, 30, 30};
-    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && CheckCollisionPointRec(mouse, closeBtn)) {
-        showInventoryPopup = false;
-    }
-
-    if (IsKeyPressed(KEY_ESCAPE)) {
-        showInventoryPopup = false;
-    }
-}
+        if (showLocationItemsPopup) {
+            DrawLocationItemsPopup(clickedLocation);
+        }
 
         EndDrawing();
-
-        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-            for (int i = 0; i < options.size(); i++) {
-                if (CheckCollisionPointRec(mouse, optionRects[i])) {
-                    selected = i;
-                    return selected;
-                }
-            }
-        }
     }
 
     return selected;
