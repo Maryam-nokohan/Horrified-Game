@@ -731,46 +731,50 @@ void Game::ChooseHero(std::string player1, std::string player2)
         {
             heroes[0]->GetPerkCard(PerkDeck.back());
             PerkDeck.pop_back();
+            startMayorloc->AddHero(heroes[0]);
         }
         break;
-
-    case 1:
+        
+        case 1:
         heroes.push_back(std ::make_shared<Archaeologist>(startArchloc));
         if (!PerkDeck.empty())
         {
             heroes[0]->GetPerkCard(PerkDeck.back());
             PerkDeck.pop_back();
+            startArchloc->AddHero(heroes[0]);
         }
         break;
-    case 2:
+        case 2:
         heroes.push_back(std::make_shared<Courier>(startCourierloc));
         if (!PerkDeck.empty())
         {
             heroes[0]->GetPerkCard(PerkDeck.back());
             PerkDeck.pop_back();
+            startCourierloc->AddHero(heroes[0]);
         }
         break;
-    case 3:
+        case 3:
         heroes.push_back(std::make_shared<Scientist>(startScientistloc));
         if (!PerkDeck.empty())
         {
             heroes[0]->GetPerkCard(PerkDeck.back());
             PerkDeck.pop_back();
+            startScientistloc->AddHero(heroes[0]);
         }
         break;
-    default:
+        default:
         break;
     }
     availableHeroes.erase(availableHeroes.begin() + player1Choice);
-
+    
     heroNames.clear();
     for (const auto &hero : availableHeroes)
-        heroNames.push_back(hero->getName());
-
+    heroNames.push_back(hero->getName());
+    
     MyTerminal.ShowMessageBox(player2 + " , choose your hero:");
     int player2Choice = MyTerminal.MenuGenerator(heroNames);
     auto player2Hero = availableHeroes[player2Choice];
-
+    
     if (heroNames[player2Choice] == "Mayor")
     {
         heroes.push_back(std ::make_shared<Mayor>(startMayorloc));
@@ -778,6 +782,7 @@ void Game::ChooseHero(std::string player1, std::string player2)
         {
             heroes[1]->GetPerkCard(PerkDeck.back());
             PerkDeck.pop_back();
+            startMayorloc->AddHero(heroes[1]);
         }
     }
     else if (heroNames[player2Choice] == "Archaeologist")
@@ -787,6 +792,7 @@ void Game::ChooseHero(std::string player1, std::string player2)
         {
             heroes[1]->GetPerkCard(PerkDeck.back());
             PerkDeck.pop_back();
+            startArchloc->AddHero(heroes[1]);
         }
     }
     else if (heroNames[player2Choice] == "Courier")
@@ -795,6 +801,7 @@ void Game::ChooseHero(std::string player1, std::string player2)
         if (!PerkDeck.empty())
         {
             heroes[1]->GetPerkCard(PerkDeck.back());
+            startCourierloc->AddHero(heroes[1]);
             PerkDeck.pop_back();
         }
     }
@@ -805,6 +812,7 @@ void Game::ChooseHero(std::string player1, std::string player2)
         {
             heroes[1]->GetPerkCard(PerkDeck.back());
             PerkDeck.pop_back();
+            startScientistloc->AddHero(heroes[1]);
         }
     }
     heroPlayer = heroes[0];

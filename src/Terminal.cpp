@@ -1290,14 +1290,14 @@ void ShowInTerminal::DrawLocationInfoPopup(std::shared_ptr<Location> location, f
     const float iconSize = 32.0f;
 
 
-    const auto& heroes = location->GetHero();
+    const auto& HeroInGame = location->GetHero();
     const auto& monsters = location->GetMonsters();
     const auto& villagers = location->GetVillager();
     const auto& items = location->GetItems();
 
     
     float totalContentHeight = 0;
-    totalContentHeight += headerSpacing + (heroes.empty() ? itemSpacing : heroes.size() * itemSpacing);
+    totalContentHeight += headerSpacing + (HeroInGame.empty() ? itemSpacing : HeroInGame.size() * itemSpacing);
     totalContentHeight += headerSpacing + (monsters.empty() ? itemSpacing : monsters.size() * itemSpacing);
     totalContentHeight += headerSpacing + (villagers.empty() ? itemSpacing : villagers.size() * itemSpacing);
     totalContentHeight += headerSpacing + (items.empty() ? itemSpacing : items.size() * itemSpacing);
@@ -1344,13 +1344,13 @@ void ShowInTerminal::DrawLocationInfoPopup(std::shared_ptr<Location> location, f
     float currentY = viewArea.y + scrollY + 10;
     
     
-    DrawTextEx(font, "Heroes:", {currentX, currentY}, headerFontSize, 1, YELLOW);
+    DrawTextEx(font, "HeroInGame:", {currentX, currentY}, headerFontSize, 1, YELLOW);
     currentY += headerSpacing;
-    if (heroes.empty()) {
+    if (HeroInGame.empty()) {
         DrawTextEx(font, "  (None)", {currentX, currentY}, itemFontSize, 1, LIGHTGRAY);
         currentY += itemSpacing;
     } else {
-        for (const auto& hero : heroes) {
+        for (const auto& hero : HeroInGame) {
             if (heroTextures.count(hero->getName())) {
                 DrawTexturePro(heroTextures[hero->getName()], {0, 0, (float)heroTextures[hero->getName()].width, (float)heroTextures[hero->getName()].height}, {currentX + 5, currentY, iconSize, iconSize}, {0,0}, 0.0f, WHITE);
             }
