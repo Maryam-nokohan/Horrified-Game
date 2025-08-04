@@ -15,91 +15,97 @@
 using namespace LocationNames;
 using namespace Names;
 
-//Constructor
-MonsterCard :: MonsterCard(const std :: string &name , int item , const std :: string & event , const MonsterStrike& strike) : Card (name) , EndStrike(false){
-    if(item >= 0)
-    this->item = item;
-    else 
-    throw std::invalid_argument("Monster card item count must be posetive");
+// Constructor
+MonsterCard ::MonsterCard(const std ::string &name, int item, const std ::string &event, const MonsterStrike &strike) : Card(name), EndStrike(false)
+{
+    if (item >= 0)
+        this->item = item;
+    else
+        throw std::invalid_argument("Monster card item count must be posetive");
     this->Event = event;
     this->Strikes = strike;
 }
-//Get functions 
-int :: MonsterCard ::GetItem ()const {return item;}
-std :: string MonsterCard ::GetOrderSymbold(){return Strikes.MonsterSymbol;}
-int MonsterCard ::GetMove() {return Strikes.MoveNum;}
-int MonsterCard ::GetDiceRoll() {return Strikes.DiceRolls;}
-std :: string MonsterCard::GetEvent(){return Event;}
-//Effect 
-void MonsterCard ::ApplyEffect(Game & game)
+// Get functions
+int ::MonsterCard ::GetItem() const { return item; }
+std ::string MonsterCard ::GetOrderSymbold() { return Strikes.MonsterSymbol; }
+int MonsterCard ::GetMove() { return Strikes.MoveNum; }
+int MonsterCard ::GetDiceRoll() { return Strikes.DiceRolls; }
+std ::string MonsterCard::GetEvent() { return Event; }
+// Effect
+void MonsterCard ::ApplyEffect(Game &game)
 {
-    //Put items : 
+    // Put items :
     game.SetRandomItems(item);
-    game.MyTerminal.ShowPopupMessages(game ,"Added " + std :: to_string(item) + " items to map");
-    game.MyTerminal.ShowMonsterPhase(game , shared_from_this());
-    //apply event
+    game.MyTerminal.ShowPopupMessages(game, "Added " + std ::to_string(item) + " items to map");
+    game.MyTerminal.ShowMonsterPhase(game, shared_from_this());
+    // apply event
     auto dracula = game.GetDracula();
     auto invisible = game.GetInvisibleMan();
 
     if (Name == Sunrise)
     {
-        if(dracula){
-        dracula->SetLocation(game.mapPlan.GetLocationptr(Crypt));
-        game.MyTerminal.ShowPopupMessages(game ,Sunrise + " Card Event Applyed  :"  + Event);
-        game.MyTerminal.ShowMonsterPhase(game , shared_from_this());
+        if (dracula)
+        {
+            dracula->SetLocation(game.mapPlan.GetLocationptr(Crypt));
+            game.MyTerminal.ShowPopupMessages(game, Sunrise + " Card Event Applyed  :" + Event);
+            game.MyTerminal.ShowMonsterPhase(game, shared_from_this());
         }
-        else {
-            game.MyTerminal.ShowPopupMessages(game ,"dracula isn't in the game to apply Sunrise card effect!");
-            game.MyTerminal.ShowMonsterPhase(game , shared_from_this());
-            return;}
+        else
+        {
+            game.MyTerminal.ShowPopupMessages(game, "dracula isn't in the game to apply Sunrise card effect!");
+            game.MyTerminal.ShowMonsterPhase(game, shared_from_this());
+            return;
+        }
     }
 
     else if (Name == FromTheBat)
     {
-        if(dracula){
-        dracula->GetLocation()->RemoveMonster(dracula);
-        dracula->SetLocation(game.heroPlayer->getLocation());
-        game.MyTerminal.ShowPopupMessages(game ,FromTheBat+ " Card Event Applyed  :"  + Event);
-        game.MyTerminal.ShowMonsterPhase(game , shared_from_this());
+        if (dracula)
+        {
+            dracula->GetLocation()->RemoveMonster(dracula);
+            dracula->SetLocation(game.heroPlayer->getLocation());
+            game.MyTerminal.ShowPopupMessages(game, FromTheBat + " Card Event Applyed  :" + Event);
+            game.MyTerminal.ShowMonsterPhase(game, shared_from_this());
         }
-        else {
-            game.MyTerminal.ShowPopupMessages(game ,"dracula isn't in the game to apply "+ FromTheBat+" card effect!");
-            game.MyTerminal.ShowMonsterPhase(game , shared_from_this());
-            }
+        else
+        {
+            game.MyTerminal.ShowPopupMessages(game, "dracula isn't in the game to apply " + FromTheBat + " card effect!");
+            game.MyTerminal.ShowMonsterPhase(game, shared_from_this());
+        }
     }
 
     else if (Name == Thief)
     {
-        if(invisible){
-        std::shared_ptr<Location> bestLoc = nullptr;
-        int maxItems = -1;
-        for (auto &[name, loc] :game.mapPlan.getLocations())
+        if (invisible)
         {
-            if ((int)loc->GetItems().size() > maxItems)
+            std::shared_ptr<Location> bestLoc = nullptr;
+            int maxItems = -1;
+            for (auto &[name, loc] : game.mapPlan.getLocations())
             {
-                maxItems = loc->GetItems().size();
-                bestLoc = loc;
+                if ((int)loc->GetItems().size() > maxItems)
+                {
+                    maxItems = loc->GetItems().size();
+                    bestLoc = loc;
+                }
+            }
+            if (bestLoc)
+            {
+                invisible->SetLocation(bestLoc);
+                bestLoc->ClearItems();
+                game.MyTerminal.ShowPopupMessages(game, Thief + " Card Event Applyed  :" + Event);
+                game.MyTerminal.ShowMonsterPhase(game, shared_from_this());
+            }
+            else
+            {
+                game.MyTerminal.ShowPopupMessages(game, "No items in game to apply " + Thief + " effect!");
+                game.MyTerminal.ShowMonsterPhase(game, shared_from_this());
             }
         }
-        if (bestLoc)
+        else
         {
-            invisible->SetLocation(bestLoc);
-            bestLoc->ClearItems();
-            game.MyTerminal.ShowPopupMessages(game ,Thief + " Card Event Applyed  :"  + Event);
-            game.MyTerminal.ShowMonsterPhase(game , shared_from_this());
+            game.MyTerminal.ShowPopupMessages(game, "Invisible man is not in the game to apply " + Thief + " effect!");
+            game.MyTerminal.ShowMonsterPhase(game, shared_from_this());
         }
-        else 
-        {
-            game.MyTerminal.ShowPopupMessages(game ,"No items in game to apply " + Thief + " effect!");
-        game.MyTerminal.ShowMonsterPhase(game , shared_from_this());
-        }
-    }
-    else 
-    {
-        game.MyTerminal.ShowPopupMessages(game ,"Invisible man is not in the game to apply " + Thief + " effect!");
-        game.MyTerminal.ShowMonsterPhase(game , shared_from_this());
-
-    }
     }
 
     else if (Name == TheDelivery)
@@ -107,21 +113,23 @@ void MonsterCard ::ApplyEffect(Game & game)
 
         auto docks = game.mapPlan.GetLocationptr(Docks);
         bool found = false;
-        for (auto &v : game.villagers){
-            if (v->getName() == WilburAndChick){
+        for (auto &v : game.villagers)
+        {
+            if (v->getName() == WilburAndChick)
+            {
                 found = true;
                 v->SetLocation(docks);
             }
         }
-        if(found)
+        if (found)
         {
-            game.MyTerminal.ShowPopupMessages(game ,TheDelivery + " Card Event Applyed  :"  + Event);
-            game.MyTerminal.ShowMonsterPhase(game , shared_from_this());
+            game.MyTerminal.ShowPopupMessages(game, TheDelivery + " Card Event Applyed  :" + Event);
+            game.MyTerminal.ShowMonsterPhase(game, shared_from_this());
         }
         else
         {
-            game.MyTerminal.ShowPopupMessages(game ,"Not found " + WilburAndChick + " to apply " + TheDelivery);
-            game.MyTerminal.ShowMonsterPhase(game , shared_from_this());
+            game.MyTerminal.ShowPopupMessages(game, "Not found " + WilburAndChick + " to apply " + TheDelivery);
+            game.MyTerminal.ShowMonsterPhase(game, shared_from_this());
             return;
         }
     }
@@ -130,21 +138,23 @@ void MonsterCard ::ApplyEffect(Game & game)
     {
         bool found = false;
         auto camp = game.mapPlan.GetLocationptr(Camp);
-         for (auto &v : game.villagers){
-            if (v->getName() == Maleva){
+        for (auto &v : game.villagers)
+        {
+            if (v->getName() == Maleva)
+            {
                 found = true;
                 v->SetLocation(camp);
             }
         }
-        if(found)
+        if (found)
         {
-            game.MyTerminal.ShowPopupMessages(game ,FortuneTeller + " Card Event Applyed  :"  + Event);
-            game.MyTerminal.ShowMonsterPhase(game , shared_from_this());
+            game.MyTerminal.ShowPopupMessages(game, FortuneTeller + " Card Event Applyed  :" + Event);
+            game.MyTerminal.ShowMonsterPhase(game, shared_from_this());
         }
         else
         {
-            game.MyTerminal.ShowPopupMessages(game ,"Not found " +Maleva + " to apply " + FortuneTeller);
-            game.MyTerminal.ShowMonsterPhase(game , shared_from_this());
+            game.MyTerminal.ShowPopupMessages(game, "Not found " + Maleva + " to apply " + FortuneTeller);
+            game.MyTerminal.ShowMonsterPhase(game, shared_from_this());
             return;
         }
     }
@@ -153,21 +163,23 @@ void MonsterCard ::ApplyEffect(Game & game)
     {
         bool found = false;
         auto lab = game.mapPlan.GetLocationptr(Laboratory);
-         for (auto &v : game.villagers){
-            if (v->getName() == DrCranley){
+        for (auto &v : game.villagers)
+        {
+            if (v->getName() == DrCranley)
+            {
                 found = true;
                 v->SetLocation(lab);
             }
         }
-        if(found)
+        if (found)
         {
-            game.MyTerminal.ShowPopupMessages(game ,FormerEmployer + " Card Event Applyed  :"  + Event);
-            game.MyTerminal.ShowMonsterPhase(game , shared_from_this());
+            game.MyTerminal.ShowPopupMessages(game, FormerEmployer + " Card Event Applyed  :" + Event);
+            game.MyTerminal.ShowMonsterPhase(game, shared_from_this());
         }
         else
         {
-            game.MyTerminal.ShowPopupMessages(game ,"Not found " + DrCranley + " to apply " + FormerEmployer);
-            game.MyTerminal.ShowMonsterPhase(game , shared_from_this());
+            game.MyTerminal.ShowPopupMessages(game, "Not found " + DrCranley + " to apply " + FormerEmployer);
+            game.MyTerminal.ShowMonsterPhase(game, shared_from_this());
             return;
         }
     }
@@ -176,21 +188,23 @@ void MonsterCard ::ApplyEffect(Game & game)
     {
         bool found = false;
         auto tower = game.mapPlan.GetLocationptr(Tower);
-        for (auto &v : game.villagers){
-            if (v->getName() == Fritz){
+        for (auto &v : game.villagers)
+        {
+            if (v->getName() == Fritz)
+            {
                 found = true;
                 v->SetLocation(tower);
             }
         }
-        if(found)
+        if (found)
         {
-            game.MyTerminal.ShowPopupMessages(game ,HurriedAssistant + " Card Event Applyed  :"  + Event);
-        game.MyTerminal.ShowMonsterPhase(game , shared_from_this());
+            game.MyTerminal.ShowPopupMessages(game, HurriedAssistant + " Card Event Applyed  :" + Event);
+            game.MyTerminal.ShowMonsterPhase(game, shared_from_this());
         }
         else
         {
-            game.MyTerminal.ShowPopupMessages(game ,"Not found " + Fritz + " to apply " + HurriedAssistant);
-            game.MyTerminal.ShowMonsterPhase(game , shared_from_this());
+            game.MyTerminal.ShowPopupMessages(game, "Not found " + Fritz + " to apply " + HurriedAssistant);
+            game.MyTerminal.ShowMonsterPhase(game, shared_from_this());
             return;
         }
     }
@@ -199,21 +213,24 @@ void MonsterCard ::ApplyEffect(Game & game)
     {
         bool found = false;
         auto barn = game.mapPlan.GetLocationptr(Barn);
-        for (auto &v : game.villagers){
-            if (v->getName() == Maria){
+        for (auto &v : game.villagers)
+        {
+            if (v->getName() == Maria)
+            {
                 found = true;
                 v->SetLocation(barn);
             }
         }
-        if(found)
+        if (found)
         {
-            game.MyTerminal.ShowPopupMessages(game ,TheInnocent + " Card Event Applyed  :"  + Event);
-       
-        game.MyTerminal.ShowMonsterPhase(game , shared_from_this());}
+            game.MyTerminal.ShowPopupMessages(game, TheInnocent + " Card Event Applyed  :" + Event);
+
+            game.MyTerminal.ShowMonsterPhase(game, shared_from_this());
+        }
         else
         {
-            game.MyTerminal.ShowPopupMessages(game ,"Not found " + Maria + " to apply " + TheInnocent);
-game.MyTerminal.ShowMonsterPhase(game , shared_from_this());
+            game.MyTerminal.ShowPopupMessages(game, "Not found " + Maria + " to apply " + TheInnocent);
+            game.MyTerminal.ShowMonsterPhase(game, shared_from_this());
             return;
         }
     }
@@ -222,65 +239,71 @@ game.MyTerminal.ShowMonsterPhase(game , shared_from_this());
     {
         bool found = false;
         auto cave = game.mapPlan.GetLocationptr(Cave);
-         for (auto &v : game.villagers){
-            if (v->getName() == ProfPearson){
+        for (auto &v : game.villagers)
+        {
+            if (v->getName() == ProfPearson)
+            {
                 found = true;
                 v->SetLocation(cave);
             }
         }
-        if(found)
+        if (found)
         {
-            game.MyTerminal.ShowPopupMessages(game ,EgyptianExpert + " Card Event Applyed  :"  + Event);
-            game.MyTerminal.ShowMonsterPhase(game , shared_from_this());
+            game.MyTerminal.ShowPopupMessages(game, EgyptianExpert + " Card Event Applyed  :" + Event);
+            game.MyTerminal.ShowMonsterPhase(game, shared_from_this());
         }
         else
         {
-            game.MyTerminal.ShowPopupMessages(game ,"Not found " + ProfPearson + " to apply " + EgyptianExpert);
-            return;game.MyTerminal.ShowMonsterPhase(game , shared_from_this());
+            game.MyTerminal.ShowPopupMessages(game, "Not found " + ProfPearson + " to apply " + EgyptianExpert);
+            return;
+            game.MyTerminal.ShowMonsterPhase(game, shared_from_this());
         }
     }
 
     else if (Name == TheIchthyologist)
     {
-        bool found =false;
+        bool found = false;
         auto inst = game.mapPlan.GetLocationptr(Institute);
-         for (auto &v : game.villagers){
-            if (v->getName() == DrReed){
+        for (auto &v : game.villagers)
+        {
+            if (v->getName() == DrReed)
+            {
                 found = true;
                 v->SetLocation(inst);
             }
         }
-        if(found)
+        if (found)
         {
-            game.MyTerminal.ShowPopupMessages(game ,TheIchthyologist + " Card Event Applyed  :"  + Event);
-            game.MyTerminal.ShowMonsterPhase(game , shared_from_this());
+            game.MyTerminal.ShowPopupMessages(game, TheIchthyologist + " Card Event Applyed  :" + Event);
+            game.MyTerminal.ShowMonsterPhase(game, shared_from_this());
         }
         else
         {
-            game.MyTerminal.ShowPopupMessages(game ,"Not found " + DrReed + " to apply " + TheIchthyologist);
-            return;game.MyTerminal.ShowMonsterPhase(game , shared_from_this());
+            game.MyTerminal.ShowPopupMessages(game, "Not found " + DrReed + " to apply " + TheIchthyologist);
+            return;
+            game.MyTerminal.ShowMonsterPhase(game, shared_from_this());
         }
     }
-   
+
     else if (Name == OnTheMove)
     {
         int frenzyIndex = 0;
-        if(dracula)
+        if (dracula)
         {
-            if(dracula->GetFrenzyMarker())
+            if (dracula->GetFrenzyMarker())
             {
-                if(invisible)
+                if (invisible)
                 {
                     dracula->SetFrenzyMarker(false);
                     invisible->SetFrenzyMarker(true);
                 }
             }
         }
-        else if(invisible)
+        else if (invisible)
         {
-            if(invisible->GetFrenzyMarker())
+            if (invisible->GetFrenzyMarker())
             {
-                if(dracula)
+                if (dracula)
                 {
                     invisible->SetFrenzyMarker(false);
                     dracula->SetFrenzyMarker(true);
@@ -291,24 +314,24 @@ game.MyTerminal.ShowMonsterPhase(game , shared_from_this());
         {
             auto from = v->getCurrentLocation();
             auto to = v->getSafeLocation();
-            
+
             if (!from || !to || from == to)
-            continue;
-            
+                continue;
+
             std::unordered_map<std::shared_ptr<Location>, std::shared_ptr<Location>> prev;
             std::queue<std::shared_ptr<Location>> q;
             std::unordered_set<std::shared_ptr<Location>> visited;
-            
+
             q.push(from);
             visited.insert(from);
-            
+
             while (!q.empty())
             {
                 auto curr = q.front();
                 q.pop();
                 if (curr == to)
-                break;
-                
+                    break;
+
                 for (auto &neighbor : curr->GetNeighbors())
                 {
                     if (!visited.count(neighbor))
@@ -319,242 +342,258 @@ game.MyTerminal.ShowMonsterPhase(game , shared_from_this());
                     }
                 }
             }
-            
+
             std::vector<std::shared_ptr<Location>> path;
             for (auto step = to; step != from && prev.count(step); step = prev[step])
-            path.push_back(step);
-            
+                path.push_back(step);
+
             std::reverse(path.begin(), path.end());
-            
+
             if (!path.empty())
             {
                 auto nextStep = path.front();
                 from->RemoveVillager(v);
                 v->SetLocation(nextStep);
-                game.MyTerminal.ShowPopupMessages(game ,"Villager " + v->getName() + " moves toward safe house: " + nextStep->GetCityName());
-                game.MyTerminal.ShowMonsterPhase(game , shared_from_this()); 
+                game.MyTerminal.ShowPopupMessages(game, "Villager " + v->getName() + " moves toward safe house: " + nextStep->GetCityName());
+                game.MyTerminal.ShowMonsterPhase(game, shared_from_this());
                 if (v->isAlive() == State ::Rescued)
-                            {
-                                game.RemoveVillagerFromGame(v);
-                                game.MyTerminal.ShowPopupMessages(game ,"You rescued " + v->getName());
-                                game.MyTerminal.ShowMonsterPhase(game , shared_from_this());
-                                game.heroPlayer->GetPerkCard(game.PerkDeck.back());
-                                game.heroPlayer->getLocation()->RemoveVillager(v);
-                                game.PerkDeck.pop_back();
-                            }
+                {
+                    game.RemoveVillagerFromGame(v);
+                    game.MyTerminal.ShowPopupMessages(game, "You rescued " + v->getName());
+                    game.MyTerminal.ShowMonsterPhase(game, shared_from_this());
+                    game.heroPlayer->GetPerkCard(game.PerkDeck.back());
+                    game.heroPlayer->getLocation()->RemoveVillager(v);
+                    game.PerkDeck.pop_back();
+                }
             }
         }
-        game.MyTerminal.ShowPopupMessages(game ,OnTheMove + " Card Event Applyed  :"  + Event);
-        game.MyTerminal.ShowMonsterPhase(game , shared_from_this());
+        game.MyTerminal.ShowPopupMessages(game, OnTheMove + " Card Event Applyed  :" + Event);
+        game.MyTerminal.ShowMonsterPhase(game, shared_from_this());
     }
 
     else if (Name == HypnoticGaze)
     {
-        if(dracula){
-        auto monsterLoc = dracula->GetLocation(); 
-        std::shared_ptr<Hero> closestHero = nullptr;
-        std::shared_ptr<Villager> closestVillager = nullptr;
-        int minDist = std::numeric_limits<int>::max();
-
-        std::unordered_map<std::shared_ptr<Location>, int> dist;
-        std::queue<std::shared_ptr<Location>> q;
-        dist[monsterLoc] = 0;
-        q.push(monsterLoc);
-
-        while (!q.empty())
+        if (dracula)
         {
-            auto curr = q.front();
-            q.pop();
-            int d = dist[curr];
+            auto monsterLoc = dracula->GetLocation();
+            std::shared_ptr<Hero> closestHero = nullptr;
+            std::shared_ptr<Villager> closestVillager = nullptr;
+            int minDist = std::numeric_limits<int>::max();
 
-            for (auto &h : game.heroes)
-                if (h->getLocation() == curr && d < minDist)
-                {
-                    closestHero = h;
-                    closestVillager = nullptr;
-                    minDist = d;
-                }
+            std::unordered_map<std::shared_ptr<Location>, int> dist;
+            std::queue<std::shared_ptr<Location>> q;
+            dist[monsterLoc] = 0;
+            q.push(monsterLoc);
 
-            for (auto &v : game.villagers)
-                if (v->getCurrentLocation() == curr && d < minDist)
-                {
-                    closestVillager = v;
-                    closestHero = nullptr;
-                    minDist = d;
-                }
-
-            for (auto &nei : curr->GetNeighbors())
-                if (!dist.count(nei))
-                {
-                    dist[nei] = d + 1;
-                    q.push(nei);
-                }
-        }
-
-        auto target = closestHero ? closestHero->getLocation()
-                                  : (closestVillager ? closestVillager->getCurrentLocation() : nullptr);
-        if (!target || target == monsterLoc)
-            return;
-
-        std::unordered_map<std::shared_ptr<Location>, std::shared_ptr<Location>> prev;
-        std::queue<std::shared_ptr<Location>> q2;
-        std::unordered_set<std::shared_ptr<Location>> visited;
-
-        q2.push(target);
-        visited.insert(target);
-
-        while (!q2.empty())
-        {
-            auto curr = q2.front();
-            q2.pop();
-            if (curr == monsterLoc)
-                break;
-
-            for (auto &neighbor : curr->GetNeighbors())
+            while (!q.empty())
             {
-                if (!visited.count(neighbor))
+                auto curr = q.front();
+                q.pop();
+                int d = dist[curr];
+
+                for (auto &h : game.heroes)
+                    if (h->getLocation() == curr && d < minDist)
+                    {
+                        closestHero = h;
+                        closestVillager = nullptr;
+                        minDist = d;
+                    }
+
+                for (auto &v : game.villagers)
+                    if (v->getCurrentLocation() == curr && d < minDist)
+                    {
+                        closestVillager = v;
+                        closestHero = nullptr;
+                        minDist = d;
+                    }
+
+                for (auto &nei : curr->GetNeighbors())
+                    if (!dist.count(nei))
+                    {
+                        dist[nei] = d + 1;
+                        q.push(nei);
+                    }
+            }
+
+            auto target = closestHero ? closestHero->getLocation()
+                                      : (closestVillager ? closestVillager->getCurrentLocation() : nullptr);
+            if (!target || target == monsterLoc)
+                return;
+
+            std::unordered_map<std::shared_ptr<Location>, std::shared_ptr<Location>> prev;
+            std::queue<std::shared_ptr<Location>> q2;
+            std::unordered_set<std::shared_ptr<Location>> visited;
+
+            q2.push(target);
+            visited.insert(target);
+
+            while (!q2.empty())
+            {
+                auto curr = q2.front();
+                q2.pop();
+                if (curr == monsterLoc)
+                    break;
+
+                for (auto &neighbor : curr->GetNeighbors())
                 {
-                    visited.insert(neighbor);
-                    prev[neighbor] = curr;
-                    q2.push(neighbor);
+                    if (!visited.count(neighbor))
+                    {
+                        visited.insert(neighbor);
+                        prev[neighbor] = curr;
+                        q2.push(neighbor);
+                    }
                 }
             }
+
+            std::vector<std::shared_ptr<Location>> path;
+            for (auto step = monsterLoc; step && prev.count(step); step = prev[step])
+                path.push_back(step);
+            std::reverse(path.begin(), path.end());
+
+            int stepsToMove = std::min(3, (int)path.size());
+            for (int i = 0; i < stepsToMove; ++i)
+            {
+                auto nextStep = path[i];
+                if (closestHero)
+                {
+                    auto loc = closestHero->getLocation();
+                    loc->RemoveHero(closestHero);
+                    closestHero->SetLocation(nextStep);
+                    game.MyTerminal.ShowPopupMessages(game, "Hero " + closestHero->getName() + " moves toward Dracula.");
+                }
+                else if (closestVillager)
+                {
+                    auto loc = closestVillager->getCurrentLocation();
+                    loc->RemoveVillager(closestVillager);
+                    closestVillager->SetLocation(nextStep);
+                    game.MyTerminal.ShowPopupMessages(game, "Villager " + closestVillager->getName() + " moves toward Dracula.");
+                }
+            }
+
+            // if (path.size() >= 2)
+            // {
+            //     auto nextStep = path[1];
+            //     if (closestHero)
+            //     {
+            //         auto loc = closestHero->getLocation();
+            //         loc->RemoveHero(closestHero);
+            //         closestHero->SetLocation(nextStep);
+            //         game.MyTerminal.ShowPopupMessages(game ,"Hero " + closestHero->getName() + " moves toward dracula.");
+            //         game.MyTerminal.ShowMonsterPhase(game , shared_from_this());
+            //     }
+            //     else if (closestVillager)
+            //     {
+            //         auto loc = closestVillager->getCurrentLocation();
+            //         loc->RemoveVillager(closestVillager);
+            //         closestVillager->SetLocation(nextStep);
+            //         game.MyTerminal.ShowPopupMessages(game ,"Villager " + closestVillager->getName() + " moves toward dracula.");
+            //         game.MyTerminal.ShowMonsterPhase(game , shared_from_this());
+            //     }
+            // }
+            game.MyTerminal.ShowPopupMessages(game, HypnoticGaze + " Card Event Applyed  :" + Event);
+            game.MyTerminal.ShowMonsterPhase(game, shared_from_this());
         }
-
-        std::vector<std::shared_ptr<Location>> path;
-        for (auto step = monsterLoc; step && prev.count(step); step = prev[step])
-            path.push_back(step);
-        std::reverse(path.begin(), path.end());
-
-        if (path.size() >= 2)
+        else
         {
-            auto nextStep = path[1];
-            if (closestHero)
-            {
-                auto loc = closestHero->getLocation();
-                loc->RemoveHero(closestHero);
-                closestHero->SetLocation(nextStep);
-                game.MyTerminal.ShowPopupMessages(game ,"Hero " + closestHero->getName() + " moves toward dracula.");
-                game.MyTerminal.ShowMonsterPhase(game , shared_from_this());
-            }
-            else if (closestVillager)
-            {
-                auto loc = closestVillager->getCurrentLocation();
-                loc->RemoveVillager(closestVillager);
-                closestVillager->SetLocation(nextStep);
-                game.MyTerminal.ShowPopupMessages(game ,"Villager " + closestVillager->getName() + " moves toward dracula.");
-                game.MyTerminal.ShowMonsterPhase(game , shared_from_this());
-            }
+            game.MyTerminal.ShowPopupMessages(game, "dracula isn't in the game to apply " + HypnoticGaze + " card effect!");
+            game.MyTerminal.ShowMonsterPhase(game, shared_from_this());
         }
-           game.MyTerminal.ShowPopupMessages(game ,HypnoticGaze + " Card Event Applyed  :"  + Event);
-           game.MyTerminal.ShowMonsterPhase(game , shared_from_this());
-        }
-    else
-    {
-    game.MyTerminal.ShowPopupMessages(game ,"dracula isn't in the game to apply "+ HypnoticGaze +" card effect!");
-    game.MyTerminal.ShowMonsterPhase(game , shared_from_this());
-}
+    }
 
-}
-
-    //apply strikes : 
-    game.MyTerminal.ShowPopupMessages(game ,"Applying Strikes ...");
-    game.MyTerminal.ShowMonsterPhase(game , shared_from_this());
+    // apply strikes :
+    game.MyTerminal.ShowPopupMessages(game, "Applying Strikes ...");
+    game.MyTerminal.ShowMonsterPhase(game, shared_from_this());
     for (const auto ch : Strikes.MonsterSymbol)
     {
-        if(EndStrike)
-        return;
+        if (EndStrike)
+            return;
         if (ch == 'D' && dracula)
         {
-            ApplyMonsterStrike(game , dracula);
+            ApplyMonsterStrike(game, dracula);
         }
         else if (ch == 'I' && invisible)
         {
-            ApplyMonsterStrike(game , invisible);
+            ApplyMonsterStrike(game, invisible);
         }
         else if (ch == 'F')
         {
-            if(dracula){
-            if (dracula->GetFrenzyMarker())
+            if (dracula)
             {
-                ApplyMonsterStrike(game ,dracula);
-                return;
+                if (dracula->GetFrenzyMarker())
+                {
+                    ApplyMonsterStrike(game, dracula);
+                    return;
+                }
             }
-        }
-            if(invisible){
-            if(invisible->GetFrenzyMarker())
+            if (invisible)
             {
-                ApplyMonsterStrike(game , invisible);
+                if (invisible->GetFrenzyMarker())
+                {
+                    ApplyMonsterStrike(game, invisible);
+                }
             }
-        }
         }
     }
 }
-void MonsterCard:: ApplyMonsterStrike(Game & game , std ::shared_ptr<Monster> monsterName)
+void MonsterCard::ApplyMonsterStrike(Game &game, std ::shared_ptr<Monster> monsterName)
 {
-    if (!monsterName) {
-    throw std :: invalid_argument( "ERROR: monsterName is nullptr in ApplyMonsterStrike()\n");
-}
+    if (!monsterName)
+    {
+        throw std ::invalid_argument("ERROR: monsterName is nullptr in ApplyMonsterStrike()\n");
+    }
     auto nearHeros = monsterName->GetLocation()->GetHero();
     auto nearVillagers = monsterName->GetLocation()->GetVillager();
-    if (nearHeros.empty() && nearVillagers.empty() )
+    if (nearHeros.empty() && nearVillagers.empty())
     {
-        auto nearestOp = monsterName->FindNearestOpponent(game.mapPlan , monsterName->GetLocation(),Strikes.MoveNum);
+        auto nearestOp = monsterName->FindNearestOpponent(game.mapPlan, monsterName->GetLocation(), Strikes.MoveNum);
         monsterName->Move(nearestOp);
-        game.MyTerminal.ShowPopupMessages(game ,monsterName->GetName() + " moved toward the nearest opponent at " + nearestOp->GetCityName());
-        game.MyTerminal.ShowMonsterPhase(game , shared_from_this());
+        game.MyTerminal.ShowPopupMessages(game, monsterName->GetName() + " moved toward the nearest opponent at " + nearestOp->GetCityName());
+        game.MyTerminal.ShowMonsterPhase(game, shared_from_this());
     }
     else
     {
-        game.MyTerminal.ShowPopupMessages(game ,monsterName->GetName() + " already in the opponent location");
-        game.MyTerminal.ShowMonsterPhase(game , shared_from_this());
+        game.MyTerminal.ShowPopupMessages(game, monsterName->GetName() + " already in the opponent location");
+        game.MyTerminal.ShowMonsterPhase(game, shared_from_this());
     }
     int InvisibleManPowerDices = 0;
     for (int i = 0; i < Strikes.DiceRolls; ++i)
     {
         // Faces
         std::vector<std::string> faces = game.MyTerminal.ShowDiceRollAnimation(game.GameDice, game.MyTerminal.GetFont());
-        for(const auto & face : faces){
-        if (face == "*")
+        for (const auto &face : faces)
         {
-            if(monsterName->Attack(game))
+            if (face == "*")
             {
-                EndStrike = true;
-                return;
-            }     
-        }
-        else if (face == "!")
-        {
-            std ::string name = monsterName->GetName();
-            if (name == "Dracula")
-            {
-                auto dracula = game.GetDracula();
-                dracula->DarkCharm(game);
+                if (monsterName->Attack(game))
+                {
+                    EndStrike = true;
+                    return;
+                }
             }
-            else
+            else if (face == "!")
             {
-                InvisibleManPowerDices++;
-             
+                std ::string name = monsterName->GetName();
+                if (name == "Dracula")
+                {
+                    auto dracula = game.GetDracula();
+                    dracula->DarkCharm(game);
+                }
+                else
+                {
+                    InvisibleManPowerDices++;
+                }
+            }
+            else if (face == " ")
+            {
             }
         }
-        else if (face == " ")
+    }
+    if (InvisibleManPowerDices)
+    {
+        auto Invisible = game.GetInvisibleMan();
+        for (int k = 0; k < InvisibleManPowerDices; ++k)
         {
-            
+            Invisible->StalkUnseen(game, 2);
         }
-      
     }
 }
-  if(InvisibleManPowerDices)
-        {
-            auto Invisible = game.GetInvisibleMan();
-            for(int k = 0 ; k < InvisibleManPowerDices ;++k)
-            {
-                Invisible->StalkUnseen(game , 2);
-            
-            }
-            
-        }
-
-}
-
-
