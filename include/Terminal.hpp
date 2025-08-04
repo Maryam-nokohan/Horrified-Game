@@ -39,6 +39,7 @@ Rectangle locationPopupBounds = { 200, 100, 400, 500 };
    
   public :
   Music music;
+  void DrawLocationInfoPopup(std::shared_ptr<Location> location, float& scrollY);
   ShowInTerminal()= default;
   void ShowMessageBox(const std :: string&);
   void LoadAssets();
