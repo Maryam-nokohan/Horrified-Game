@@ -49,6 +49,7 @@ Rectangle locationPopupBounds = { 200, 100, 400, 500 };
   int MenuGenerator(const std::vector<std::string>& options);
   bool GetPlayerInfo(std::string& name, int& days);
   void ShowExitScreen();
+  void ShowBackgroundScreen(std::string title , std::string text);
   void DrawTerrorLevel(int terrorLevel, Font font, Vector2 position);
   void DrawHeroInfo(std::shared_ptr<Hero> hero, Font font, Vector2 position , Rectangle* );
   void DrawPerkCard(const std::shared_ptr<PerkCard>& card, Font font, Vector2 position);

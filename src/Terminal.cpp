@@ -112,7 +112,9 @@ void ShowInTerminal ::LoadAssets()
     backgroundTextures["input"] = LoadTexture("../assets/Background/Background2.png");
     backgroundTextures["exit"] = LoadTexture("../assets/Background/Background3.png");
     backgroundTextures["msg"] = LoadTexture("../assets/Background/Background4.png");
-
+    backgroundTextures["phase"] = LoadTexture("../assets/Background/phase1.jpg");
+    backgroundTextures["DraculaAttack"] = LoadTexture("../assets/Background/Draculabg.jpg");
+    backgroundTextures["InvisibleAttack"] = LoadTexture("../assets/Background/Invisiblebg.jpg");
     // Map
     mapTexture = LoadTexture("../assets/map.png");
 
@@ -631,6 +633,90 @@ bool ShowInTerminal::GetPlayerInfo(std::string& name, int& days) {
 
     return submitClicked;
 }
+
+void ShowInTerminal::ShowBackgroundScreen(std::string name, std::string message)
+{
+    const int screenWidth = GetScreenWidth();
+    const int screenHeight = GetScreenHeight();
+
+    Texture2D bg = backgroundTextures[name];
+
+    float boxScale = 0.9f;
+    float targetScale = 1.0f;
+
+    Color boxColor = { 15, 25, 40, 160 };      // Small semi-transparent box
+    Color borderColor = { 0, 220, 255, 200 };
+    Color textColor = { 220, 240, 255, 255 };
+    int fontSize = 28;
+
+    double startTime = GetTime();
+    const float totalDuration = 3.0f;
+
+    while (!WindowShouldClose())
+    {
+        UpdateMusicStream(music);
+        double elapsed = GetTime() - startTime;
+        if (elapsed >= totalDuration) break;
+
+        float remaining = (float)(totalDuration - elapsed);
+        float volume = Clamp(remaining / totalDuration, 0.0f, 1.0f);
+        SetMusicVolume(music, volume);
+
+        boxScale += (targetScale - boxScale) * 0.1f;
+
+        BeginDrawing();
+
+        ClearBackground(BLACK);
+
+        if (bg.id != 0)
+        {
+            DrawTexturePro(bg,
+                Rectangle{ 0, 0, (float)bg.width, (float)bg.height },
+                Rectangle{ 0, 0, (float)screenWidth, (float)screenHeight },
+                Vector2{ 0, 0 }, 0.0f, WHITE);
+        }
+
+        // Measure text size
+        Vector2 textSize = MeasureTextEx(font, message.c_str(), fontSize, 1.0f);
+        float padding = 40;
+
+        Rectangle textBox = {
+            (screenWidth - textSize.x - padding) / 2,
+            screenHeight - textSize.y - 80, // lower on the screen
+            textSize.x + padding,
+            textSize.y + 30
+        };
+
+        // Scale box for slight zoom-in effect
+        Rectangle scaledBox = {
+            textBox.x + (textBox.width * (1 - boxScale)) / 2,
+            textBox.y + (textBox.height * (1 - boxScale)) / 2,
+            textBox.width * boxScale,
+            textBox.height * boxScale
+        };
+
+        // Draw box and text
+        DrawRectangleRounded(scaledBox, 0.2f, 16, Fade(boxColor, boxScale));
+        DrawRectangleRoundedLines(scaledBox, 0.2f, 16, Fade(borderColor, boxScale));
+
+        Vector2 textPos = {
+            scaledBox.x + (scaledBox.width - textSize.x) / 2,
+            scaledBox.y + (scaledBox.height - textSize.y) / 2
+        };
+
+        if (boxScale > 0.98f)
+        {
+            float shake = sin(GetTime() * 20) * 2.0f;
+            textPos.x += shake;
+        }
+
+        DrawTextEx(font, message.c_str(), textPos, fontSize, 1.0f, Fade(textColor, boxScale));
+
+        EndDrawing();
+    }
+}
+
+
 void ShowInTerminal::ShowExitScreen() {
 
     const int screenWidth = GetScreenWidth();
@@ -1204,6 +1290,9 @@ void ShowInTerminal::ShowPopupMessages(Game &game , const std::string message)
         0 , 543,boxW , boxH  
     };
 
+    Color boxColor = { 15, 25, 40, 200 }; 
+    Color borderColor = { 0, 220, 255, 255 };
+
     bool waiting = true;
     while (!WindowShouldClose() && waiting)
     {
@@ -1211,18 +1300,18 @@ void ShowInTerminal::ShowPopupMessages(Game &game , const std::string message)
         BeginDrawing();
 
 
-        DrawRectangleRec(popupBox, Fade(DARKBLUE, 0.58f));
-        DrawRectangleLinesEx(popupBox, 3, SKYBLUE);
+        DrawRectangleRec(popupBox, Fade(boxColor, 0.4f));
+        DrawRectangleLinesEx(popupBox, 3, borderColor);
 
         DrawTextEx(font, message.c_str(),
         {popupBox.x + padding, popupBox.y + padding},
-        20, 2, RAYWHITE);
+        20, 2, RED);
         
         std::string hint = "(Press Enter or click)";
         Vector2 hintSize = MeasureTextEx(font, hint.c_str(), 16, 1);
         DrawTextEx(font, hint.c_str(),
         {popupBox.x + popupBox.width - hintSize.x - 12, popupBox.y + popupBox.height - 24},
-        16, 1, GRAY);
+        16, 1, RED);
         
         EndDrawing();
         
@@ -1344,7 +1433,7 @@ void ShowInTerminal::DrawLocationInfoPopup(std::shared_ptr<Location> location, f
     float currentY = viewArea.y + scrollY + 10;
     
     
-    DrawTextEx(font, "HeroInGame:", {currentX, currentY}, headerFontSize, 1, YELLOW);
+    DrawTextEx(font, "Heros:", {currentX, currentY}, headerFontSize, 1, YELLOW);
     currentY += headerSpacing;
     if (HeroInGame.empty()) {
         DrawTextEx(font, "  (None)", {currentX, currentY}, itemFontSize, 1, LIGHTGRAY);
