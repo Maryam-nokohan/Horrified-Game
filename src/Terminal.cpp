@@ -195,7 +195,6 @@ void ShowInTerminal ::UnloadAssets()
     UnloadTexture(frenzyMark);
 }
 
-
 void ShowInTerminal::ShowMessageBox(const std::string& message) {
 
     const int windowWidth = 900;
@@ -1120,24 +1119,29 @@ std::vector<std::string> ShowInTerminal::ShowDiceRollAnimation(Dice &dice, Font 
 {
     const int numDice = 3;
     const int rollFrames = 20;
-    const float boxSize = 100;
-    const float spacing = 40;
-    const float fontSize = 48;
+    const float boxSize = 60;
+    const float spacing = 20;
+    const float fontSize = 32;
 
     std::vector<std::string> resultFaces(numDice);
-    Vector2 startPos = {(float)GetScreenWidth() / 2 - (numDice * boxSize + (numDice - 1) * spacing) / 2,
-                        (float)GetScreenHeight() / 2 - boxSize / 2};
 
-    // Animation loop
+    //  Put dice below monster card, above popup
+    Vector2 startPos = {
+        (float)GetScreenWidth() / 2 - (numDice * boxSize + (numDice - 1) * spacing) / 2,
+        480.0f
+    };
+
     for (int frame = 0; frame < rollFrames; ++frame)
     {
         UpdateMusicStream(music);
         BeginDrawing();
-        ClearBackground(DARKGRAY);
+        ClearBackground(DARKBLUE); // Or draw previous scene background instead
+
+
+        // Optional: re-draw background/map if you want full continuity
 
         for (int i = 0; i < numDice; ++i)
         {
-            UpdateMusicStream(music);
             std::string face = dice.DiceRoll();
             Rectangle box = {startPos.x + i * (boxSize + spacing), startPos.y, boxSize, boxSize};
 
@@ -1150,7 +1154,7 @@ std::vector<std::string> ShowInTerminal::ShowDiceRollAnimation(Dice &dice, Font 
 
         EndDrawing();
 
-        
+        // Simulate delay
         float delay = 0.09f;
         float elapsed = 0.0f;
         while (elapsed < delay)
@@ -1162,12 +1166,11 @@ std::vector<std::string> ShowInTerminal::ShowDiceRollAnimation(Dice &dice, Font 
     }
 
     BeginDrawing();
-    ClearBackground(DARKBLUE);
+    ClearBackground(DARKBLUE); // Or draw map/card/etc again
+
     for (int i = 0; i < numDice; ++i)
     {
-        UpdateMusicStream(music);
         resultFaces[i] = dice.DiceRoll();
-
         Rectangle box = {startPos.x + i * (boxSize + spacing), startPos.y, boxSize, boxSize};
         DrawRectangleRounded(box, 0.3f, 12, SKYBLUE);
         DrawRectangleRoundedLines(box, 0.3f, 12, WHITE);
