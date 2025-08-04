@@ -8,6 +8,9 @@
     this->power = power;
      ItemLocation=loc;
  }
+ Item::Item(ItemColor color, int power, std::shared_ptr<Location> itemLoc , std::shared_ptr<Location> CurrLoc , const std::string& name) :
+ color(color) , name(name) , CurrentLocation(CurrLoc) , ItemLocation(itemLoc) , power(power){}
+
 
 ItemColor Item::getColor() const{
     return color;

@@ -255,7 +255,7 @@ void Game ::InitializeCards()
     }
     for (int i = 0; i < 2; ++i)
     {
-        MonsterDeck.push_back(std ::make_shared<MonsterCard>(HypnoticGaze, 2, "Closest Villager or Hero getting one move close to monster", MonsterStrike("I", 1, 2)));
+        MonsterDeck.push_back(std ::make_shared<MonsterCard>(HypnoticGaze, 2, "Closest Villager or Hero getting 3 step toward Dracula", MonsterStrike("I", 1, 2)));
     }
     std ::shuffle(MonsterDeck.begin(), MonsterDeck.end(), std ::mt19937(std ::random_device()()));
 }
@@ -668,9 +668,6 @@ void Game::MonsterPhase()
         return;
     }
     auto card = MonsterDeck.back();
-
-    MyTerminal.ShowPopupMessages(*this, "Monster Phase Begins!!!!!");
-
     MyTerminal.ShowMonsterPhase(*this, card);
     card->ApplyEffect(*this);
 
@@ -822,7 +819,7 @@ void Game::GameStart()
     const int screenWidth = 900;
     const int screenHeight = 700;
     InitWindow(screenWidth, screenHeight, "Horrified Game");
-    SetTargetFPS(60);
+    SetTargetFPS(70);
 
     InitAudioDevice();
     MyTerminal.music = LoadMusicStream("../assets/horror.mp3");
@@ -893,6 +890,7 @@ void Game::GameStart()
         HeroPhase();
         if (!skipMonsterPhase && !CheckGameEnd())
         {
+            MyTerminal.ShowBackgroundScreen("phase" , "THE NIGHT FALLS ...THE MONSTERS RISE!" );
             MonsterPhase();
         }
         else

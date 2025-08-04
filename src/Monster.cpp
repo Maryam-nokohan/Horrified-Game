@@ -140,7 +140,11 @@ const std :: shared_ptr< Location> Monster::FindNearestOpponent(Map& plan, std::
 bool Monster ::Attack(Game& game)
 {
     bool successe = false;
-    game.MyTerminal.ShowPopupMessages(game ,Name + " Attacks!");
+    // game.MyTerminal.ShowPopupMessages(game ,Name + " Attacks!");
+    if(Name == "Dracula")
+    game.MyTerminal.ShowBackgroundScreen("DraculaAttack" , "Dracula Attacks!");
+    if(Name == "Invisible Man")
+    game.MyTerminal.ShowBackgroundScreen("InvisibleAttack" , "Invisble Man Attacks!");
     game.MyTerminal.ShowMonsterPhase(game , game.MonsterDeck.back());
     auto  herosNear = CurrentLocation->GetHero();
     auto  VillagersNear = CurrentLocation->GetVillager();
