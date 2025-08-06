@@ -37,6 +37,8 @@ void GameFileHandler::SaveGame(Game &game, const std::string &filename)
     for (const auto &hero : game.heroes)
     {
         out << "heroName " << hero->getName() << "\n";
+        if (!hero->getLocation())
+            throw std::runtime_error("Hero " + hero->getName() + " has null location!");
         out << "location " << hero->getLocation()->GetCityName() << "\n";
         out << "actions " << hero->getRemainingActions() << "\n";
 
@@ -44,6 +46,8 @@ void GameFileHandler::SaveGame(Game &game, const std::string &filename)
         out << "inventorySize " << inventory.size() << "\n";
         for (const auto &item : inventory)
         {
+            if (!item)
+                continue;
             out << "item " << item->getPower() << " " << static_cast<int>(item->getColor()) << " " << item->getName() << "\n";
         }
 
@@ -187,9 +191,10 @@ void GameFileHandler::LoadGame(Game &game, const std::string &filename)
         int actions;
         in >> actions;
 
-
         std::shared_ptr<Hero> hero;
         auto loc = game.mapPlan.GetLocationptr(locName);
+        if (!loc)
+            throw std::runtime_error("Invalid location name from save file: " + locName);
         if (heroName == "Mayor")
             hero = std::make_shared<Mayor>(loc);
         else if (heroName == "Archaeologist")
@@ -254,7 +259,7 @@ void GameFileHandler::LoadGame(Game &game, const std::string &filename)
     in >> token >> monsterDeckSize;
     for (int i = 0; i < monsterDeckSize; ++i)
     {
-        in >> token >> std::ws; 
+        in >> token >> std::ws;
         std::string name, event, order;
         int item, move, dice;
 
@@ -282,6 +287,8 @@ void GameFileHandler::LoadGame(Game &game, const std::string &filename)
         std::string locName;
         in >> locName;
         auto loc = game.mapPlan.GetLocationptr(locName);
+        if (!loc)
+            throw std::runtime_error("Invalid location name Item from save file: " + locName);
 
         int count;
 
@@ -295,7 +302,7 @@ void GameFileHandler::LoadGame(Game &game, const std::string &filename)
             in >> power >> color >> std::ws;
             std::getline(in, ItemName);
 
-            auto item = std::make_shared<Item>((ItemColor)color, power, loc, ItemName);
+            auto item = std::make_shared<Item>((ItemColor)color, power, loc,loc, ItemName);
             loc->AddItem(item);
         }
 
@@ -353,7 +360,7 @@ void GameFileHandler::LoadGame(Game &game, const std::string &filename)
         int coffinCount;
         in >> coffinCount;
         auto dracula = game.GetDracula();
-        for (int i = 0; i < coffinCount; ++i)
+     for (int i = 0; i < coffinCount; ++i)
         {
             bool destroyed;
             std::string name;
@@ -411,7 +418,7 @@ void GameFileHandler::LoadGame(Game &game, const std::string &filename)
 
         game.villagers.push_back(villager);
     }
-    
+
     in.close();
     std::cout << "✅ Game loaded from " << filename << "\n";
 }

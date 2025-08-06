@@ -5,15 +5,15 @@ Courier ::Courier(std::shared_ptr<Location> startLocation) : Hero("Courier", 4, 
 void Courier ::specialAction(Game &game)
 {
     auto heros = game.heroes;
-    heros.erase(heros.begin()+2);
-    std::vector<std::string> heroNames;
-    for (const auto &h : heros)
-            heroNames.push_back(h->getName());
-
-   int selectedHero = game.MyTerminal.MenuGenerator(heroNames);
+    int index = -1;
+    for (int i = 0 ; i < heros.size() ; ++i){
+        if(heros[i]->getName() != "Courier")
+        index = i;
+    }
     currentLocation->RemoveHero(shared_from_this());
-    auto nextLocation = game.heroes[selectedHero]->getLocation();
+    auto nextLocation = game.heroes[index]->getLocation();
                 getLocation()->RemoveHero(shared_from_this());
                 moveTo(nextLocation);
                 DecreaseAction();
+    game.MyTerminal.ShowMessageBox("Courier moved to " + game.heroes[index] ->getName());
 }

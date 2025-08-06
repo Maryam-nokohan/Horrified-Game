@@ -253,7 +253,9 @@ void Hero::pickUpItems(std::shared_ptr<Item> item)
     if (item)
     {
         inventory.push_back(item);
+        if(item->getLocation())
         item->getLocation()->RemoveItem(item);
+        else throw std::invalid_argument("Item have a null location!");
         return;
     }
     else 
