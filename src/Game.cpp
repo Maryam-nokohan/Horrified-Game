@@ -306,7 +306,7 @@ void Game::HeroPhase()
     int selected = -1;
     while (selected != 8)
     {
-        selected = MyTerminal.ShowHeroPhase(*this, {"Move", "Guid", "Pick up", "Advance", "Defeat", "Special Action", "Use Perks", "Help", "Exit Hero Phase", "Exit Game", "Save Game", "load game"});
+        selected = MyTerminal.ShowHeroPhase(*this, {"Move", "Guid", "Pick up", "Advance", "Defeat", "Special Action", "Use Perks", "Help", "Exit Hero Phase", "Back to menu", "Save Game", "load game"});
         // check if actions left :
         if (heroPlayer->getRemainingActions() == 0)
         {
@@ -633,12 +633,13 @@ void Game::HeroPhase()
             MyTerminal.ShowMessageBox("exiting the hero phase...");
             break;
         }
-        // exit Game Button
+        // back to manu Button
         else if (selected == 9)
         {
-            MyTerminal.ShowMessageBox("Logging Out ...");
-            MyTerminal.ShowExitScreen();
-            exit(0);
+            MyTerminal.ShowMessageBox("Back to manu ...");
+          //  MyTerminal.ShowExitScreen();
+            //exit(0);
+            
         }
         else if (selected == 10)
         {
