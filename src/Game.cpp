@@ -230,18 +230,18 @@ void Game ::InitializeCards()
     }
     std ::shuffle(PerkDeck.begin(), PerkDeck.end(), std ::mt19937(std ::random_device()()));
     // Monster Card
-    for (int i = 0; i < 3; ++i)
-    {
-        MonsterDeck.push_back(std ::make_shared<MonsterCard>(FromTheBat, 2, "Place Dracula in the hero feild", MonsterStrike("I", 1, 2)));
-    }
-    for (int i = 0; i < 3; ++i)
-    {
-        MonsterDeck.push_back(std ::make_shared<MonsterCard>(Sunrise, 0, "Put Dracula in Crypt", MonsterStrike("I", 1, 2)));
-    }
-    for (int i = 0; i < 2; ++i)
-    {
-        MonsterDeck.push_back(std ::make_shared<MonsterCard>(Thief, 2, "put Invisible man in a location with the most items and remove all the item from that location", MonsterStrike("ID", 1, 3)));
-    }
+    // for (int i = 0; i < 3; ++i)
+    // {
+    //     MonsterDeck.push_back(std ::make_shared<MonsterCard>(FromTheBat, 2, "Place Dracula in the hero feild", MonsterStrike("I", 1, 2)));
+    // }
+    // for (int i = 0; i < 3; ++i)
+    // {
+    //     MonsterDeck.push_back(std ::make_shared<MonsterCard>(Sunrise, 0, "Put Dracula in Crypt", MonsterStrike("I", 1, 2)));
+    // }
+    // for (int i = 0; i < 2; ++i)
+    // {
+    //     MonsterDeck.push_back(std ::make_shared<MonsterCard>(Thief, 2, "put Invisible man in a location with the most items and remove all the item from that location", MonsterStrike("ID", 1, 3)));
+    // }
     MonsterDeck.push_back(std ::make_shared<MonsterCard>(TheDelivery, 3, "Put Chick and Wilbur in Dock", MonsterStrike("F", 1, 3)));
     MonsterDeck.push_back(std ::make_shared<MonsterCard>(FortuneTeller, 3, "put maleva in camp", MonsterStrike("F", 1, 2)));
     MonsterDeck.push_back(std ::make_shared<MonsterCard>(FormerEmployer, 3, "put dr.cranly in Lab", MonsterStrike("IF", 1, 2)));
@@ -249,14 +249,14 @@ void Game ::InitializeCards()
     MonsterDeck.push_back(std ::make_shared<MonsterCard>(TheInnocent, 3, "put Maria in Barn", MonsterStrike("FDI", 1, 3)));
     MonsterDeck.push_back(std ::make_shared<MonsterCard>(EgyptianExpert, 3, "put prof.Pearson in cave", MonsterStrike("DF", 2, 2)));
     MonsterDeck.push_back(std ::make_shared<MonsterCard>(TheIchthyologist, 3, "put dr.Read in Institute", MonsterStrike("F", 1, 2)));
-    for (int i = 0; i < 2; ++i)
-    {
-        MonsterDeck.push_back(std ::make_shared<MonsterCard>(OnTheMove, 3, "give Frenzy to the next Monster and take each villager one move closer to their safe house", MonsterStrike("F", 3, 2)));
-    }
-    for (int i = 0; i < 2; ++i)
-    {
-        MonsterDeck.push_back(std ::make_shared<MonsterCard>(HypnoticGaze, 2, "Closest Villager or Hero getting 3 step toward Dracula", MonsterStrike("I", 1, 2)));
-    }
+    // for (int i = 0; i < 2; ++i)
+    // {
+    //     MonsterDeck.push_back(std ::make_shared<MonsterCard>(OnTheMove, 3, "give Frenzy to the next Monster and take each villager one move closer to their safe house", MonsterStrike("F", 3, 2)));
+    // }
+    // for (int i = 0; i < 2; ++i)
+    // {
+    //     MonsterDeck.push_back(std ::make_shared<MonsterCard>(HypnoticGaze, 2, "Closest Villager or Hero getting one move close to monster", MonsterStrike("I", 1, 2)));
+    // }
     std ::shuffle(MonsterDeck.begin(), MonsterDeck.end(), std ::mt19937(std ::random_device()()));
 }
 void Game ::InitializeCharacters()
@@ -300,7 +300,7 @@ void Game::SwitchPlayer()
     else
         heroPlayer = heroes[0];
 }
-void Game::HeroPhase()
+bool Game::HeroPhase()
 {
 
     int selected = -1;
@@ -637,8 +637,7 @@ void Game::HeroPhase()
         else if (selected == 9)
         {
             MyTerminal.ShowMessageBox("Back to manu ...");
-          //  MyTerminal.ShowExitScreen();
-            //exit(0);
+            return true;
             
         }
         else if (selected == 10)
@@ -653,11 +652,15 @@ void Game::HeroPhase()
         }
 
         if (CheckGameEnd())
-            return;
+            return false ;
+            
+
     }
     if (CheckGameEnd())
-        return;
+         return false;
+         
     heroPlayer->resetActions();
+    return false;
 }
 
 void Game::increaseTerrorLevel() { terrorLevel++; }
@@ -669,6 +672,9 @@ void Game::MonsterPhase()
         return;
     }
     auto card = MonsterDeck.back();
+
+    MyTerminal.ShowPopupMessages(*this, "Monster Phase Begins!!!!!");
+
     MyTerminal.ShowMonsterPhase(*this, card);
     card->ApplyEffect(*this);
 
@@ -729,50 +735,46 @@ void Game::ChooseHero(std::string player1, std::string player2)
         {
             heroes[0]->GetPerkCard(PerkDeck.back());
             PerkDeck.pop_back();
-            startMayorloc->AddHero(heroes[0]);
         }
         break;
-        
-        case 1:
+
+    case 1:
         heroes.push_back(std ::make_shared<Archaeologist>(startArchloc));
         if (!PerkDeck.empty())
         {
             heroes[0]->GetPerkCard(PerkDeck.back());
             PerkDeck.pop_back();
-            startArchloc->AddHero(heroes[0]);
         }
         break;
-        case 2:
+    case 2:
         heroes.push_back(std::make_shared<Courier>(startCourierloc));
         if (!PerkDeck.empty())
         {
             heroes[0]->GetPerkCard(PerkDeck.back());
             PerkDeck.pop_back();
-            startCourierloc->AddHero(heroes[0]);
         }
         break;
-        case 3:
+    case 3:
         heroes.push_back(std::make_shared<Scientist>(startScientistloc));
         if (!PerkDeck.empty())
         {
             heroes[0]->GetPerkCard(PerkDeck.back());
             PerkDeck.pop_back();
-            startScientistloc->AddHero(heroes[0]);
         }
         break;
-        default:
+    default:
         break;
     }
     availableHeroes.erase(availableHeroes.begin() + player1Choice);
-    
+
     heroNames.clear();
     for (const auto &hero : availableHeroes)
-    heroNames.push_back(hero->getName());
-    
+        heroNames.push_back(hero->getName());
+
     MyTerminal.ShowMessageBox(player2 + " , choose your hero:");
     int player2Choice = MyTerminal.MenuGenerator(heroNames);
     auto player2Hero = availableHeroes[player2Choice];
-    
+
     if (heroNames[player2Choice] == "Mayor")
     {
         heroes.push_back(std ::make_shared<Mayor>(startMayorloc));
@@ -780,7 +782,6 @@ void Game::ChooseHero(std::string player1, std::string player2)
         {
             heroes[1]->GetPerkCard(PerkDeck.back());
             PerkDeck.pop_back();
-            startMayorloc->AddHero(heroes[1]);
         }
     }
     else if (heroNames[player2Choice] == "Archaeologist")
@@ -790,7 +791,6 @@ void Game::ChooseHero(std::string player1, std::string player2)
         {
             heroes[1]->GetPerkCard(PerkDeck.back());
             PerkDeck.pop_back();
-            startArchloc->AddHero(heroes[1]);
         }
     }
     else if (heroNames[player2Choice] == "Courier")
@@ -799,7 +799,6 @@ void Game::ChooseHero(std::string player1, std::string player2)
         if (!PerkDeck.empty())
         {
             heroes[1]->GetPerkCard(PerkDeck.back());
-            startCourierloc->AddHero(heroes[1]);
             PerkDeck.pop_back();
         }
     }
@@ -810,7 +809,6 @@ void Game::ChooseHero(std::string player1, std::string player2)
         {
             heroes[1]->GetPerkCard(PerkDeck.back());
             PerkDeck.pop_back();
-            startScientistloc->AddHero(heroes[1]);
         }
     }
     heroPlayer = heroes[0];
@@ -820,7 +818,7 @@ void Game::GameStart()
     const int screenWidth = 900;
     const int screenHeight = 700;
     InitWindow(screenWidth, screenHeight, "Horrified Game");
-    SetTargetFPS(70);
+    SetTargetFPS(60);
 
     InitAudioDevice();
     MyTerminal.music = LoadMusicStream("../assets/horror.mp3");
@@ -831,7 +829,9 @@ void Game::GameStart()
     DrawText("Loading...", 385, 340, 30, WHITE);
     EndDrawing();
     MyTerminal.LoadAssets();
-    while (true)
+
+    bool returnToMainMenu = false;
+    while (!WindowShouldClose())
     {
         UpdateMusicStream(MyTerminal.music);
         int StartMenuSelected = MyTerminal.MenuGenerator({"Start", "Load Game", "Exit"});
@@ -841,6 +841,7 @@ void Game::GameStart()
             MyTerminal.ShowExitScreen();
             UnloadMusicStream(MyTerminal.music);
             CloseAudioDevice();
+            CloseWindow();
             return;
         }
 
@@ -855,7 +856,7 @@ void Game::GameStart()
             int selectedSlot = MyTerminal.MenuGenerator({"slot1", "slot2", "slot3", "slot4", "slot5"});
             std::string FileName = "file_" + std::to_string(selectedSlot + 1);
             GameFileHandler::LoadGame(*this, FileName);
-            break;
+            // break;
         }
         if (StartMenuSelected == 0)
         {
@@ -880,18 +881,21 @@ void Game::GameStart()
             }
 
             ChooseHero(p1, p2);
-            break;
+            // break;
         }
-    }
+    
 
     while (!CheckGameEnd())
     {
         UpdateMusicStream(MyTerminal.music);
 
-        HeroPhase();
+        returnToMainMenu = HeroPhase();
+        if(returnToMainMenu){
+            Reset();
+            break;
+        }
         if (!skipMonsterPhase && !CheckGameEnd())
         {
-            MyTerminal.ShowBackgroundScreen("phase" , "THE NIGHT FALLS ...THE MONSTERS RISE!" );
             MonsterPhase();
         }
         else
@@ -899,7 +903,11 @@ void Game::GameStart()
             skipMonsterPhase = false;
         }
     }
-
+    if(CheckGameEnd()){
+        Reset();
+        continue;
+    }
+    }
     MyTerminal.UnloadAssets();
     UnloadMusicStream(MyTerminal.music);
     CloseAudioDevice();
@@ -923,11 +931,8 @@ bool Game::CheckGameEnd()
         MyTerminal.ShowMessageBox("Victory! The Heroes have vanquished all the monsters!\n");
         GameOver = true;
     }
-    if (GameOver){
-        Reset();
-        SetUpGame();
-        GameStart();
-    }
+    // if (GameOver)
+    //     exit(0);
     return GameOver;
 }
 void Game::Reset()
