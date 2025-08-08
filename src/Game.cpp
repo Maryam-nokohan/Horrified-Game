@@ -838,7 +838,7 @@ void Game::GameStart()
 
         if (StartMenuSelected == 2)
         {
-            MyTerminal.ShowExitScreen();
+            MyTerminal.ShowBackgroundScreen("exit" , "THE DARKNESS AWAITS YOU...");
             UnloadMusicStream(MyTerminal.music);
             CloseAudioDevice();
             CloseWindow();
@@ -918,17 +918,17 @@ bool Game::CheckGameEnd()
 {
     if (MonsterDeck.empty() && !Monsters.empty())
     {
-        MyTerminal.ShowMessageBox("Darkness Falls... The town is overrun! The monsters have prevailed.\n");
+        MyTerminal.ShowBackgroundScreen("lose" , "Darkness Falls... The town is overrun! The monsters have prevailed.");
         GameOver = true;
     }
     else if (terrorLevel >= 5)
     {
-        MyTerminal.ShowMessageBox("Terror Reigns! The townsfolk have lost all hope... Evil claims victory.\n");
+        MyTerminal.ShowBackgroundScreen("lose" , "Terror Reigns! The townsfolk have lost all hope... Evil claims victory.");
         GameOver = true;
     }
     else if (Monsters.empty())
     {
-        MyTerminal.ShowMessageBox("Victory! The Heroes have vanquished all the monsters!\n");
+        MyTerminal.ShowBackgroundScreen("win" , "Victory! The Heroes have vanquished all the monsters!");
         GameOver = true;
     }
     // if (GameOver)
