@@ -716,6 +716,7 @@ void ShowInTerminal::ShowBackgroundScreen(std::string name, std::string message)
 
         EndDrawing();
     }
+    SetMusicVolume(music , 1.0f);
 }
 
 
