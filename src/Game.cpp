@@ -481,7 +481,7 @@ bool Game::HeroPhase()
                         if (item->getColor() == ItemColor::Red)
                         {
                             redItems.push_back(item);
-                            redItemNames.push_back(item->getName());
+                            redItemNames.push_back(item->getName() + "(" +std::to_string(item->getPower())+ ")");
                         }
 
                     std::vector<std::shared_ptr<Item>> usedItems;

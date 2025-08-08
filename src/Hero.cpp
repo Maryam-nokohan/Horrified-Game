@@ -66,7 +66,7 @@ bool Hero::PlayerGetHit(Game &game)
             std ::vector<std ::string> ItemNames;
             for (const auto &item : inventory)
             {
-                ItemNames.push_back(item->getName());
+                ItemNames.push_back(item->getName() + "(" + item->GetItemColorToString(item->getColor()) + ")"+ "(" +std::to_string(item->getPower()) + ")");
             }
             game.MyTerminal.ShowMessageBox("Choose an Item to discard :");
             int index = game.MyTerminal.MenuGenerator(ItemNames);

@@ -49,3 +49,11 @@ void Item::setLocation(const std::shared_ptr<Location>& newLoc){
         else
         return false;
     }
+    std::string Item::GetItemColorToString(ItemColor color){
+        switch (color){
+            case ItemColor::Red: return "Red";
+            case ItemColor::Blue: return "Blue";
+            case ItemColor::Yellow: return "Yellow";
+
+        }
+    }
