@@ -35,8 +35,13 @@ void PerkCard ::ApplyEffect(Game & game)
                 
             }
             else if (name == OverStock) {
-                game.SetRandomItems(2);
-                game.MyTerminal.ShowMessageBox("Added two item to the map!");
+                auto loc1 = game.heroes[0]->getLocation();
+                auto loc2 = game.heroes[1]->getLocation();
+                game.mapPlan.GetLocationptr(loc1->GetCityName())->AddItem(game.Items.back());
+                game.Items.pop_back();
+                game.mapPlan.GetLocationptr(loc2->GetCityName())->AddItem(game.Items.back());
+                game.Items.pop_back();
+                game.MyTerminal.ShowMessageBox("Added two item to hero's location the map!");
 
                 }
             else if (name == LateIntoTheNight) {
