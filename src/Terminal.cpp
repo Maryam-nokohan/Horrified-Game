@@ -115,6 +115,8 @@ void ShowInTerminal ::LoadAssets()
     backgroundTextures["phase"] = LoadTexture("../assets/Background/phase1.jpg");
     backgroundTextures["DraculaAttack"] = LoadTexture("../assets/Background/Draculabg.jpg");
     backgroundTextures["InvisibleAttack"] = LoadTexture("../assets/Background/Invisiblebg.jpg");
+    backgroundTextures["win"] = LoadTexture("../assets/Background/win.png");
+    backgroundTextures["lose"] = LoadTexture("../assets/Background/lose.png");
     // Map
     mapTexture = LoadTexture("../assets/map.png");
 
@@ -714,85 +716,10 @@ void ShowInTerminal::ShowBackgroundScreen(std::string name, std::string message)
 
         EndDrawing();
     }
+    SetMusicVolume(music , 1.0f);
 }
 
 
-void ShowInTerminal::ShowExitScreen() {
-
-    const int screenWidth = GetScreenWidth();
-    const int screenHeight = GetScreenHeight();
-
-    Texture2D bg = backgroundTextures["exit"];
-
-    const float boxWidth = 600;
-    const float boxHeight = 180;
-    const float boxX = (screenWidth - boxWidth) / 2;
-    const float boxY = (screenHeight - boxHeight) / 2;
-
-    Rectangle box = { boxX, boxY, boxWidth, boxHeight };
-
-    float boxScale = 0.9f;
-    float targetScale = 1.0f;
-    Color boxColor = { 15, 25, 40, 200 }; 
-    Color borderColor = { 0, 220, 255, 255 };
-    Color textColor = { 220, 240, 255, 255 };   
-
-    const std::string message = "THE DARKNESS AWAITS YOU...";
-    int fontSize = 32;
-
-double startTime = GetTime();
-    const float totalDuration = 3.0f;
-
-    while (!WindowShouldClose()) {
-        UpdateMusicStream(music);
-        double elapsed = GetTime() - startTime;
-        if (elapsed >= totalDuration) break;
-
-        
-        float remaining = (float)(totalDuration - elapsed);
-        float volume = Clamp(remaining / totalDuration, 0.0f, 1.0f);
-        SetMusicVolume(music, volume);
-
-        boxScale += (targetScale - boxScale) * 0.1f;
-
-        BeginDrawing();
-
-        
-        ClearBackground(BLACK);
-        if (bg.id != 0) {
-            DrawTexturePro(bg,
-                Rectangle{ 0, 0, (float)bg.width, (float)bg.height },
-                Rectangle{ 0, 0, (float)screenWidth, (float)screenHeight },
-                Vector2{ 0, 0 }, 0.0f, WHITE);
-        }
-
-    
-        Rectangle scaledBox = {
-            box.x + (box.width * (1 - boxScale)) / 2,
-            box.y + (box.height * (1 - boxScale)) / 2,
-            box.width * boxScale,
-            box.height * boxScale
-        };
-
-        DrawRectangleRounded(scaledBox, 0.2f, 16, Fade(boxColor, boxScale));
-        DrawRectangleRoundedLines(scaledBox, 0.2f, 16, Fade(borderColor, boxScale));
-
-        Vector2 textSize = MeasureTextEx(font, message.c_str(), fontSize, 1.0f);
-        Vector2 textPos = {
-            scaledBox.x + (scaledBox.width - textSize.x) / 2,
-            scaledBox.y + (scaledBox.height - textSize.y) / 2
-        };
-
-        if (boxScale > 0.98f) {
-            float shake = sin(GetTime() * 20) * 2.0f;
-            textPos.x += shake;
-        }
-
-        DrawTextEx(font, message.c_str(), textPos, fontSize, 1.0f, Fade(textColor, boxScale));
-
-        EndDrawing();
-    }
-}
 void ShowInTerminal :: DrawTerrorLevel(int terrorLevel, Font font, Vector2 position) {
     
     std::string label = "Terror Level: " + std::to_string(terrorLevel);

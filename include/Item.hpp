@@ -25,6 +25,7 @@ class Item :public std :: enable_shared_from_this<Item>
     const std::string& getName() const;
     void setLocation(const std :: shared_ptr<Location>&) ;
     bool operator==(Item item);
+    std::string GetItemColorToString(ItemColor color);
 
 };
 #endif

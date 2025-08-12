@@ -55,7 +55,7 @@ class Game{
     Game & operator=(const Game &) = delete;
     ~Game();
     void ChooseHero(std::string , std::string);
-    void HeroPhase();
+    bool HeroPhase();
     void SetRandomItems(int);
     void MonsterPhase();
     void SwitchPlayer();
