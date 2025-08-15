@@ -41,6 +41,10 @@ void ShowInTerminal ::LoadAssets()
     villagerTextures[WilburAndChick] = LoadTexture("../assets/Villager/WilburAndChick.png");
     villagerTextures[Maria] = LoadTexture("../assets/Villager/Maria.png");
 
+    DiceBack = LoadTexture("../assets/Items/dice/diceBack.jpg");
+    diceFaces[" "] = LoadTexture("../assets/Items/dice/diceEmpty.jpg");
+    diceFaces["*"] = LoadTexture("../assets/Items/dice/diceStar.jpg");
+    diceFaces["!"] = LoadTexture("../assets/Items/dice/dicePower.jpg");
     // Items
     // Yellow
     itemTextures[Flower] = LoadTexture("../assets/Items/Yellow/Flower.png");
@@ -151,27 +155,27 @@ void ShowInTerminal ::LoadAssets()
     locationPositions[Hospital] = {210, 497};
     locationPositions[Graveyard] = {328, 488};
 
-float r = 20.0f;
+    float r = 20.0f;
 
-locationBounds[Cave] = {43.0f - r, 133.0f - r, 2*r, 2*r};
-locationBounds[Camp] = {123.0f - r, 115.0f - r, 2*r, 2*r};
-locationBounds[Precinct] = {219.0f - r, 104.0f - r, 2*r, 2*r};
-locationBounds[Inn] = {306.0f - r, 89.0f - r, 2*r, 2*r};
-locationBounds[Abbey] = {58.0f - r, 319.0f - r, 2*r, 2*r};
-locationBounds[Crypt] = {40.0f - r, 419.0f - r, 2*r, 2*r};
-locationBounds[Mansion] = {157.0f - r, 277.0f - r, 2*r, 2*r};
-locationBounds[Theater] = {348.0f - r, 198.0f - r, 2*r, 2*r};
-locationBounds[Barn] = {415.0f - r, 101.0f - r, 2*r, 2*r};
-locationBounds[Tower] = {454.0f - r, 191.0f - r, 2*r, 2*r};
-locationBounds[Dungeon] = {502.0f - r, 101.0f - r, 2*r, 2*r};
-locationBounds[Docks] = {488.0f - r, 279.0f - r, 2*r, 2*r};
-locationBounds[Institute] = {443.0f - r, 495.0f - r, 2*r, 2*r};
-locationBounds[Laboratory] = {377.0f - r, 405.0f - r, 2*r, 2*r};
-locationBounds[Shop] = {302.0f - r, 342.0f - r, 2*r, 2*r};
-locationBounds[Museum] = {126.0f - r, 406.0f - r, 2*r, 2*r};
-locationBounds[Church] = {248.0f - r, 431.0f - r, 2*r, 2*r};
-locationBounds[Hospital] = {210.0f - r, 497.0f - r, 2*r, 2*r};
-locationBounds[Graveyard] = {328.0f - r, 488.0f - r, 2*r, 2*r};
+    locationBounds[Cave] = {43.0f - r, 133.0f - r, 2 * r, 2 * r};
+    locationBounds[Camp] = {123.0f - r, 115.0f - r, 2 * r, 2 * r};
+    locationBounds[Precinct] = {219.0f - r, 104.0f - r, 2 * r, 2 * r};
+    locationBounds[Inn] = {306.0f - r, 89.0f - r, 2 * r, 2 * r};
+    locationBounds[Abbey] = {58.0f - r, 319.0f - r, 2 * r, 2 * r};
+    locationBounds[Crypt] = {40.0f - r, 419.0f - r, 2 * r, 2 * r};
+    locationBounds[Mansion] = {157.0f - r, 277.0f - r, 2 * r, 2 * r};
+    locationBounds[Theater] = {348.0f - r, 198.0f - r, 2 * r, 2 * r};
+    locationBounds[Barn] = {415.0f - r, 101.0f - r, 2 * r, 2 * r};
+    locationBounds[Tower] = {454.0f - r, 191.0f - r, 2 * r, 2 * r};
+    locationBounds[Dungeon] = {502.0f - r, 101.0f - r, 2 * r, 2 * r};
+    locationBounds[Docks] = {488.0f - r, 279.0f - r, 2 * r, 2 * r};
+    locationBounds[Institute] = {443.0f - r, 495.0f - r, 2 * r, 2 * r};
+    locationBounds[Laboratory] = {377.0f - r, 405.0f - r, 2 * r, 2 * r};
+    locationBounds[Shop] = {302.0f - r, 342.0f - r, 2 * r, 2 * r};
+    locationBounds[Museum] = {126.0f - r, 406.0f - r, 2 * r, 2 * r};
+    locationBounds[Church] = {248.0f - r, 431.0f - r, 2 * r, 2 * r};
+    locationBounds[Hospital] = {210.0f - r, 497.0f - r, 2 * r, 2 * r};
+    locationBounds[Graveyard] = {328.0f - r, 488.0f - r, 2 * r, 2 * r};
 }
 void ShowInTerminal ::UnloadAssets()
 {
@@ -192,132 +196,146 @@ void ShowInTerminal ::UnloadAssets()
         UnloadTexture(tex);
     for (auto &[_, tex] : backgroundTextures)
         UnloadTexture(tex);
+    for (auto &[_, tex] : diceFaces)
+        UnloadTexture(tex);
     UnloadTexture(mapTexture);
     UnloadFont(font);
     UnloadTexture(coffinBrokenTexture);
     UnloadTexture(coffinIntactTexture);
     UnloadTexture(frenzyMark);
+    UnloadTexture(DiceBack);
 }
 
-void ShowInTerminal::ShowMessageBox(const std::string& message) {
+void ShowInTerminal::ShowMessageBox(const std::string &message)
+{
 
     const int windowWidth = 900;
     const int windowHeight = 700;
-    
- 
+
     const float boxWidth = 600;
     const float boxHeight = 150;
     const float boxX = (windowWidth - boxWidth) / 2;
     const float boxY = (windowHeight - boxHeight) / 2;
-    
-    Rectangle box = { boxX, boxY, boxWidth, boxHeight };
-    
+
+    Rectangle box = {boxX, boxY, boxWidth, boxHeight};
 
     float boxScale = 0.9f;
     float targetScale = 1.0f;
 
-    Color boxColor = { 15, 25, 40, 200 }; 
-    Color borderColor = { 0, 220, 255, 255 };
-    Color textColor = { 220, 240, 255, 255 };   
-    Color hintColor = { 150, 200, 220, 200 };   
-    
+    Color boxColor = {15, 25, 40, 200};
+    Color borderColor = {0, 220, 255, 255};
+    Color textColor = {220, 240, 255, 255};
+    Color hintColor = {150, 200, 220, 200};
+
     bool waiting = true;
-    while (!WindowShouldClose() && waiting) {
+    while (!WindowShouldClose() && waiting)
+    {
         UpdateMusicStream(music);
-        
+
         boxScale += (targetScale - boxScale) * 0.1f;
-        
+
         BeginDrawing();
-        
-        if (backgroundTextures["msg"].id != 0) {
+
+        if (backgroundTextures["msg"].id != 0)
+        {
             DrawTexturePro(backgroundTextures["msg"],
-                         Rectangle{0, 0, (float)backgroundTextures["msg"].width, (float)backgroundTextures["msg"].height},
-                         Rectangle{0, 0, (float)windowWidth, (float)windowHeight},
-                         Vector2{0, 0}, 0.0f, WHITE);
-        } else {
-    
-            DrawRectangleGradientV(0, 0, windowWidth, windowHeight, 
-                                 Color{ 240, 240, 250, 255 }, 
-                                 Color{ 200, 200, 220, 255 });
+                           Rectangle{0, 0, (float)backgroundTextures["msg"].width, (float)backgroundTextures["msg"].height},
+                           Rectangle{0, 0, (float)windowWidth, (float)windowHeight},
+                           Vector2{0, 0}, 0.0f, WHITE);
         }
-        
-    
+        else
+        {
+
+            DrawRectangleGradientV(0, 0, windowWidth, windowHeight,
+                                   Color{240, 240, 250, 255},
+                                   Color{200, 200, 220, 255});
+        }
+
         Rectangle scaledBox = {
             box.x + (box.width * (1 - boxScale)) / 2,
             box.y + (box.height * (1 - boxScale)) / 2,
             box.width * boxScale,
-            box.height * boxScale
-        };
-        
-        
+            box.height * boxScale};
+
         DrawRectangleRounded(scaledBox, 0.2f, 16, Fade(boxColor, boxScale));
 
         DrawRectangleRoundedLines(scaledBox, 0.2f, 16, Fade(borderColor, boxScale));
-        
+
         int fontSize = 24;
-        
+
         const float maxTextWidth = boxWidth - 40;
         Vector2 textSize = MeasureTextEx(font, message.c_str(), fontSize, 1.0f);
-        
-        if (textSize.x > maxTextWidth) {
+
+        if (textSize.x > maxTextWidth)
+        {
             std::string wrappedText;
             std::string currentLine;
             std::istringstream iss(message);
             std::string word;
-            
-            while (iss >> word) {
-                if (MeasureTextEx(font, (currentLine + word).c_str(), fontSize, 1.0f).x < maxTextWidth) {
+
+            while (iss >> word)
+            {
+                if (MeasureTextEx(font, (currentLine + word).c_str(), fontSize, 1.0f).x < maxTextWidth)
+                {
                     currentLine += word + " ";
-                } else {
+                }
+                else
+                {
                     wrappedText += currentLine + "\n";
                     currentLine = word + " ";
                 }
             }
             wrappedText += currentLine;
-            
-            DrawTextEx(font, wrappedText.c_str(), 
-                      Vector2{ scaledBox.x + 20,
-                               scaledBox.y + (scaledBox.height - fontSize * (1 + std::count(wrappedText.begin(), wrappedText.end(), '\n'))) / 2 },
-                      fontSize, 1.0f, Fade(textColor, boxScale));
-        } else {
-            DrawTextEx(font, message.c_str(), 
-                      Vector2{ scaledBox.x + (scaledBox.width - textSize.x) / 2,
-                               scaledBox.y + (scaledBox.height - textSize.y) / 2 },fontSize, 1.0f, Fade(textColor, boxScale)); // استفاده از رنگ متن جدید
+
+            DrawTextEx(font, wrappedText.c_str(),
+                       Vector2{scaledBox.x + 20,
+                               scaledBox.y + (scaledBox.height - fontSize * (1 + std::count(wrappedText.begin(), wrappedText.end(), '\n'))) / 2},
+                       fontSize, 1.0f, Fade(textColor, boxScale));
         }
-        
-        if (boxScale > 0.98f) {
-            const char* hintText = "Press ENTER or click to continue...";
+        else
+        {
+            DrawTextEx(font, message.c_str(),
+                       Vector2{scaledBox.x + (scaledBox.width - textSize.x) / 2,
+                               scaledBox.y + (scaledBox.height - textSize.y) / 2},
+                       fontSize, 1.0f, Fade(textColor, boxScale)); // استفاده از رنگ متن جدید
+        }
+
+        if (boxScale > 0.98f)
+        {
+            const char *hintText = "Press ENTER or click to continue...";
             int hintFontSize = 16;
             Vector2 hintSize = MeasureTextEx(font, hintText, hintFontSize, 1.0f);
-            DrawTextEx(font, hintText, 
-                       Vector2{ windowWidth/2 - hintSize.x/2, boxY + boxHeight + 20 },
+            DrawTextEx(font, hintText,
+                       Vector2{windowWidth / 2 - hintSize.x / 2, boxY + boxHeight + 20},
                        hintFontSize, 1.0f, WHITE);
         }
-        
+
         EndDrawing();
-        
-        if ((IsKeyPressed(KEY_ENTER) || IsMouseButtonPressed(MOUSE_LEFT_BUTTON))) {
-            if (boxScale > 0.98f) {
+
+        if ((IsKeyPressed(KEY_ENTER) || IsMouseButtonPressed(MOUSE_LEFT_BUTTON)))
+        {
+            if (boxScale > 0.98f)
+            {
                 waiting = false;
             }
         }
     }
 }
 
-void ShowInTerminal::ShowHelpScreen() {
+void ShowInTerminal::ShowHelpScreen()
+{
     Texture2D bg = backgroundTextures["msg"];
     const int screenWidth = GetScreenWidth();
     const int screenHeight = GetScreenHeight();
 
-    
-    Color panelColor = { 25, 30, 45, 235 };
-    Color borderColor = { 70, 130, 220, 255 };
-    Color titleColor = { 220, 220, 220, 255 };
-    Color textColor = { 200, 200, 200, 255 };
-    Color buttonColor = { 80, 85, 100, 255 };
-    Color buttonHoverColor = { 100, 110, 130, 255 };
+    Color panelColor = {25, 30, 45, 235};
+    Color borderColor = {70, 130, 220, 255};
+    Color titleColor = {220, 220, 220, 255};
+    Color textColor = {200, 200, 200, 255};
+    Color buttonColor = {80, 85, 100, 255};
+    Color buttonHoverColor = {100, 110, 130, 255};
 
-    const char* instructionsText =
+    const char *instructionsText =
         "Welcome to the Horrified Game! Here are the basics you need to know:\n\n"
         "1. Goal:\n"
         "   - Work with the other heroes to defeat the monsters (Dracula, Invisible Man, etc.) by\n"
@@ -347,90 +365,90 @@ void ShowInTerminal::ShowHelpScreen() {
         "   - Defeat the monsters and save the town!\n\n"
         "Good luck, hero!";
 
-    
     std::vector<std::string> lines;
     std::stringstream ss(instructionsText);
     std::string line;
-    while (std::getline(ss, line, '\n')) {
+    while (std::getline(ss, line, '\n'))
+    {
         lines.push_back(line);
     }
 
-    
     float padding = 50.0f;
-    Rectangle panelRec = { padding, padding, screenWidth - (padding * 2), screenHeight - (padding * 2) };
-    Rectangle backButtonRec = { screenWidth / 2.0f - 100, panelRec.y + panelRec.height - 60, 200, 45 };
+    Rectangle panelRec = {padding, padding, screenWidth - (padding * 2), screenHeight - (padding * 2)};
+    Rectangle backButtonRec = {screenWidth / 2.0f - 100, panelRec.y + panelRec.height - 60, 200, 45};
 
-    
     float scrollY = 0.0f;
     float textFontSize = 18.0f;
     float textLineSpacing = 10.0f;
     float totalTextHeight = lines.size() * (textFontSize + textLineSpacing);
-    Rectangle viewArea = { panelRec.x + 30, panelRec.y + 80, panelRec.width - 60, panelRec.height - 150 };
+    Rectangle viewArea = {panelRec.x + 30, panelRec.y + 80, panelRec.width - 60, panelRec.height - 150};
 
     bool backClicked = false;
-    while (!WindowShouldClose() && !backClicked) {
+    while (!WindowShouldClose() && !backClicked)
+    {
         UpdateMusicStream(music);
-        
+
         Vector2 mousePos = GetMousePosition();
         bool isMouseOverButton = CheckCollisionPointRec(mousePos, backButtonRec);
 
-        if (isMouseOverButton && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+        if (isMouseOverButton && IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+        {
             backClicked = true;
         }
 
-        
         float wheelMove = GetMouseWheelMove();
-        if (wheelMove != 0) {
+        if (wheelMove != 0)
+        {
             scrollY += wheelMove * 20;
-            if (scrollY > 0) scrollY = 0;
-            if (scrollY < viewArea.height - totalTextHeight) scrollY = viewArea.height - totalTextHeight;
+            if (scrollY > 0)
+                scrollY = 0;
+            if (scrollY < viewArea.height - totalTextHeight)
+                scrollY = viewArea.height - totalTextHeight;
         }
 
-
-        
         BeginDrawing();
         ClearBackground(BLACK);
 
-        
-        DrawTexturePro(bg, { 0, 0, (float)bg.width, (float)bg.height }, { 0, 0, (float)screenWidth, (float)screenHeight }, { 0, 0 }, 0.0f, DARKGRAY);
+        DrawTexturePro(bg, {0, 0, (float)bg.width, (float)bg.height}, {0, 0, (float)screenWidth, (float)screenHeight}, {0, 0}, 0.0f, DARKGRAY);
         DrawRectangleRec(panelRec, panelColor);
         DrawRectangleLinesEx(panelRec, 3.0f, borderColor);
 
-        
-        const char* titleText = "INSTRUCTIONS";
+        const char *titleText = "INSTRUCTIONS";
         float titleFontSize = 32.0f;
         Vector2 titleSize = MeasureTextEx(font, titleText, titleFontSize, 2);
-        DrawTextEx(font, titleText, { screenWidth / 2.0f - titleSize.x / 2, panelRec.y + 25 }, titleFontSize, 2, titleColor);
+        DrawTextEx(font, titleText, {screenWidth / 2.0f - titleSize.x / 2, panelRec.y + 25}, titleFontSize, 2, titleColor);
 
         BeginScissorMode(viewArea.x, viewArea.y, viewArea.width, viewArea.height);
-        
+
         float currentY = viewArea.y + scrollY;
-        for (const auto& textLine : lines) {
-            DrawTextEx(font, textLine.c_str(), { viewArea.x, currentY }, textFontSize, 2.0f, textColor);
+        for (const auto &textLine : lines)
+        {
+            DrawTextEx(font, textLine.c_str(), {viewArea.x, currentY}, textFontSize, 2.0f, textColor);
             currentY += textFontSize + textLineSpacing;
         }
 
         EndScissorMode();
 
         DrawRectangleRec(backButtonRec, isMouseOverButton ? buttonHoverColor : buttonColor);
-        const char* backText = "Back to Game";
+        const char *backText = "Back to Game";
         float backTextFontSize = 20.0f;
         Vector2 backTextSize = MeasureTextEx(font, backText, backTextFontSize, 2);
-        DrawTextEx(font, backText, { backButtonRec.x + (backButtonRec.width - backTextSize.x) / 2, backButtonRec.y + (backButtonRec.height - backTextSize.y) / 2 }, backTextFontSize, 2, titleColor);
+        DrawTextEx(font, backText, {backButtonRec.x + (backButtonRec.width - backTextSize.x) / 2, backButtonRec.y + (backButtonRec.height - backTextSize.y) / 2}, backTextFontSize, 2, titleColor);
 
         EndDrawing();
     }
 }
-int ShowInTerminal::MenuGenerator(const std::vector<std::string>& options) {
-    
-    const Color BG_COLOR = { 21, 30, 39, 255 };
-    const Color BUTTON_COLOR = { 70, 85, 105, 255 };
-    const Color BUTTON_BORDER_COLOR = { 100, 120, 140, 255 };
-    const Color HOVER_COLOR = { 120, 145, 175, 255 };
-    const Color TEXT_COLOR = { 230, 230, 230, 255 };
+int ShowInTerminal::MenuGenerator(const std::vector<std::string> &options)
+{
+
+    const Color BG_COLOR = {21, 30, 39, 255};
+    const Color BUTTON_COLOR = {70, 85, 105, 255};
+    const Color BUTTON_BORDER_COLOR = {100, 120, 140, 255};
+    const Color HOVER_COLOR = {120, 145, 175, 255};
+    const Color TEXT_COLOR = {230, 230, 230, 255};
 
     Texture2D bg = backgroundTextures["menu"];
-    Font& font = this->font;
+    Font &font = this->font;
 
     const float buttonWidth = 200;
     const float buttonHeight = 50;
@@ -438,7 +456,8 @@ int ShowInTerminal::MenuGenerator(const std::vector<std::string>& options) {
     const int maxButtonsPerColumn = 10;
 
     int numColumns = 1;
-    if (options.size() > maxButtonsPerColumn) {
+    if (options.size() > maxButtonsPerColumn)
+    {
         numColumns = 2;
     }
 
@@ -449,12 +468,16 @@ int ShowInTerminal::MenuGenerator(const std::vector<std::string>& options) {
 
     std::vector<Rectangle> optionRects(options.size());
 
-    for (int i = 0; i < options.size(); i++) {
+    for (int i = 0; i < options.size(); i++)
+    {
         float x, y;
-        if (numColumns == 1) {
+        if (numColumns == 1)
+        {
             x = (GetScreenWidth() - buttonWidth) / 2.0f;
             y = startY + i * (buttonHeight + spacing);
-        } else {
+        }
+        else
+        {
             int column = i / numRows;
             int row = i % numRows;
 
@@ -464,18 +487,20 @@ int ShowInTerminal::MenuGenerator(const std::vector<std::string>& options) {
             x = (column == 0) ? column1_x : column2_x;
             y = startY + row * (buttonHeight + spacing);
         }
-        optionRects[i] = { x, y, buttonWidth, buttonHeight };
+        optionRects[i] = {x, y, buttonWidth, buttonHeight};
     }
 
-
-    while (!WindowShouldClose()) {
+    while (!WindowShouldClose())
+    {
         UpdateMusicStream(music);
         Vector2 mouse = GetMousePosition();
 
-    
-        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-            for (int i = 0; i < options.size(); i++) {
-                if (CheckCollisionPointRec(mouse, optionRects[i])) {
+        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+        {
+            for (int i = 0; i < options.size(); i++)
+            {
+                if (CheckCollisionPointRec(mouse, optionRects[i]))
+                {
                     return i;
                 }
             }
@@ -483,34 +508,32 @@ int ShowInTerminal::MenuGenerator(const std::vector<std::string>& options) {
 
         BeginDrawing();
         ClearBackground(BG_COLOR);
-        
+
         DrawTexturePro(bg, {0, 0, (float)bg.width, (float)bg.height}, {0, 0, (float)GetScreenWidth(), (float)GetScreenHeight()}, {0, 0}, 0.0f, WHITE);
 
-        for (int i = 0; i < options.size(); i++) {
+        for (int i = 0; i < options.size(); i++)
+        {
             bool hovered = CheckCollisionPointRec(mouse, optionRects[i]);
 
-            
             DrawRectangleRounded(optionRects[i], 0.2f, 10, hovered ? HOVER_COLOR : BUTTON_COLOR);
             DrawRectangleRoundedLines(optionRects[i], 0.2f, 10, hovered ? SKYBLUE : BUTTON_BORDER_COLOR);
-
 
             float fontSize = 20.0f;
             const float textPadding = 15.0f;
             Vector2 textSize;
 
-            
-            do {
+            do
+            {
                 textSize = MeasureTextEx(font, options[i].c_str(), fontSize, 1);
-                if (textSize.x > buttonWidth - textPadding) {
+                if (textSize.x > buttonWidth - textPadding)
+                {
                     fontSize -= 1.0f;
                 }
             } while (textSize.x > buttonWidth - textPadding && fontSize > 8);
 
-            
             float textX = optionRects[i].x + (optionRects[i].width - textSize.x) / 2;
             float textY = optionRects[i].y + (optionRects[i].height - textSize.y) / 2;
 
-            
             DrawTextEx(font, options[i].c_str(), {textX, textY}, fontSize, 1, TEXT_COLOR);
         }
 
@@ -520,102 +543,112 @@ int ShowInTerminal::MenuGenerator(const std::vector<std::string>& options) {
     return -1;
 }
 
-bool ShowInTerminal::GetPlayerInfo(std::string& name, int& days) {
-    
+bool ShowInTerminal::GetPlayerInfo(std::string &name, int &days)
+{
+
     const int screenWidth = GetScreenWidth();
     const int screenHeight = GetScreenHeight();
 
-    
     Texture2D bg = backgroundTextures["input"];
 
-    
     std::string nameInput = "";
     std::string daysInput = "";
     std::string errorMsg = "";
 
-    
     Color bgColor = (Color){23, 28, 41, 255};
     Color textColor = (Color){220, 220, 220, 255};
-    Color boxColor = (Color){40, 45, 60, 255};       
+    Color boxColor = (Color){40, 45, 60, 255};
     Color boxActiveBorderColor = (Color){70, 130, 220, 255};
     Color btnBackColor = (Color){80, 85, 100, 255};
-    Color btnSubmitColor = (Color){60, 140, 90, 255}; 
-    Color placeholderColor = (Color){150, 150, 150, 255}; 
-
+    Color btnSubmitColor = (Color){60, 140, 90, 255};
+    Color placeholderColor = (Color){150, 150, 150, 255};
 
     float formWidth = 450;
     float formX = (screenWidth - formWidth) / 2.0f;
 
-    Rectangle nameBox = { formX, 240, formWidth, 50 };
-    Rectangle daysBox = { formX, 350, formWidth, 50 };
-    Rectangle backBtn = { formX, 450, 150, 50 };
-    Rectangle submitBtn = { formX + formWidth - 150, 450, 150, 50 };
+    Rectangle nameBox = {formX, 240, formWidth, 50};
+    Rectangle daysBox = {formX, 350, formWidth, 50};
+    Rectangle backBtn = {formX, 450, 150, 50};
+    Rectangle submitBtn = {formX + formWidth - 150, 450, 150, 50};
 
     bool typingName = true;
     bool typingDays = false;
     bool submitClicked = false;
     bool backClicked = false;
 
-    while (!WindowShouldClose() && !submitClicked && !backClicked) {
+    while (!WindowShouldClose() && !submitClicked && !backClicked)
+    {
         UpdateMusicStream(music);
-        
+
         Vector2 mouse = GetMousePosition();
         int key = GetCharPressed();
-        if (key > 0 && isprint(key)) {
-            if (typingName && nameInput.size() < 30) {
+        if (key > 0 && isprint(key))
+        {
+            if (typingName && nameInput.size() < 30)
+            {
                 nameInput.push_back((char)key);
-            } else if (typingDays && daysInput.size() < 5 && isdigit(key)) {
+            }
+            else if (typingDays && daysInput.size() < 5 && isdigit(key))
+            {
                 daysInput.push_back((char)key);
             }
         }
-        if (IsKeyPressed(KEY_BACKSPACE)) {
-            if (typingName && !nameInput.empty()) nameInput.pop_back();
-            else if (typingDays && !daysInput.empty()) daysInput.pop_back();
+        if (IsKeyPressed(KEY_BACKSPACE))
+        {
+            if (typingName && !nameInput.empty())
+                nameInput.pop_back();
+            else if (typingDays && !daysInput.empty())
+                daysInput.pop_back();
         }
-        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+        {
             typingName = CheckCollisionPointRec(mouse, nameBox);
             typingDays = CheckCollisionPointRec(mouse, daysBox);
 
-            if (CheckCollisionPointRec(mouse, submitBtn)) {
-                if (nameInput.empty() || daysInput.empty()) {
+            if (CheckCollisionPointRec(mouse, submitBtn))
+            {
+                if (nameInput.empty() || daysInput.empty())
+                {
                     errorMsg = "Both fields must be filled!";
-                } else if (!CheckInt(daysInput)) {
+                }
+                else if (!CheckInt(daysInput))
+                {
                     errorMsg = "Days must be a number!";
-                } else {
+                }
+                else
+                {
                     name = nameInput;
                     days = std::stoi(daysInput);
                     submitClicked = true;
                 }
             }
-            if (CheckCollisionPointRec(mouse, backBtn)) {
+            if (CheckCollisionPointRec(mouse, backBtn))
+            {
                 backClicked = true;
             }
         }
 
-
         BeginDrawing();
-        ClearBackground(bgColor); 
+        ClearBackground(bgColor);
 
-    
         DrawTexturePro(bg, {0, 0, (float)bg.width, (float)bg.height}, {0, 0, (float)screenWidth, (float)screenHeight}, {0, 0}, 0.0f, WHITE);
 
-        
         float fontSize = 22.0f;
         float spacing = 2.0f;
 
-    
         DrawTextEx(font, "Enter your name:", {nameBox.x, nameBox.y - 30}, fontSize, spacing, textColor);
         DrawRectangleRec(nameBox, boxColor);
-        if (typingName) DrawRectangleLinesEx(nameBox, 2, boxActiveBorderColor); // حاشیه برای کادر فعال
-        DrawTextEx(font, nameInput.empty() ? "Type name..." : nameInput.c_str(), {nameBox.x + 15, nameBox.y + 15}, fontSize, spacing, nameInput.empty() ? placeholderColor : textColor);// لیبل و کادر روزها
+        if (typingName)
+            DrawRectangleLinesEx(nameBox, 2, boxActiveBorderColor);                                                                                                                      // حاشیه برای کادر فعال
+        DrawTextEx(font, nameInput.empty() ? "Type name..." : nameInput.c_str(), {nameBox.x + 15, nameBox.y + 15}, fontSize, spacing, nameInput.empty() ? placeholderColor : textColor); // لیبل و کادر روزها
         DrawTextEx(font, "Days since last garlic:", {daysBox.x, daysBox.y - 30}, fontSize, spacing, textColor);
         DrawRectangleRec(daysBox, boxColor);
-        if (typingDays) DrawRectangleLinesEx(daysBox, 2, boxActiveBorderColor); // حاشیه برای کادر فعال
+        if (typingDays)
+            DrawRectangleLinesEx(daysBox, 2, boxActiveBorderColor); // حاشیه برای کادر فعال
         DrawTextEx(font, daysInput.empty() ? "0" : daysInput.c_str(), {daysBox.x + 15, daysBox.y + 15}, fontSize, spacing, daysInput.empty() ? placeholderColor : textColor);
 
-
-        const char* backText = "Back";
-        const char* submitText = "Submit";
+        const char *backText = "Back";
+        const char *submitText = "Submit";
         Vector2 backTextSize = MeasureTextEx(font, backText, fontSize, spacing);
         Vector2 submitTextSize = MeasureTextEx(font, submitText, fontSize, spacing);
 
@@ -625,8 +658,8 @@ bool ShowInTerminal::GetPlayerInfo(std::string& name, int& days) {
         DrawRectangleRec(submitBtn, btnSubmitColor);
         DrawTextEx(font, submitText, {submitBtn.x + (submitBtn.width - submitTextSize.x) / 2, submitBtn.y + (submitBtn.height - submitTextSize.y) / 2}, fontSize, spacing, textColor);
 
-        
-        if (!errorMsg.empty()) {
+        if (!errorMsg.empty())
+        {
             DrawTextEx(font, errorMsg.c_str(), {formX, 520}, 20, spacing, RED);
         }
 
@@ -646,9 +679,9 @@ void ShowInTerminal::ShowBackgroundScreen(std::string name, std::string message)
     float boxScale = 0.9f;
     float targetScale = 1.0f;
 
-    Color boxColor = { 15, 25, 40, 160 };      // Small semi-transparent box
-    Color borderColor = { 0, 220, 255, 200 };
-    Color textColor = { 220, 240, 255, 255 };
+    Color boxColor = {15, 25, 40, 160}; // Small semi-transparent box
+    Color borderColor = {0, 220, 255, 200};
+    Color textColor = {220, 240, 255, 255};
     int fontSize = 28;
 
     double startTime = GetTime();
@@ -658,7 +691,8 @@ void ShowInTerminal::ShowBackgroundScreen(std::string name, std::string message)
     {
         UpdateMusicStream(music);
         double elapsed = GetTime() - startTime;
-        if (elapsed >= totalDuration) break;
+        if (elapsed >= totalDuration)
+            break;
 
         float remaining = (float)(totalDuration - elapsed);
         float volume = Clamp(remaining / totalDuration, 0.0f, 1.0f);
@@ -673,9 +707,9 @@ void ShowInTerminal::ShowBackgroundScreen(std::string name, std::string message)
         if (bg.id != 0)
         {
             DrawTexturePro(bg,
-                Rectangle{ 0, 0, (float)bg.width, (float)bg.height },
-                Rectangle{ 0, 0, (float)screenWidth, (float)screenHeight },
-                Vector2{ 0, 0 }, 0.0f, WHITE);
+                           Rectangle{0, 0, (float)bg.width, (float)bg.height},
+                           Rectangle{0, 0, (float)screenWidth, (float)screenHeight},
+                           Vector2{0, 0}, 0.0f, WHITE);
         }
 
         // Measure text size
@@ -686,16 +720,14 @@ void ShowInTerminal::ShowBackgroundScreen(std::string name, std::string message)
             (screenWidth - textSize.x - padding) / 2,
             screenHeight - textSize.y - 80, // lower on the screen
             textSize.x + padding,
-            textSize.y + 30
-        };
+            textSize.y + 30};
 
         // Scale box for slight zoom-in effect
         Rectangle scaledBox = {
             textBox.x + (textBox.width * (1 - boxScale)) / 2,
             textBox.y + (textBox.height * (1 - boxScale)) / 2,
             textBox.width * boxScale,
-            textBox.height * boxScale
-        };
+            textBox.height * boxScale};
 
         // Draw box and text
         DrawRectangleRounded(scaledBox, 0.2f, 16, Fade(boxColor, boxScale));
@@ -703,8 +735,7 @@ void ShowInTerminal::ShowBackgroundScreen(std::string name, std::string message)
 
         Vector2 textPos = {
             scaledBox.x + (scaledBox.width - textSize.x) / 2,
-            scaledBox.y + (scaledBox.height - textSize.y) / 2
-        };
+            scaledBox.y + (scaledBox.height - textSize.y) / 2};
 
         if (boxScale > 0.98f)
         {
@@ -716,36 +747,34 @@ void ShowInTerminal::ShowBackgroundScreen(std::string name, std::string message)
 
         EndDrawing();
     }
-    SetMusicVolume(music , 1.0f);
+    SetMusicVolume(music, 1.0f);
 }
 
+void ShowInTerminal ::DrawTerrorLevel(int terrorLevel, Font font, Vector2 position)
+{
 
-void ShowInTerminal :: DrawTerrorLevel(int terrorLevel, Font font, Vector2 position) {
-    
     std::string label = "Terror Level: " + std::to_string(terrorLevel);
     DrawTextEx(font, label.c_str(), position, 20, 1, RED);
 
-    
     float fill = terrorLevel / 7.0f;
 
-    
-    Rectangle barBg = { position.x, position.y + 30, 200, 20 };
+    Rectangle barBg = {position.x, position.y + 30, 200, 20};
     DrawRectangleRec(barBg, DARKGRAY);
 
-    Rectangle barFill = { position.x, position.y + 30, 200 * fill, 20 };
+    Rectangle barFill = {position.x, position.y + 30, 200 * fill, 20};
     DrawRectangleRec(barFill, RED);
-
 
     DrawRectangleLinesEx(barBg, 2, BLACK);
 }
-
-
-void ShowInTerminal::DrawDraculaMat(Game& game, Vector2 startPos) {
+void ShowInTerminal::DrawDraculaMat(Game &game, Vector2 startPos)
+{
     auto dracula = game.GetDracula();
-    if (!dracula) return;
+    if (!dracula)
+        return;
 
-    const auto& coffins = dracula->GetCoffins();
-    if (coffins.empty()) return;
+    const auto &coffins = dracula->GetCoffins();
+    if (coffins.empty())
+        return;
 
     const float cellWidth = 148.0f;
     const float cellHeight = 55.0f;
@@ -753,84 +782,90 @@ void ShowInTerminal::DrawDraculaMat(Game& game, Vector2 startPos) {
     const float coffinSize = 35.0f;
     const float textFontSize = 16.0f;
     const float titleFontSize = 18.0f;
-    
-    
-    const Color tableColor = { 50, 50, 80, 255 };
-    const Color borderColor = { 100, 100, 140, 255 };
+
+    const Color tableColor = {50, 50, 80, 255};
+    const Color borderColor = {100, 100, 140, 255};
     const Color textColor = WHITE;
 
-    const char* title = "Dracula mat";
+    const char *title = "Dracula mat";
     Vector2 titleSize = MeasureTextEx(font, title, titleFontSize, 1);
-    DrawTextEx(font, title, 
-              {startPos.x + (cellWidth - titleSize.x)/2, startPos.y - 25}, 
-              titleFontSize, 1, WHITE);
+    DrawTextEx(font, title,
+               {startPos.x + (cellWidth - titleSize.x) / 2, startPos.y - 25},
+               titleFontSize, 1, WHITE);
 
     float availableHeight = GetScreenHeight() - startPos.y - 30;
     int maxVisibleRows = std::floor(availableHeight / cellHeight);
     int rowsToShow = std::min((int)coffins.size(), maxVisibleRows);
 
-    for (int i = 0; i < rowsToShow; i++) {
+    for (int i = 0; i < rowsToShow; i++)
+    {
         float cellY = startPos.y + i * cellHeight;
-        
-        
+
         DrawRectangleRounded(
-            Rectangle{startPos.x, cellY, cellWidth, cellHeight}, 
+            Rectangle{startPos.x, cellY, cellWidth, cellHeight},
             0.1f, 5, tableColor);
         DrawRectangleRoundedLines(
-            Rectangle{startPos.x, cellY, cellWidth, cellHeight}, 
+            Rectangle{startPos.x, cellY, cellWidth, cellHeight},
             0.1f, 5, borderColor);
 
-    
-        const auto& locName = coffins[i].second;
+        const auto &locName = coffins[i].second;
         std::string label = locName + ":";
         Vector2 textSize = MeasureTextEx(font, label.c_str(), textFontSize, 1);
-        
-        
-        DrawTextEx(font, label.c_str(), 
-                  {startPos.x + padding, cellY + (cellHeight - textSize.y)/2}, 
-                  textFontSize, 1, textColor);
 
-        
+        DrawTextEx(font, label.c_str(),
+                   {startPos.x + padding, cellY + (cellHeight - textSize.y) / 2},
+                   textFontSize, 1, textColor);
+
         float coffinX = startPos.x + cellWidth - coffinSize - padding;
-        float coffinY = cellY + (cellHeight - coffinSize)/2;
-        
-        if (coffins[i].first) {
-            if (coffinBrokenTexture.id != 0) {
+        float coffinY = cellY + (cellHeight - coffinSize) / 2;
+
+        if (coffins[i].first)
+        {
+            if (coffinBrokenTexture.id != 0)
+            {
                 DrawTexturePro(
                     coffinBrokenTexture,
                     Rectangle{0, 0, (float)coffinBrokenTexture.width, (float)coffinBrokenTexture.height},
-                    Rectangle{coffinX, coffinY, coffinSize, coffinSize * (float)coffinBrokenTexture.height/coffinBrokenTexture.width},
-                    Vector2{0, 0}, 0.0f, WHITE
-                );
-            } else {
-                DrawTextEx(font, "💀", 
-                          Vector2{coffinX + coffinSize/2 - 8, coffinY + 2}, 
-                          20, 1, RED);
+                    Rectangle{coffinX, coffinY, coffinSize, coffinSize * (float)coffinBrokenTexture.height / coffinBrokenTexture.width},
+                    Vector2{0, 0}, 0.0f, WHITE);
             }
-        } else {
-            if (coffinIntactTexture.id != 0) {
+            else
+            {
+                DrawTextEx(font, "💀",
+                           Vector2{coffinX + coffinSize / 2 - 8, coffinY + 2},
+                           20, 1, RED);
+            }
+        }
+        else
+        {
+            if (coffinIntactTexture.id != 0)
+            {
                 DrawTexturePro(
                     coffinIntactTexture,
                     Rectangle{0, 0, (float)coffinIntactTexture.width, (float)coffinIntactTexture.height},
-                    Rectangle{coffinX, coffinY, coffinSize, coffinSize * (float)coffinIntactTexture.height/coffinIntactTexture.width},
-                    Vector2{0, 0}, 0.0f, WHITE
-                );
-            } else {
-                DrawTextEx(font, "⚰️", 
-                          Vector2{coffinX + coffinSize/2 - 8, coffinY + 2}, 
-                          20, 1, GREEN);
+                    Rectangle{coffinX, coffinY, coffinSize, coffinSize * (float)coffinIntactTexture.height / coffinIntactTexture.width},
+                    Vector2{0, 0}, 0.0f, WHITE);
+            }
+            else
+            {
+                DrawTextEx(font, "⚰️",
+                           Vector2{coffinX + coffinSize / 2 - 8, coffinY + 2},
+                           20, 1, GREEN);
             }
         }
     }
-    if (coffins.size() > maxVisibleRows) {
-        const char* moreMsg = TextFormat("+%d more...", (int)coffins.size() - maxVisibleRows);
-        DrawTextEx(font, moreMsg, 
-                  Vector2{startPos.x + 10, startPos.y + rowsToShow * cellHeight + 5}, 
-                  14, 1, GRAY);
+    if (coffins.size() > maxVisibleRows)
+    {
+        const char *moreMsg = TextFormat("+%d more...", (int)coffins.size() - maxVisibleRows);
+        DrawTextEx(font, moreMsg,
+                   Vector2{startPos.x + 10, startPos.y + rowsToShow * cellHeight + 5},
+                   14, 1, GRAY);
     }
 }
-void ShowInTerminal::DrawInvisibleManMat(const std::vector<std::pair<bool, std::string>>& evidences, Font font, Vector2 startPos) {
-    if (evidences.empty()) return;
+void ShowInTerminal::DrawInvisibleManMat(const std::vector<std::pair<bool, std::string>> &evidences, Font font, Vector2 startPos)
+{
+    if (evidences.empty())
+        return;
 
     const float cellWidth = 148.0f;
     const float cellHeight = 44.0f;
@@ -838,63 +873,70 @@ void ShowInTerminal::DrawInvisibleManMat(const std::vector<std::pair<bool, std::
     const float iconSize = 20.0f;
     const float textFontSize = 16.0f;
     const float titleFontSize = 18.0f;
-    
-    const Color tableColor = { 50, 50, 80, 255 };
-    const Color borderColor = { 100, 100, 140, 255 };
+
+    const Color tableColor = {50, 50, 80, 255};
+    const Color borderColor = {100, 100, 140, 255};
     const Color textColor = WHITE;
 
-    const char* title = "Invisible Man Mat";
+    const char *title = "Invisible Man Mat";
     Vector2 titleSize = MeasureTextEx(font, title, titleFontSize, 1);
-    DrawTextEx(font, title, 
-              {startPos.x + (cellWidth - titleSize.x)/2, startPos.y - 25}, 
-              titleFontSize, 1, BLUE);
+    DrawTextEx(font, title,
+               {startPos.x + (cellWidth - titleSize.x) / 2, startPos.y - 25},
+               titleFontSize, 1, BLUE);
 
     float availableHeight = GetScreenHeight() - startPos.y - 30;
     int maxVisibleRows = std::floor(availableHeight / cellHeight);
     int rowsToShow = std::min((int)evidences.size(), maxVisibleRows);
 
-    for (int i = 0; i < rowsToShow; i++) {
+    for (int i = 0; i < rowsToShow; i++)
+    {
         float cellY = startPos.y + i * cellHeight;
-        
+
         DrawRectangleRounded(
-            Rectangle{startPos.x, cellY, cellWidth, cellHeight}, 
+            Rectangle{startPos.x, cellY, cellWidth, cellHeight},
             0.1f, 5, tableColor);
         DrawRectangleRoundedLines(
-            Rectangle{startPos.x, cellY, cellWidth, cellHeight}, 
+            Rectangle{startPos.x, cellY, cellWidth, cellHeight},
             0.1f, 5, borderColor);
 
-        const auto& locName = evidences[i].second;
+        const auto &locName = evidences[i].second;
         std::string label = locName + ":";
         Vector2 textSize = MeasureTextEx(font, label.c_str(), textFontSize, 1);
-        
-        DrawTextEx(font, label.c_str(), 
-                  {startPos.x + padding, cellY + (cellHeight - textSize.y)/2}, 
-                  textFontSize, 1, textColor);
+
+        DrawTextEx(font, label.c_str(),
+                   {startPos.x + padding, cellY + (cellHeight - textSize.y) / 2},
+                   textFontSize, 1, textColor);
 
         float iconX = startPos.x + cellWidth - iconSize - padding;
-        float iconY = cellY + (cellHeight - iconSize)/2;
-        
-        if (evidences[i].first) {
-            
-            DrawTextEx(font, "V", 
-                      {iconX, iconY}, 
-                      iconSize, 1, GREEN);
-        } else {
-            
-            DrawTextEx(font, "X", 
-                      {iconX, iconY}, 
-                      iconSize, 1, RED);
+        float iconY = cellY + (cellHeight - iconSize) / 2;
+
+        if (evidences[i].first)
+        {
+
+            DrawTextEx(font, "V",
+                       {iconX, iconY},
+                       iconSize, 1, GREEN);
+        }
+        else
+        {
+
+            DrawTextEx(font, "X",
+                       {iconX, iconY},
+                       iconSize, 1, RED);
         }
     }
 
-    if (evidences.size() > maxVisibleRows) {
-        const char* moreMsg = TextFormat("+%d more...", (int)evidences.size() - maxVisibleRows);
-        DrawTextEx(font, moreMsg, 
-                  Vector2{startPos.x + 10, startPos.y + rowsToShow * cellHeight + 5}, 
-                  14, 1, GRAY);
+    if (evidences.size() > maxVisibleRows)
+    {
+        const char *moreMsg = TextFormat("+%d more...", (int)evidences.size() - maxVisibleRows);
+        DrawTextEx(font, moreMsg,
+                   Vector2{startPos.x + 10, startPos.y + rowsToShow * cellHeight + 5},
+                   14, 1, GRAY);
     }
 }
-void ShowInTerminal :: DrawItemsList(const std::vector<std::shared_ptr<Item>>& items, Font font, Vector2 position) {
+
+void ShowInTerminal ::DrawItemsList(const std::vector<std::shared_ptr<Item>> &items, Font font, Vector2 position)
+{
     float fontSize = 18;
     float spacing = 2;
     float y = position.y;
@@ -904,20 +946,26 @@ void ShowInTerminal :: DrawItemsList(const std::vector<std::shared_ptr<Item>>& i
     DrawRectangle(position.x - 10, position.y - 10, boxWidth, boxHeight, Fade(DARKGREEN, 0.5f));
     DrawRectangleLinesEx({position.x - 10, position.y - 10, boxWidth, boxHeight}, 2, DARKGRAY);
 
-    for (const auto& item : items) {
+    for (const auto &item : items)
+    {
         std::string line = "- " + item->getName() + " (" + std::to_string(item->getPower()) + ")";
         Color color = WHITE;
-        if (item->getColor() == ItemColor::Red) color = RED;
-        else if (item->getColor() == ItemColor::Yellow) color = YELLOW;
-        else if (item->getColor() == ItemColor::Blue) color = SKYBLUE;
+        if (item->getColor() == ItemColor::Red)
+            color = RED;
+        else if (item->getColor() == ItemColor::Yellow)
+            color = YELLOW;
+        else if (item->getColor() == ItemColor::Blue)
+            color = SKYBLUE;
 
         DrawTextEx(font, line.c_str(), {position.x, y}, fontSize, spacing, color);
         y += fontSize + 4;
     }
 }
 
-void ShowInTerminal::DrawHeroInfo(std::shared_ptr<Hero> hero, Font font, Vector2 startPos, Rectangle* outClickZone) {
-    if (!hero) return;
+void ShowInTerminal::DrawHeroInfo(std::shared_ptr<Hero> hero, Font font, Vector2 startPos, Rectangle *outClickZone)
+{
+    if (!hero)
+        return;
 
     const float cellWidth = 148.0f;
     const float cellHeight = 54.0f;
@@ -925,11 +973,11 @@ void ShowInTerminal::DrawHeroInfo(std::shared_ptr<Hero> hero, Font font, Vector2
     const float textFontSize = 16.0f;
     const float titleFontSize = 18.0f;
 
-    const Color tableColor = { 50, 50, 80, 255 };
-    const Color borderColor = { 100, 100, 140, 255 };
+    const Color tableColor = {50, 50, 80, 255};
+    const Color borderColor = {100, 100, 140, 255};
     const Color textColor = WHITE;
 
-    const char* title = "Hero Info";
+    const char *title = "Hero Info";
     Vector2 titleSize = MeasureTextEx(font, title, titleFontSize, 1);
     DrawTextEx(font, title,
                {startPos.x + (cellWidth - titleSize.x) / 2, startPos.y - 25},
@@ -941,7 +989,8 @@ void ShowInTerminal::DrawHeroInfo(std::shared_ptr<Hero> hero, Font font, Vector2
     lines.push_back("Actions: " + std::to_string(hero->getRemainingActions()));
     lines.push_back("Inventory: Click here");
 
-    for (size_t i = 0; i < lines.size(); i++) {
+    for (size_t i = 0; i < lines.size(); i++)
+    {
         float cellY = startPos.y + i * cellHeight;
 
         DrawRectangleRounded(
@@ -953,8 +1002,8 @@ void ShowInTerminal::DrawHeroInfo(std::shared_ptr<Hero> hero, Font font, Vector2
 
         std::string text = lines[i];
 
-        
-        if (text.find("Inventory:") == 0) {
+        if (text.find("Inventory:") == 0)
+        {
             std::string prefix = "Inventory: ";
             std::string clickablePart = "Click here";
 
@@ -964,24 +1013,24 @@ void ShowInTerminal::DrawHeroInfo(std::shared_ptr<Hero> hero, Font font, Vector2
             Vector2 prefixPos = {startPos.x + padding, cellY + (cellHeight - prefixSize.y) / 2};
             Vector2 clickablePos = {prefixPos.x + prefixSize.x, cellY + (cellHeight - clickableSize.y) / 2};
 
-            
             DrawTextEx(font, prefix.c_str(), prefixPos, textFontSize, 1, textColor);
 
-            
             DrawTextEx(font, clickablePart.c_str(), clickablePos, textFontSize, 1, textColor);
 
-            
-            if (outClickZone) {
+            if (outClickZone)
+            {
                 *outClickZone = {clickablePos.x, clickablePos.y, clickableSize.x, clickableSize.y};
             }
-
-        } else {
+        }
+        else
+        {
             Vector2 textSize = MeasureTextEx(font, text.c_str(), textFontSize, 1);
             Vector2 textPos = {startPos.x + padding, cellY + (cellHeight - textSize.y) / 2};
             DrawTextEx(font, text.c_str(), textPos, textFontSize, 1, textColor);
         }
     }
 }
+
 void ShowInTerminal::DrawMonsterCard(const std::shared_ptr<MonsterCard> &card, Vector2 position, float scale)
 {
     if (!card)
@@ -1002,6 +1051,49 @@ void ShowInTerminal::DrawMonsterCard(const std::shared_ptr<MonsterCard> &card, V
         DrawText(("Card texture missing for: " + nameKey).c_str(), position.x, position.y, 20, RED);
     }
 }
+
+void ShowInTerminal::DrawDiceMat()
+{   
+    const float diceW = 265;
+    const float diceH = 172;
+    const float boxSize = 60;
+    const float spacing = 10;
+
+    Vector2 matPos = {590, 370};
+
+    int numDice = currentFaces.size();
+   Vector2 startPos = {
+        matPos.x + (diceW - (numDice * boxSize + (numDice - 1) * spacing)) / 2,  
+        matPos.y + (diceH - boxSize) / 2                             
+    };
+
+    Texture2D DiceBack = LoadTexture("../assets/Items/dice/diceBack.jpg");
+    DrawTexturePro(DiceBack,
+                   {0, 0, (float)DiceBack.width, (float)DiceBack.height},
+                   {matPos.x, matPos.y, diceW, diceH},
+                   {0, 0}, 0.0f, WHITE);
+
+    for (int i = 0; i < numDice; ++i)
+    {
+        Rectangle box = {startPos.x + i * (boxSize + spacing), startPos.y, boxSize, boxSize};
+        DrawRectangleRounded(box, 0.3f, 12, SKYBLUE);
+        DrawRectangleRoundedLines(box, 0.3f, 12, WHITE);
+
+        if (diceFaces.find(currentFaces[i]) != diceFaces.end())
+        {
+            DrawTexturePro(diceFaces[currentFaces[i]],
+                           {0, 0, (float)diceFaces[currentFaces[i]].width, (float)diceFaces[currentFaces[i]].height},
+                           {box.x, box.y, boxSize, boxSize},
+                           {0, 0}, 0.0f, WHITE);
+        }
+        else
+        {
+            DrawText("?", box.x + boxSize / 2 - MeasureText("?", 32) / 2,
+                     box.y + boxSize / 3, 32, BLACK);
+        }
+    }
+}
+
 float ShowInTerminal::GetBestScaleForCharacters(Texture2D ObjectTexture)
 {
     float TargetWidth = 59;
@@ -1011,17 +1103,19 @@ float ShowInTerminal::GetBestScaleForCharacters(Texture2D ObjectTexture)
     return fmin(ScaleX, ScaleY);
 }
 
-void ShowInTerminal::DrawPerkCard(const std::shared_ptr<PerkCard>& card, Font font, Vector2 position) {
-    DrawTextEx(font, "Perk Card", {position.x + 35 , position.y}, 20, 2, GREEN);
+void ShowInTerminal::DrawPerkCard(const std::shared_ptr<PerkCard> &card, Font font, Vector2 position)
+{
+    DrawTextEx(font, "Perk Card", {position.x + 35, position.y}, 20, 2, GREEN);
 
-    if (card) {
+    if (card)
+    {
         std::string name = card->GetName();
 
-
-        if (perkTextures.count(name)) {
-            Texture2D& texture = perkTextures[name];
+        if (perkTextures.count(name))
+        {
+            Texture2D &texture = perkTextures[name];
             float maxWidth = 150.0f;
-            float scale = maxWidth / texture.width ;
+            float scale = maxWidth / texture.width;
             float imgW = texture.width * scale;
             float imgH = texture.height * scale;
 
@@ -1029,15 +1123,19 @@ void ShowInTerminal::DrawPerkCard(const std::shared_ptr<PerkCard>& card, Font fo
 
             DrawTextureEx(texture, imgPos, 0, scale, WHITE);
 
-
             DrawRectangleLines(imgPos.x - 2, imgPos.y - 2, imgW + 4, imgH + 4, DARKGREEN);
-        } else {
+        }
+        else
+        {
             DrawTextEx(font, "(Card image missing)", {position.x, position.y + 30}, 18, 2, RED);
         }
-    } else {
+    }
+    else
+    {
         DrawTextEx(font, "(No card)", {position.x, position.y + 30}, 18, 2, RED);
     }
 }
+
 void ShowInTerminal::DrawCharactersOnMap(
     const std::vector<std::shared_ptr<Hero>> &heroes,
     const std::vector<std::shared_ptr<Monster>> &monsters,
@@ -1048,23 +1146,22 @@ void ShowInTerminal::DrawCharactersOnMap(
     float mapDrawWidth = 545,
     float mapDrawHeight = 542)
 {
-    
-    // === Draw Items 
-    for(const auto i : Items)
+
+    // === Draw Items
+    for (const auto i : Items)
     {
         auto posIt = locationPositions.find(i->GetItemLocationName()->GetCityName());
         auto iconIt = itemTextures.find(i->getName());
-           if (posIt != locationPositions.end() && iconIt != villagerTextures.end())
-            {
-                Texture2D ItemTex = iconIt->second;
-                Vector2 position = locationPositions[i->GetItemLocationName()->GetCityName()];
-                position.y -= 60;
-                position.x -= 30;
+        if (posIt != locationPositions.end() && iconIt != villagerTextures.end())
+        {
+            Texture2D ItemTex = iconIt->second;
+            Vector2 position = locationPositions[i->GetItemLocationName()->GetCityName()];
+            position.y -= 60;
+            position.x -= 30;
 
-                float Scale = ShowInTerminal:: GetBestScaleForCharacters(ItemTex);
-                DrawTextureEx(ItemTex, position, 0.0f, Scale, WHITE);
-            }
-
+            float Scale = ShowInTerminal::GetBestScaleForCharacters(ItemTex);
+            DrawTextureEx(ItemTex, position, 0.0f, Scale, WHITE);
+        }
     }
     // === Draw Heroes
     for (const auto &h : heroes)
@@ -1078,7 +1175,7 @@ void ShowInTerminal::DrawCharactersOnMap(
             position.y -= 60;
             position.x -= 30;
 
-            float Scale = ShowInTerminal:: GetBestScaleForCharacters(HeroTex);
+            float Scale = ShowInTerminal::GetBestScaleForCharacters(HeroTex);
             DrawTextureEx(HeroTex, position, 0.0f, Scale, WHITE);
         }
     }
@@ -1095,14 +1192,14 @@ void ShowInTerminal::DrawCharactersOnMap(
             position.y -= 80;
             position.x -= 50;
 
-            float Scale = ShowInTerminal:: GetBestScaleForCharacters(MonsterTex);
+            float Scale = ShowInTerminal::GetBestScaleForCharacters(MonsterTex);
             DrawTextureEx(MonsterTex, position, 0.0f, Scale, WHITE);
-            if(m->GetFrenzyMarker())
+            if (m->GetFrenzyMarker())
             {
                 Texture2D frenzyTex = frenzyMark;
-                Vector2 pos = {position.x+15 , position.y-20};
+                Vector2 pos = {position.x + 15, position.y - 20};
                 float s = GetBestScaleForCharacters(frenzyTex) / 2;
-                DrawTextureEx(frenzyTex , pos , 0.0f , s , WHITE);
+                DrawTextureEx(frenzyTex, pos, 0.0f, s, WHITE);
             }
         }
     }
@@ -1121,37 +1218,34 @@ void ShowInTerminal::DrawCharactersOnMap(
                 position.y -= 60;
                 position.x -= 5;
 
-                float Scale = ShowInTerminal:: GetBestScaleForCharacters(VillagerTex);
+                float Scale = ShowInTerminal::GetBestScaleForCharacters(VillagerTex);
                 DrawTextureEx(VillagerTex, position, 0.0f, Scale, WHITE);
             }
         }
     }
-    
 }
+
 std::vector<std::string> ShowInTerminal::ShowDiceRollAnimation(Dice &dice, Font font)
 {
     const int numDice = 3;
     const int rollFrames = 20;
-    const float boxSize = 60;
+    const float boxSize = 100;
     const float spacing = 20;
     const float fontSize = 32;
-
     std::vector<std::string> resultFaces(numDice);
-
-    //  Put dice below monster card, above popup
     Vector2 startPos = {
         (float)GetScreenWidth() / 2 - (numDice * boxSize + (numDice - 1) * spacing) / 2,
-        480.0f
-    };
+        (float)GetScreenHeight() / 2 - boxSize / 2};
 
     for (int frame = 0; frame < rollFrames; ++frame)
     {
         UpdateMusicStream(music);
         BeginDrawing();
-        ClearBackground(DARKBLUE); // Or draw previous scene background instead
-
-
-        // Optional: re-draw background/map if you want full continuity
+        // ClearBackground(DARKBLUE);
+        DrawTexturePro(DiceBack,
+                       {0, 0, (float)DiceBack.width, (float)DiceBack.height},
+                       {0, 0, (float)GetScreenWidth(), (float)GetScreenHeight()},
+                       {0, 0}, 0.0f, WHITE);
 
         for (int i = 0; i < numDice; ++i)
         {
@@ -1161,8 +1255,10 @@ std::vector<std::string> ShowInTerminal::ShowDiceRollAnimation(Dice &dice, Font 
             DrawRectangleRounded(box, 0.3f, 12, GRAY);
             DrawRectangleRoundedLines(box, 0.3f, 12, WHITE);
 
-            int faceWidth = MeasureText(face.c_str(), fontSize);
-            DrawText(face.c_str(), box.x + (boxSize - faceWidth) / 2, box.y + boxSize / 3, fontSize, BLACK);
+            DrawTexturePro(diceFaces[face],
+                           {0, 0, (float)diceFaces[face].width, (float)diceFaces[face].height},
+                           {box.x, box.y, boxSize, boxSize},
+                           {0, 0}, 0.0f, WHITE);
         }
 
         EndDrawing();
@@ -1179,7 +1275,11 @@ std::vector<std::string> ShowInTerminal::ShowDiceRollAnimation(Dice &dice, Font 
     }
 
     BeginDrawing();
-    ClearBackground(DARKBLUE); // Or draw map/card/etc again
+    DrawTexturePro(DiceBack,
+                   {0, 0, (float)DiceBack.width, (float)DiceBack.height},
+                   {0, 0, (float)GetScreenWidth(), (float)GetScreenHeight()},
+                   {0, 0}, 0.0f, WHITE);
+    // ClearBackground(DARKBLUE);
 
     for (int i = 0; i < numDice; ++i)
     {
@@ -1188,8 +1288,10 @@ std::vector<std::string> ShowInTerminal::ShowDiceRollAnimation(Dice &dice, Font 
         DrawRectangleRounded(box, 0.3f, 12, SKYBLUE);
         DrawRectangleRoundedLines(box, 0.3f, 12, WHITE);
 
-        int faceWidth = MeasureText(resultFaces[i].c_str(), fontSize);
-        DrawText(resultFaces[i].c_str(), box.x + (boxSize - faceWidth) / 2, box.y + boxSize / 3, fontSize, BLACK);
+        DrawTexturePro(diceFaces[resultFaces[i]],
+                       {0, 0, (float)diceFaces[resultFaces[i]].width, (float)diceFaces[resultFaces[i]].height},
+                       {box.x, box.y, boxSize, boxSize},
+                       {0, 0}, 0.0f, WHITE);
     }
     EndDrawing();
 
@@ -1201,10 +1303,11 @@ std::vector<std::string> ShowInTerminal::ShowDiceRollAnimation(Dice &dice, Font 
         finalElapsed += delta;
         UpdateMusicStream(music);
     }
-
+    currentFaces.clear();
+    currentFaces = resultFaces;
     return resultFaces;
 }
-void ShowInTerminal::ShowPopupMessages(Game &game , const std::string message)
+void ShowInTerminal::ShowPopupMessages(Game &game, const std::string message)
 {
     float screenW = (float)GetScreenWidth();
     float screenH = (float)GetScreenHeight();
@@ -1214,11 +1317,10 @@ void ShowInTerminal::ShowPopupMessages(Game &game , const std::string message)
     const float padding = 20;
 
     Rectangle popupBox = {
-        0 , 543,boxW , boxH  
-    };
+        0, 543, boxW, boxH};
 
-    Color boxColor = { 15, 25, 40, 200 }; 
-    Color borderColor = { 0, 220, 255, 255 };
+    Color boxColor = {15, 25, 40, 200};
+    Color borderColor = {0, 220, 255, 255};
 
     bool waiting = true;
     while (!WindowShouldClose() && waiting)
@@ -1226,28 +1328,29 @@ void ShowInTerminal::ShowPopupMessages(Game &game , const std::string message)
         UpdateMusicStream(music);
         BeginDrawing();
 
-
         DrawRectangleRec(popupBox, Fade(boxColor, 0.4f));
         DrawRectangleLinesEx(popupBox, 3, borderColor);
 
         DrawTextEx(font, message.c_str(),
-        {popupBox.x + padding, popupBox.y + padding},
-        20, 2, RED);
-        
+                   {popupBox.x + padding, popupBox.y + padding},
+                   20, 2, RED);
+
         std::string hint = "(Press Enter or click)";
         Vector2 hintSize = MeasureTextEx(font, hint.c_str(), 16, 1);
         DrawTextEx(font, hint.c_str(),
-        {popupBox.x + popupBox.width - hintSize.x - 12, popupBox.y + popupBox.height - 24},
-        16, 1, RED);
-        
+                   {popupBox.x + popupBox.width - hintSize.x - 12, popupBox.y + popupBox.height - 24},
+                   16, 1, RED);
+
         EndDrawing();
-        
+
         if (IsKeyPressed(KEY_ENTER) || IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
-        waiting = false;
+            waiting = false;
     }
 }
-void ShowInTerminal::DrawInventoryPopup(std::shared_ptr<Hero> hero) {
-    if (!hero) return;
+void ShowInTerminal::DrawInventoryPopup(std::shared_ptr<Hero> hero)
+{
+    if (!hero)
+        return;
 
     DrawRectangleRec(inventoryPopupBounds, Fade(BLACK, 0.9f));
     DrawRectangleLinesEx(inventoryPopupBounds, 3, SKYBLUE);
@@ -1255,7 +1358,7 @@ void ShowInTerminal::DrawInventoryPopup(std::shared_ptr<Hero> hero) {
     const float padding = 15.0f;
     const float columnSpacing = 200.0f;
     const float iconSize = 32.0f;
-    const float itemSpacing = 40.0f; 
+    const float itemSpacing = 40.0f;
     const int maxItemsPerColumn = (int)((inventoryPopupBounds.height - 2 * padding - 40) / itemSpacing);
 
     float xStart = inventoryPopupBounds.x + padding;
@@ -1265,11 +1368,15 @@ void ShowInTerminal::DrawInventoryPopup(std::shared_ptr<Hero> hero) {
     DrawTextEx(font, "Inventory", {xStart, yStart}, fontSize, 1, GOLD);
     yStart += fontSize + 10;
 
-    const auto& items = hero->getInventory();
-    if (items.empty()) {
+    const auto &items = hero->getInventory();
+    if (items.empty())
+    {
         DrawTextEx(font, "No items found.", {xStart, yStart}, fontSize, 1, LIGHTGRAY);
-    } else {
-        for (size_t i = 0; i < items.size(); i++) {
+    }
+    else
+    {
+        for (size_t i = 0; i < items.size(); i++)
+        {
             int col = i / maxItemsPerColumn;
             int row = i % maxItemsPerColumn;
 
@@ -1278,9 +1385,9 @@ void ShowInTerminal::DrawInventoryPopup(std::shared_ptr<Hero> hero) {
 
             Texture2D icon = itemTextures[items[i]->getName()];
             DrawTexturePro(icon,
-                {0, 0, (float)icon.width, (float)icon.height},
-                {x, y, iconSize, iconSize},
-                {0, 0}, 0.0f, WHITE);
+                           {0, 0, (float)icon.width, (float)icon.height},
+                           {x, y, iconSize, iconSize},
+                           {0, 0}, 0.0f, WHITE);
 
             std::string itemText = items[i]->getName() + "(" + std::to_string(items[i]->getPower()) + ")";
             DrawTextEx(font, itemText.c_str(), {x + iconSize + 10, y + 4}, fontSize, 1, WHITE);
@@ -1292,12 +1399,13 @@ void ShowInTerminal::DrawInventoryPopup(std::shared_ptr<Hero> hero) {
     DrawTextEx(font, "X", {closeBtn.x + 8, closeBtn.y + 4}, 24, 1, WHITE);
 }
 
-void ShowInTerminal::DrawLocationInfoPopup(std::shared_ptr<Location> location, float& scrollY) {
-    if (!location) return;
+void ShowInTerminal::DrawLocationInfoPopup(std::shared_ptr<Location> location, float &scrollY)
+{
+    if (!location)
+        return;
 
-    
     const float padding = 20.0f;
-    const float itemSpacing = 40.0f; 
+    const float itemSpacing = 40.0f;
     const int titleFontSize = 24;
     const float titleSectionHeight = titleFontSize + 35;
     const int headerFontSize = 20;
@@ -1305,101 +1413,109 @@ void ShowInTerminal::DrawLocationInfoPopup(std::shared_ptr<Location> location, f
     const int itemFontSize = 18;
     const float iconSize = 32.0f;
 
+    const auto &HeroInGame = location->GetHero();
+    const auto &monsters = location->GetMonsters();
+    const auto &villagers = location->GetVillager();
+    const auto &items = location->GetItems();
 
-    const auto& HeroInGame = location->GetHero();
-    const auto& monsters = location->GetMonsters();
-    const auto& villagers = location->GetVillager();
-    const auto& items = location->GetItems();
-
-    
     float totalContentHeight = 0;
     totalContentHeight += headerSpacing + (HeroInGame.empty() ? itemSpacing : HeroInGame.size() * itemSpacing);
     totalContentHeight += headerSpacing + (monsters.empty() ? itemSpacing : monsters.size() * itemSpacing);
     totalContentHeight += headerSpacing + (villagers.empty() ? itemSpacing : villagers.size() * itemSpacing);
     totalContentHeight += headerSpacing + (items.empty() ? itemSpacing : items.size() * itemSpacing);
-    
-    
+
     DrawRectangleRec(locationPopupBounds, Fade(BLACK, 0.9f));
     DrawRectangleLinesEx(locationPopupBounds, 3, SKYBLUE);
-    
 
     std::string title = "Info for " + location->GetCityName();
     DrawTextEx(font, title.c_str(), {locationPopupBounds.x + padding, locationPopupBounds.y + 15}, titleFontSize, 1, GOLD);
 
-    
     Rectangle closeBtn = {locationPopupBounds.x + locationPopupBounds.width - 40, locationPopupBounds.y + 10, 30, 30};
     DrawRectangleRounded(closeBtn, 0.2f, 4, RED);
     DrawTextEx(font, "X", {closeBtn.x + 8, closeBtn.y + 4}, 24, 1, WHITE);
 
-    
     Rectangle viewArea = {
         locationPopupBounds.x,
         locationPopupBounds.y + titleSectionHeight,
         locationPopupBounds.width,
-        locationPopupBounds.height - titleSectionHeight - padding
-    };
-    
-    
-    if (CheckCollisionPointRec(GetMousePosition(), locationPopupBounds)) {
+        locationPopupBounds.height - titleSectionHeight - padding};
+
+    if (CheckCollisionPointRec(GetMousePosition(), locationPopupBounds))
+    {
         float wheelMove = GetMouseWheelMove();
-        if (wheelMove != 0) {
+        if (wheelMove != 0)
+        {
             scrollY += wheelMove * 20;
         }
     }
 
-    
-    if (scrollY > 0) scrollY = 0;
+    if (scrollY > 0)
+        scrollY = 0;
     float minScrollY = viewArea.height - totalContentHeight;
-    if (minScrollY > 0) minScrollY = 0; 
-    if (scrollY < minScrollY) scrollY = minScrollY;
+    if (minScrollY > 0)
+        minScrollY = 0;
+    if (scrollY < minScrollY)
+        scrollY = minScrollY;
 
-    
     BeginScissorMode(viewArea.x, viewArea.y, viewArea.width, viewArea.height);
 
     float currentX = viewArea.x + padding;
     float currentY = viewArea.y + scrollY + 10;
-    
-    
+
     DrawTextEx(font, "Heros:", {currentX, currentY}, headerFontSize, 1, YELLOW);
     currentY += headerSpacing;
-    if (HeroInGame.empty()) {
+    if (HeroInGame.empty())
+    {
         DrawTextEx(font, "  (None)", {currentX, currentY}, itemFontSize, 1, LIGHTGRAY);
         currentY += itemSpacing;
-    } else {
-        for (const auto& hero : HeroInGame) {
-            if (heroTextures.count(hero->getName())) {
-                DrawTexturePro(heroTextures[hero->getName()], {0, 0, (float)heroTextures[hero->getName()].width, (float)heroTextures[hero->getName()].height}, {currentX + 5, currentY, iconSize, iconSize}, {0,0}, 0.0f, WHITE);
+    }
+    else
+    {
+        for (const auto &hero : HeroInGame)
+        {
+            if (heroTextures.count(hero->getName()))
+            {
+                DrawTexturePro(heroTextures[hero->getName()], {0, 0, (float)heroTextures[hero->getName()].width, (float)heroTextures[hero->getName()].height}, {currentX + 5, currentY, iconSize, iconSize}, {0, 0}, 0.0f, WHITE);
             }
             DrawTextEx(font, hero->getName().c_str(), {currentX + iconSize + 15, currentY + 4}, itemFontSize, 1, WHITE);
             currentY += itemSpacing;
         }
     }
 
-
-    DrawTextEx(font, "Monsters:", {currentX, currentY}, headerFontSize, 1, RED);currentY += headerSpacing;
-    if (monsters.empty()) {
+    DrawTextEx(font, "Monsters:", {currentX, currentY}, headerFontSize, 1, RED);
+    currentY += headerSpacing;
+    if (monsters.empty())
+    {
         DrawTextEx(font, "  (None)", {currentX, currentY}, itemFontSize, 1, LIGHTGRAY);
         currentY += itemSpacing;
-    } else {
-        for (const auto& monster : monsters) {
-            if (monsterTextures.count(monster->GetName())) {
-                DrawTexturePro(monsterTextures[monster->GetName()], {0, 0, (float)monsterTextures[monster->GetName()].width, (float)monsterTextures[monster->GetName()].height}, {currentX + 5, currentY, iconSize, iconSize}, {0,0}, 0.0f, WHITE);
+    }
+    else
+    {
+        for (const auto &monster : monsters)
+        {
+            if (monsterTextures.count(monster->GetName()))
+            {
+                DrawTexturePro(monsterTextures[monster->GetName()], {0, 0, (float)monsterTextures[monster->GetName()].width, (float)monsterTextures[monster->GetName()].height}, {currentX + 5, currentY, iconSize, iconSize}, {0, 0}, 0.0f, WHITE);
             }
             DrawTextEx(font, monster->GetName().c_str(), {currentX + iconSize + 15, currentY + 4}, itemFontSize, 1, WHITE);
             currentY += itemSpacing;
         }
     }
-    
 
     DrawTextEx(font, "Villagers:", {currentX, currentY}, headerFontSize, 1, GREEN);
     currentY += headerSpacing;
-    if (villagers.empty()) {
+    if (villagers.empty())
+    {
         DrawTextEx(font, "  (None)", {currentX, currentY}, itemFontSize, 1, LIGHTGRAY);
         currentY += itemSpacing;
-    } else {
-        for (const auto& villager : villagers) {
-             if (villagerTextures.count(villager->getName())) {
-                DrawTexturePro(villagerTextures[villager->getName()], {0, 0, (float)villagerTextures[villager->getName()].width, (float)villagerTextures[villager->getName()].height}, {currentX + 5, currentY, iconSize, iconSize}, {0,0}, 0.0f, WHITE);
+    }
+    else
+    {
+        for (const auto &villager : villagers)
+        {
+            if (villagerTextures.count(villager->getName()))
+            {
+                DrawTexturePro(villagerTextures[villager->getName()], {0, 0, (float)villagerTextures[villager->getName()].width, (float)villagerTextures[villager->getName()].height}, {currentX + 5, currentY, iconSize, iconSize}, {0, 0}, 0.0f, WHITE);
             }
             DrawTextEx(font, villager->getName().c_str(), {currentX + iconSize + 15, currentY + 4}, itemFontSize, 1, WHITE);
             currentY += itemSpacing;
@@ -1408,12 +1524,17 @@ void ShowInTerminal::DrawLocationInfoPopup(std::shared_ptr<Location> location, f
 
     DrawTextEx(font, "Items:", {currentX, currentY}, headerFontSize, 1, SKYBLUE);
     currentY += headerSpacing;
-    if (items.empty()) {
+    if (items.empty())
+    {
         DrawTextEx(font, "  (None)", {currentX, currentY}, itemFontSize, 1, LIGHTGRAY);
         currentY += itemSpacing;
-    } else {
-        for (const auto& item : items) {
-            if (itemTextures.count(item->getName())) {
+    }
+    else
+    {
+        for (const auto &item : items)
+        {
+            if (itemTextures.count(item->getName()))
+            {
                 DrawTexturePro(itemTextures[item->getName()], {0, 0, (float)itemTextures[item->getName()].width, (float)itemTextures[item->getName()].height}, {currentX + 5, currentY, iconSize, iconSize}, {0, 0}, 0.0f, WHITE);
             }
             std::string itemText = item->getName() + " (" + std::to_string(item->getPower()) + ")";
@@ -1424,7 +1545,8 @@ void ShowInTerminal::DrawLocationInfoPopup(std::shared_ptr<Location> location, f
 
     EndScissorMode();
 }
-int ShowInTerminal::ShowHeroPhase(Game& game, const std::vector<std::string>& options) {
+int ShowInTerminal::ShowHeroPhase(Game &game, const std::vector<std::string> &options)
+{
     int selected = -1;
 
     float mapW = 545;
@@ -1438,56 +1560,67 @@ int ShowInTerminal::ShowHeroPhase(Game& game, const std::vector<std::string>& op
     const Color buttonColor = {100, 140, 255, 255};
     const Color hoverColor = {130, 170, 255, 255};
 
-Rectangle optionRects[options.size()];
-for (int i = 0; i < options.size(); i++) {
-    int row = i / 6; 
-    int col = i % 6; 
-    float totalWidth = 6 * buttonWidth + (6 - 1) * spacing;
-    float x = (GetScreenWidth() - totalWidth) / 2 + col * (buttonWidth + spacing);
-    float y = GetScreenHeight() - 120 + row * (buttonHeight + spacing);
-    optionRects[i] = {x, y, buttonWidth, buttonHeight};
-}
-float locationScrolly = 0.0f;
+    Rectangle optionRects[options.size()];
+    for (int i = 0; i < options.size(); i++)
+    {
+        int row = i / 6;
+        int col = i % 6;
+        float totalWidth = 6 * buttonWidth + (6 - 1) * spacing;
+        float x = (GetScreenWidth() - totalWidth) / 2 + col * (buttonWidth + spacing);
+        float y = GetScreenHeight() - 120 + row * (buttonHeight + spacing);
+        optionRects[i] = {x, y, buttonWidth, buttonHeight};
+    }
+    float locationScrolly = 0.0f;
 
-    while (!WindowShouldClose()) {
+    while (!WindowShouldClose())
+    {
         UpdateMusicStream(music);
         Vector2 mouse = GetMousePosition();
 
-        
-        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-            
-            if (showLocationItemsPopup) {
+        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+        {
+
+            if (showLocationItemsPopup)
+            {
                 Rectangle closeBtn = {locationPopupBounds.x + locationPopupBounds.width - 40, locationPopupBounds.y + 10, 30, 30};
-                if (CheckCollisionPointRec(mouse, closeBtn)) {
+                if (CheckCollisionPointRec(mouse, closeBtn))
+                {
                     showLocationItemsPopup = false;
                     clickedLocation = nullptr;
                 }
             }
-            
-            else if (showInventoryPopup) {
-                 Rectangle closeBtn = {inventoryPopupBounds.x + inventoryPopupBounds.width - 40, inventoryPopupBounds.y + 10, 30, 30};
-                 if (CheckCollisionPointRec(mouse, closeBtn)) {
+
+            else if (showInventoryPopup)
+            {
+                Rectangle closeBtn = {inventoryPopupBounds.x + inventoryPopupBounds.width - 40, inventoryPopupBounds.y + 10, 30, 30};
+                if (CheckCollisionPointRec(mouse, closeBtn))
+                {
                     showInventoryPopup = false;
-                 }
+                }
             }
-            
-            else {
+
+            else
+            {
                 bool buttonClicked = false;
-                for (int i = 0; i < options.size(); i++) {
-                    if (CheckCollisionPointRec(mouse, optionRects[i])) {
+                for (int i = 0; i < options.size(); i++)
+                {
+                    if (CheckCollisionPointRec(mouse, optionRects[i]))
+                    {
                         selected = i;
                         buttonClicked = true;
-                        break; 
+                        break;
                     }
                 }
 
-                if (buttonClicked) {
+                if (buttonClicked)
+                {
                     return selected;
                 }
 
-                
-                for (auto const& [name, bounds] : locationBounds) {
-                    if (CheckCollisionPointRec(mouse, bounds)) {
+                for (auto const &[name, bounds] : locationBounds)
+                {
+                    if (CheckCollisionPointRec(mouse, bounds))
+                    {
                         clickedLocation = game.getMapPlan().GetLocationptr(name);
                         showLocationItemsPopup = true;
                         locationScrolly = 0.0f;
@@ -1497,76 +1630,80 @@ float locationScrolly = 0.0f;
             }
         }
 
-        
-        if (IsKeyPressed(KEY_ESCAPE)) {
+        if (IsKeyPressed(KEY_ESCAPE))
+        {
             showInventoryPopup = false;
             showLocationItemsPopup = false;
             clickedLocation = nullptr;
         }
 
-
         BeginDrawing();
         ClearBackground(BLACK);
         Texture2D bg = backgroundTextures["menu"];
- DrawTexturePro(bg, {0, 0, (float)bg.width, (float)bg.height}, {0, 0, (float)GetScreenWidth(), (float)GetScreenHeight()}, {0, 0}, 0.0f, WHITE);
-
+        DrawTexturePro(bg, {0, 0, (float)bg.width, (float)bg.height}, {0, 0, (float)GetScreenWidth(), (float)GetScreenHeight()}, {0, 0}, 0.0f, WHITE);
 
         DrawRectangleLines(mapPos.x - 5, mapPos.y - 5, mapW + 10, mapH + 10, DARKGRAY);
         DrawTexturePro(mapTexture,
-                     {0, 0, (float)mapTexture.width, (float)mapTexture.height},
-                     {mapPos.x, mapPos.y, mapW, mapH},
-                     {0, 0}, 0.0f, WHITE);
+                       {0, 0, (float)mapTexture.width, (float)mapTexture.height},
+                       {mapPos.x, mapPos.y, mapW, mapH},
+                       {0, 0}, 0.0f, WHITE);
 
         DrawCharactersOnMap(game.heroes, game.Monsters, game.villagers, game.GetItemsInGame(), 30, {0, 0});
         DrawTerrorLevel(game.terrorLevel, font, {8, 484});
 
         if (auto dracula = game.GetDracula())
-            DrawDraculaMat(game, {(float)GetScreenWidth() - 165.0f , 40.0f });
-            if (auto invisible = game.GetInvisibleMan()) {
+            DrawDraculaMat(game, {(float)GetScreenWidth() - 165.0f, 40.0f});
+        if (auto invisible = game.GetInvisibleMan())
+        {
             Vector2 inMatPos = {(float)GetScreenWidth() - 330.0f, 40.0f};
             DrawInvisibleManMat(invisible->GetEvidence(), font, inMatPos);
 
             Rectangle inventoryClickZone = {0};
             if (game.heroPlayer)
-                DrawHeroInfo(game.heroPlayer, font, {inMatPos.x, inMatPos.y + 50.0f * (float)invisible->GetEvidence().size() + 40.0f} , &inventoryClickZone);
-            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && CheckCollisionPointRec(GetMousePosition(), inventoryClickZone)) {
+                DrawHeroInfo(game.heroPlayer, font, {inMatPos.x, inMatPos.y + 50.0f * (float)invisible->GetEvidence().size() + 40.0f}, &inventoryClickZone);
+            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && CheckCollisionPointRec(GetMousePosition(), inventoryClickZone))
+            {
                 showInventoryPopup = true;
             }
         }
 
-        if (game.heroPlayer && game.heroPlayer->PeekPerkCard()) {
+        if (game.heroPlayer && game.heroPlayer->PeekPerkCard())
+        {
             Vector2 perkCardPos = {(float)GetScreenWidth() - 165.0f, 301.0f};
             DrawPerkCard(game.heroPlayer->PeekPerkCard(), font, perkCardPos);
         }
 
-        
-        if (!showInventoryPopup && !showLocationItemsPopup) {
-            for (int i = 0; i < options.size(); i++) {
+        if (!showInventoryPopup && !showLocationItemsPopup)
+        {
+            for (int i = 0; i < options.size(); i++)
+            {
                 bool hover = CheckCollisionPointRec(mouse, optionRects[i]);
                 DrawRectangleRounded(optionRects[i], 0.3f, 8, hover ? hoverColor : buttonColor);
 
-                const char* text = options[i].c_str();
+                const char *text = options[i].c_str();
                 int fontSize = 18;
                 int tw = MeasureText(text, fontSize);
-                while (tw > buttonWidth - 10 && fontSize > 12) {
+                while (tw > buttonWidth - 10 && fontSize > 12)
+                {
                     fontSize--;
                     tw = MeasureText(text, fontSize);
                 }
                 Vector2 textSize = MeasureTextEx(font, text, fontSize, 1);
                 DrawTextEx(font, text,
-                       {optionRects[i].x + (buttonWidth - textSize.x) / 2,
-                        optionRects[i].y + (buttonHeight - textSize.y) / 2},
-                       fontSize, 1, WHITE);
+                           {optionRects[i].x + (buttonWidth - textSize.x) / 2,
+                            optionRects[i].y + (buttonHeight - textSize.y) / 2},
+                           fontSize, 1, WHITE);
             }
         }
 
-        
-        if (showInventoryPopup) {
+        if (showInventoryPopup)
+        {
             DrawInventoryPopup(game.heroPlayer);
         }
 
-        if (showLocationItemsPopup) {
-            DrawLocationInfoPopup(clickedLocation , locationScrolly );
+        if (showLocationItemsPopup)
+        {
+            DrawLocationInfoPopup(clickedLocation, locationScrolly);
         }
 
         EndDrawing();
@@ -1591,11 +1728,14 @@ void ShowInTerminal::ShowMonsterPhase(Game &game, std::shared_ptr<MonsterCard> c
     float cardScale = cardW / (float)monsterTexture.width;
     Vector2 cardPos = {mapPos.x + mapW + 45, 0};
 
-    BeginDrawing();
-    // === Backgound 
-     Texture2D bg = backgroundTextures["menu"];
-    DrawTexturePro(bg, {0, 0, (float)bg.width, (float)bg.height}, {0, 0, (float)GetScreenWidth(), (float)GetScreenHeight()}, {0, 0}, 0.0f, WHITE);
+    // Dice mat
+    float diceW = 265;
+    float diceH = 172;
 
+    BeginDrawing();
+    // === Backgound
+    Texture2D bg = backgroundTextures["menu"];
+    DrawTexturePro(bg, {0, 0, (float)bg.width, (float)bg.height}, {0, 0, (float)GetScreenWidth(), (float)GetScreenHeight()}, {0, 0}, 0.0f, WHITE);
 
     // === Map
     DrawRectangleLines(mapPos.x - 5, mapPos.y - 5, mapW + 10, mapH + 10, DARKGRAY);
@@ -1616,8 +1756,10 @@ void ShowInTerminal::ShowMonsterPhase(Game &game, std::shared_ptr<MonsterCard> c
     // === Monster Card
     DrawRectangleLines(cardPos.x - 5, cardPos.y - 5, cardW + 10, cardH + 10, DARKGRAY);
     DrawMonsterCard(card, cardPos, cardScale);
+    // === Dice mat
+    DrawDiceMat();
+
     EndDrawing();
 }
 
 Font ShowInTerminal::GetFont() { return font; }
-

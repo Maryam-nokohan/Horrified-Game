@@ -56,4 +56,5 @@ void Item::setLocation(const std::shared_ptr<Location>& newLoc){
             case ItemColor::Yellow: return "Yellow";
 
         }
+        return "";
     }
