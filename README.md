@@ -160,7 +160,6 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 - Inspired by the _Horrified_ board game by Ravensburger.
 - Thanks to the open-source community for tools and libraries used in this project.
 - Special thanks to contributors and testers who help bring this game to life.
-- if you are more intrested in terminal base
 - Earlier terminal-based edition of Horrified Game, created using FTXUI check it out [here](https://github.com/Maryam-nokohan/Horrified-Terminal-Based)
 
 ---
