@@ -1728,10 +1728,6 @@ void ShowInTerminal::ShowMonsterPhase(Game &game, std::shared_ptr<MonsterCard> c
     float cardScale = cardW / (float)monsterTexture.width;
     Vector2 cardPos = {mapPos.x + mapW + 45, 0};
 
-    // Dice mat
-    float diceW = 265;
-    float diceH = 172;
-
     BeginDrawing();
     // === Backgound
     Texture2D bg = backgroundTextures["menu"];
