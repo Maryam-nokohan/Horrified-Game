@@ -29,6 +29,7 @@ _Horrified Game_ is a cooperative strategy game where players work together as u
 - **Iconic Monsters**: Face off against classic horror monsters like Dracula and Invisible man, each with unique mechanics.
 - **Immersive Atmosphere**: Enjoy eerie visuals and sound effects that enhance the horror theme.
 - **Cross-Platform**: Playable on various devices
+- **Clean Modular Design**, separating graphics, game logic, and assets for maintainability. 
 
 ## 📂 Project Structure
 
@@ -159,6 +160,8 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 - Inspired by the _Horrified_ board game by Ravensburger.
 - Thanks to the open-source community for tools and libraries used in this project.
 - Special thanks to contributors and testers who help bring this game to life.
+- if you are more intrested in terminal base
+- Earlier terminal-based edition of Horrified Game, created using FTXUI check it out [here](https://github.com/Maryam-nokohan/Horrified-Terminal-Based)
 
 ---
 
