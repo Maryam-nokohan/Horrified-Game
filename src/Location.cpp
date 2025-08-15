@@ -97,3 +97,23 @@ const std ::vector<std ::shared_ptr<Hero>> &Location ::GetHero() { return Heros;
 const std ::string &Location ::GetCityName() { return Name; };
 const int &Location ::GetX() { return x; }
 const int &Location ::GetY() { return y; }
+
+void Location::ClearVillagers(){
+
+    for (int i = 0; i < Villagers.size(); ++i)
+    {
+        RemoveVillager(Villagers[i]);
+    }
+    this->Villagers.clear();
+    this->Villagers.resize(0);
+
+}
+void Location :: ClearMonsters(){
+    for (int i = 0; i < Monsters.size(); ++i)
+    {
+        RemoveMonster(Monsters[i]);
+    }
+    this->Monsters.clear();
+    this->Monsters.resize(0);
+}
+

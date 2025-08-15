@@ -347,8 +347,7 @@ void GameFileHandler::LoadGame(Game &game, const std::string &filename)
             {
                 if (m->GetName() == name)
                 {
-                    loc->AddMonster(m);
-                    m->SetLocation(loc);
+                    m->Move(loc);
                 }
             }
         }

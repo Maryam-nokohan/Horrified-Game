@@ -481,7 +481,7 @@ bool Game::HeroPhase()
                         if (item->getColor() == ItemColor::Red)
                         {
                             redItems.push_back(item);
-                            redItemNames.push_back(item->getName() + "(" + std::to_string(item->getPower()) + ")");
+                            redItemNames.push_back(item->getName() + "(" +std::to_string(item->getPower())+ ")");
                         }
 
                     std::vector<std::shared_ptr<Item>> usedItems;
@@ -638,6 +638,7 @@ bool Game::HeroPhase()
         {
             MyTerminal.ShowMessageBox("Back to manu ...");
             return true;
+            
         }
         else if (selected == 10)
         {
@@ -651,11 +652,13 @@ bool Game::HeroPhase()
         }
 
         if (CheckGameEnd())
-            return false;
+            return false ;
+            
+
     }
     if (CheckGameEnd())
-        return false;
-
+         return false;
+         
     heroPlayer->resetActions();
     return false;
 }
@@ -732,7 +735,6 @@ void Game::ChooseHero(std::string player1, std::string player2)
         {
             heroes[0]->GetPerkCard(PerkDeck.back());
             PerkDeck.pop_back();
-            startMayorloc->AddHero(heroes[0]);
         }
         break;
 
@@ -742,7 +744,6 @@ void Game::ChooseHero(std::string player1, std::string player2)
         {
             heroes[0]->GetPerkCard(PerkDeck.back());
             PerkDeck.pop_back();
-            startArchloc->AddHero(heroes[0]);
         }
         break;
     case 2:
@@ -751,7 +752,6 @@ void Game::ChooseHero(std::string player1, std::string player2)
         {
             heroes[0]->GetPerkCard(PerkDeck.back());
             PerkDeck.pop_back();
-            startCourierloc->AddHero(heroes[0]);
         }
         break;
     case 3:
@@ -760,7 +760,6 @@ void Game::ChooseHero(std::string player1, std::string player2)
         {
             heroes[0]->GetPerkCard(PerkDeck.back());
             PerkDeck.pop_back();
-            startScientistloc->AddHero(heroes[0]);
         }
         break;
     default:
@@ -783,7 +782,6 @@ void Game::ChooseHero(std::string player1, std::string player2)
         {
             heroes[1]->GetPerkCard(PerkDeck.back());
             PerkDeck.pop_back();
-            startMayorloc->AddHero(heroes[1]);
         }
     }
     else if (heroNames[player2Choice] == "Archaeologist")
@@ -793,7 +791,6 @@ void Game::ChooseHero(std::string player1, std::string player2)
         {
             heroes[1]->GetPerkCard(PerkDeck.back());
             PerkDeck.pop_back();
-            startArchloc->AddHero(heroes[1]);
         }
     }
     else if (heroNames[player2Choice] == "Courier")
@@ -802,7 +799,6 @@ void Game::ChooseHero(std::string player1, std::string player2)
         if (!PerkDeck.empty())
         {
             heroes[1]->GetPerkCard(PerkDeck.back());
-            startCourierloc->AddHero(heroes[1]);
             PerkDeck.pop_back();
         }
     }
@@ -813,7 +809,6 @@ void Game::ChooseHero(std::string player1, std::string player2)
         {
             heroes[1]->GetPerkCard(PerkDeck.back());
             PerkDeck.pop_back();
-            startScientistloc->AddHero(heroes[1]);
         }
     }
     heroPlayer = heroes[0];
@@ -823,7 +818,8 @@ void Game::GameStart()
     const int screenWidth = 900;
     const int screenHeight = 700;
     InitWindow(screenWidth, screenHeight, "Horrified Game");
-    SetTargetFPS(70);
+    SetTargetFPS(60);
+
     InitAudioDevice();
     MyTerminal.music = LoadMusicStream("../assets/horror.mp3");
     PlayMusicStream(MyTerminal.music);
@@ -842,7 +838,7 @@ void Game::GameStart()
 
         if (StartMenuSelected == 2)
         {
-            MyTerminal.ShowBackgroundScreen("exit", "THE DARKNESS AWAITS YOU...");
+            MyTerminal.ShowBackgroundScreen("exit" , "THE DARKNESS AWAITS YOU...");
             UnloadMusicStream(MyTerminal.music);
             CloseAudioDevice();
             CloseWindow();
@@ -887,31 +883,30 @@ void Game::GameStart()
             ChooseHero(p1, p2);
             // break;
         }
+    
 
-        while (!CheckGameEnd())
-        {
-            UpdateMusicStream(MyTerminal.music);
+    while (!CheckGameEnd())
+    {
+        UpdateMusicStream(MyTerminal.music);
 
-            returnToMainMenu = HeroPhase();
-            if (returnToMainMenu)
-            {
-                Reset();
-                break;
-            }
-            if (!skipMonsterPhase && !CheckGameEnd())
-            {
-                MonsterPhase();
-            }
-            else
-            {
-                skipMonsterPhase = false;
-            }
-        }
-        if (CheckGameEnd())
-        {
+        returnToMainMenu = HeroPhase();
+        if(returnToMainMenu){
             Reset();
-            continue;
+            break;
         }
+        if (!skipMonsterPhase && !CheckGameEnd())
+        {
+            MonsterPhase();
+        }
+        else
+        {
+            skipMonsterPhase = false;
+        }
+    }
+    if(CheckGameEnd()){
+        Reset();
+        continue;
+    }
     }
     MyTerminal.UnloadAssets();
     UnloadMusicStream(MyTerminal.music);
@@ -923,17 +918,17 @@ bool Game::CheckGameEnd()
 {
     if (MonsterDeck.empty() && !Monsters.empty())
     {
-        MyTerminal.ShowBackgroundScreen("lose", "Darkness Falls... The town is overrun! The monsters have prevailed.");
+        MyTerminal.ShowBackgroundScreen("lose" , "Darkness Falls... The town is overrun! The monsters have prevailed.");
         GameOver = true;
     }
     else if (terrorLevel >= 5)
     {
-        MyTerminal.ShowBackgroundScreen("lose", "Terror Reigns! The townsfolk have lost all hope... Evil claims victory.");
+        MyTerminal.ShowBackgroundScreen("lose" , "Terror Reigns! The townsfolk have lost all hope... Evil claims victory.");
         GameOver = true;
     }
     else if (Monsters.empty())
     {
-        MyTerminal.ShowBackgroundScreen("win", "Victory! The Heroes have vanquished all the monsters!");
+        MyTerminal.ShowBackgroundScreen("win" , "Victory! The Heroes have vanquished all the monsters!");
         GameOver = true;
     }
     // if (GameOver)
@@ -947,8 +942,16 @@ void Game::Reset()
     GameOver = false;
     skipMonsterPhase = false;
     heroes.clear();
+    for (auto &loc : mapPlan.getLocations())
+   {
+       loc.second->ClearMonsters();
+   }
     Monsters.clear();
-    villagers.clear();
+    // villagers.clear();
+    for (auto &loc : mapPlan.getLocations())
+    {
+        loc.second->ClearVillagers();
+    }
     Items.clear();
     EmptyBackUpItems.clear();
     PerkDeck.clear();

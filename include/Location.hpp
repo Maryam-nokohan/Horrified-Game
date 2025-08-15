@@ -41,6 +41,9 @@ public:
     const int& GetX() ;
     const int& GetY() ;
 
+    void ClearVillagers();
+    void ClearMonsters();
+
     ~Location() {};
 };
 #endif
