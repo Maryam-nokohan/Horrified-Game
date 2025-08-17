@@ -230,18 +230,18 @@ void Game ::InitializeCards()
     }
     std ::shuffle(PerkDeck.begin(), PerkDeck.end(), std ::mt19937(std ::random_device()()));
     // Monster Card
-    // for (int i = 0; i < 3; ++i)
-    // {
-    //     MonsterDeck.push_back(std ::make_shared<MonsterCard>(FromTheBat, 2, "Place Dracula in the hero feild", MonsterStrike("I", 1, 2)));
-    // }
-    // for (int i = 0; i < 3; ++i)
-    // {
-    //     MonsterDeck.push_back(std ::make_shared<MonsterCard>(Sunrise, 0, "Put Dracula in Crypt", MonsterStrike("I", 1, 2)));
-    // }
-    // for (int i = 0; i < 2; ++i)
-    // {
-    //     MonsterDeck.push_back(std ::make_shared<MonsterCard>(Thief, 2, "put Invisible man in a location with the most items and remove all the item from that location", MonsterStrike("ID", 1, 3)));
-    // }
+    for (int i = 0; i < 3; ++i)
+    {
+        MonsterDeck.push_back(std ::make_shared<MonsterCard>(FromTheBat, 2, "Place Dracula in the hero feild", MonsterStrike("I", 1, 2)));
+    }
+    for (int i = 0; i < 3; ++i)
+    {
+        MonsterDeck.push_back(std ::make_shared<MonsterCard>(Sunrise, 0, "Put Dracula in Crypt", MonsterStrike("I", 1, 2)));
+    }
+    for (int i = 0; i < 2; ++i)
+    {
+        MonsterDeck.push_back(std ::make_shared<MonsterCard>(Thief, 2, "put Invisible man in a location with the most items and remove all the item from that location", MonsterStrike("ID", 1, 3)));
+    }
     MonsterDeck.push_back(std ::make_shared<MonsterCard>(TheDelivery, 3, "Put Chick and Wilbur in Dock", MonsterStrike("F", 1, 3)));
     MonsterDeck.push_back(std ::make_shared<MonsterCard>(FortuneTeller, 3, "put maleva in camp", MonsterStrike("F", 1, 2)));
     MonsterDeck.push_back(std ::make_shared<MonsterCard>(FormerEmployer, 3, "put dr.cranly in Lab", MonsterStrike("IF", 1, 2)));
@@ -249,14 +249,14 @@ void Game ::InitializeCards()
     MonsterDeck.push_back(std ::make_shared<MonsterCard>(TheInnocent, 3, "put Maria in Barn", MonsterStrike("FDI", 1, 3)));
     MonsterDeck.push_back(std ::make_shared<MonsterCard>(EgyptianExpert, 3, "put prof.Pearson in cave", MonsterStrike("DF", 2, 2)));
     MonsterDeck.push_back(std ::make_shared<MonsterCard>(TheIchthyologist, 3, "put dr.Read in Institute", MonsterStrike("F", 1, 2)));
-    // for (int i = 0; i < 2; ++i)
-    // {
-    //     MonsterDeck.push_back(std ::make_shared<MonsterCard>(OnTheMove, 3, "give Frenzy to the next Monster and take each villager one move closer to their safe house", MonsterStrike("F", 3, 2)));
-    // }
-    // for (int i = 0; i < 2; ++i)
-    // {
-    //     MonsterDeck.push_back(std ::make_shared<MonsterCard>(HypnoticGaze, 2, "Closest Villager or Hero getting one move close to monster", MonsterStrike("I", 1, 2)));
-    // }
+    for (int i = 0; i < 2; ++i)
+    {
+        MonsterDeck.push_back(std ::make_shared<MonsterCard>(OnTheMove, 3, "give Frenzy to the next Monster and take each villager one move closer to their safe house", MonsterStrike("F", 3, 2)));
+    }
+    for (int i = 0; i < 2; ++i)
+    {
+        MonsterDeck.push_back(std ::make_shared<MonsterCard>(HypnoticGaze, 2, "Closest Villager or Hero getting one move close to monster", MonsterStrike("I", 1, 2)));
+    }
     std ::shuffle(MonsterDeck.begin(), MonsterDeck.end(), std ::mt19937(std ::random_device()()));
 }
 void Game ::InitializeCharacters()
@@ -731,39 +731,40 @@ void Game::ChooseHero(std::string player1, std::string player2)
     {
     case 0:
         heroes.push_back(std ::make_shared<Mayor>(startMayorloc));
-        heroes.back()->getLocation()->AddHero(heroes.back());
+
         if (!PerkDeck.empty())
         {
             heroes[0]->GetPerkCard(PerkDeck.back());
             PerkDeck.pop_back();
+            startMayorloc->AddHero(heroes[0]);
         }
         break;
 
     case 1:
         heroes.push_back(std ::make_shared<Archaeologist>(startArchloc));
-        heroes.back()->getLocation()->AddHero(heroes.back());
         if (!PerkDeck.empty())
         {
             heroes[0]->GetPerkCard(PerkDeck.back());
             PerkDeck.pop_back();
+            startArchloc->AddHero(heroes[0]);
         }
         break;
     case 2:
         heroes.push_back(std::make_shared<Courier>(startCourierloc));
-        heroes.back()->getLocation()->AddHero(heroes.back());
         if (!PerkDeck.empty())
         {
             heroes[0]->GetPerkCard(PerkDeck.back());
             PerkDeck.pop_back();
+            startCourierloc->AddHero(heroes[0]);
         }
         break;
     case 3:
         heroes.push_back(std::make_shared<Scientist>(startScientistloc));
-         heroes.back()->getLocation()->AddHero(heroes.back());
         if (!PerkDeck.empty())
         {
             heroes[0]->GetPerkCard(PerkDeck.back());
             PerkDeck.pop_back();
+            startScientistloc->AddHero(heroes[0]);
         }
         break;
     default:
@@ -782,41 +783,43 @@ void Game::ChooseHero(std::string player1, std::string player2)
     if (heroNames[player2Choice] == "Mayor")
     {
         heroes.push_back(std ::make_shared<Mayor>(startMayorloc));
-        heroes.back()->getLocation()->AddHero(heroes.back());
+
         if (!PerkDeck.empty())
         {
             heroes[1]->GetPerkCard(PerkDeck.back());
             PerkDeck.pop_back();
+            startMayorloc->AddHero(heroes[1]);
         }
     }
     else if (heroNames[player2Choice] == "Archaeologist")
     {
         heroes.push_back(std ::make_shared<Archaeologist>(startArchloc));
-        heroes.back()->getLocation()->AddHero(heroes.back());
         if (!PerkDeck.empty())
         {
             heroes[1]->GetPerkCard(PerkDeck.back());
             PerkDeck.pop_back();
+            startArchloc->AddHero(heroes[1]);
         }
     }
     else if (heroNames[player2Choice] == "Courier")
     {
         heroes.push_back(std::make_shared<Courier>(startCourierloc));
-        heroes.back()->getLocation()->AddHero(heroes.back());
+    
         if (!PerkDeck.empty())
         {
             heroes[1]->GetPerkCard(PerkDeck.back());
             PerkDeck.pop_back();
+            startCourierloc->AddHero(heroes[1]);
         }
     }
     else if (heroNames[player2Choice] == "Scientist")
     {
         heroes.push_back(std::make_shared<Scientist>(startScientistloc));
-         heroes.back()->getLocation()->AddHero(heroes.back());
         if (!PerkDeck.empty())
         {
             heroes[1]->GetPerkCard(PerkDeck.back());
             PerkDeck.pop_back();
+            startScientistloc->AddHero(heroes[1]);
         }
     }
     heroPlayer = heroes[0];
