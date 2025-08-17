@@ -731,6 +731,7 @@ void Game::ChooseHero(std::string player1, std::string player2)
     {
     case 0:
         heroes.push_back(std ::make_shared<Mayor>(startMayorloc));
+        heroes.back()->getLocation()->AddHero(heroes.back());
         if (!PerkDeck.empty())
         {
             heroes[0]->GetPerkCard(PerkDeck.back());
@@ -740,6 +741,7 @@ void Game::ChooseHero(std::string player1, std::string player2)
 
     case 1:
         heroes.push_back(std ::make_shared<Archaeologist>(startArchloc));
+        heroes.back()->getLocation()->AddHero(heroes.back());
         if (!PerkDeck.empty())
         {
             heroes[0]->GetPerkCard(PerkDeck.back());
@@ -748,6 +750,7 @@ void Game::ChooseHero(std::string player1, std::string player2)
         break;
     case 2:
         heroes.push_back(std::make_shared<Courier>(startCourierloc));
+        heroes.back()->getLocation()->AddHero(heroes.back());
         if (!PerkDeck.empty())
         {
             heroes[0]->GetPerkCard(PerkDeck.back());
@@ -756,6 +759,7 @@ void Game::ChooseHero(std::string player1, std::string player2)
         break;
     case 3:
         heroes.push_back(std::make_shared<Scientist>(startScientistloc));
+         heroes.back()->getLocation()->AddHero(heroes.back());
         if (!PerkDeck.empty())
         {
             heroes[0]->GetPerkCard(PerkDeck.back());
@@ -778,6 +782,7 @@ void Game::ChooseHero(std::string player1, std::string player2)
     if (heroNames[player2Choice] == "Mayor")
     {
         heroes.push_back(std ::make_shared<Mayor>(startMayorloc));
+        heroes.back()->getLocation()->AddHero(heroes.back());
         if (!PerkDeck.empty())
         {
             heroes[1]->GetPerkCard(PerkDeck.back());
@@ -787,6 +792,7 @@ void Game::ChooseHero(std::string player1, std::string player2)
     else if (heroNames[player2Choice] == "Archaeologist")
     {
         heroes.push_back(std ::make_shared<Archaeologist>(startArchloc));
+        heroes.back()->getLocation()->AddHero(heroes.back());
         if (!PerkDeck.empty())
         {
             heroes[1]->GetPerkCard(PerkDeck.back());
@@ -796,6 +802,7 @@ void Game::ChooseHero(std::string player1, std::string player2)
     else if (heroNames[player2Choice] == "Courier")
     {
         heroes.push_back(std::make_shared<Courier>(startCourierloc));
+        heroes.back()->getLocation()->AddHero(heroes.back());
         if (!PerkDeck.empty())
         {
             heroes[1]->GetPerkCard(PerkDeck.back());
@@ -805,6 +812,7 @@ void Game::ChooseHero(std::string player1, std::string player2)
     else if (heroNames[player2Choice] == "Scientist")
     {
         heroes.push_back(std::make_shared<Scientist>(startScientistloc));
+         heroes.back()->getLocation()->AddHero(heroes.back());
         if (!PerkDeck.empty())
         {
             heroes[1]->GetPerkCard(PerkDeck.back());
