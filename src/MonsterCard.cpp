@@ -470,26 +470,6 @@ void MonsterCard ::ApplyEffect(Game &game)
                 }
             }
 
-            // if (path.size() >= 2)
-            // {
-            //     auto nextStep = path[1];
-            //     if (closestHero)
-            //     {
-            //         auto loc = closestHero->getLocation();
-            //         loc->RemoveHero(closestHero);
-            //         closestHero->SetLocation(nextStep);
-            //         game.MyTerminal.ShowPopupMessages(game ,"Hero " + closestHero->getName() + " moves toward dracula.");
-            //         game.MyTerminal.ShowMonsterPhase(game , shared_from_this());
-            //     }
-            //     else if (closestVillager)
-            //     {
-            //         auto loc = closestVillager->getCurrentLocation();
-            //         loc->RemoveVillager(closestVillager);
-            //         closestVillager->SetLocation(nextStep);
-            //         game.MyTerminal.ShowPopupMessages(game ,"Villager " + closestVillager->getName() + " moves toward dracula.");
-            //         game.MyTerminal.ShowMonsterPhase(game , shared_from_this());
-            //     }
-            // }
             game.MyTerminal.ShowPopupMessages(game, HypnoticGaze + " Card Event Applyed  :" + Event);
             game.MyTerminal.ShowMonsterPhase(game, shared_from_this());
         }

@@ -851,6 +851,7 @@ void Game::GameStart()
         {
             MyTerminal.ShowBackgroundScreen("exit" , "THE DARKNESS AWAITS YOU...");
             UnloadMusicStream(MyTerminal.music);
+            MyTerminal.UnloadAssets();
             CloseAudioDevice();
             CloseWindow();
             return;

@@ -182,28 +182,43 @@ void ShowInTerminal ::UnloadAssets()
 
     for (auto &[_, tex] : heroTextures)
         UnloadTexture(tex);
-    for (auto &[_, tex] : monsterTextures)
+        std::cout<<"Unloaded heros\n";
+        for (auto &[_, tex] : monsterTextures)
         UnloadTexture(tex);
-    for (auto &[_, tex] : villagerTextures)
+        std::cout<<"Unloaded monsters\n";
+        for (auto &[_, tex] : villagerTextures)
         UnloadTexture(tex);
-    for (auto &[_, tex] : perkTextures)
+        std::cout<<"Unloaded villagers\n";
+        for (auto &[_, tex] : perkTextures)
         UnloadTexture(tex);
-    for (auto &[_, tex] : itemTextures)
+        std::cout<<"Unloaded perks\n";
+        for (auto &[_, tex] : itemTextures)
         UnloadTexture(tex);
-    for (auto &[_, tex] : monsterCardTextures)
+        std::cout<<"Unloaded items\n";
+        for (auto &[_, tex] : monsterCardTextures)
         UnloadTexture(tex);
-    for (auto &[_, tex] : monstermatTextures)
+        std::cout<<"Unloaded monsterdeck\n";
+        for (auto &[_, tex] : monstermatTextures)
         UnloadTexture(tex);
-    for (auto &[_, tex] : backgroundTextures)
+        std::cout<<"Unloaded monster mat\n";
+        for (auto &[_, tex] : backgroundTextures)
         UnloadTexture(tex);
-    for (auto &[_, tex] : diceFaces)
+        std::cout<<"Unloaded backgrounds\n";
+        for (auto &[_, tex] : diceFaces)
         UnloadTexture(tex);
-    UnloadTexture(mapTexture);
-    UnloadFont(font);
-    UnloadTexture(coffinBrokenTexture);
-    UnloadTexture(coffinIntactTexture);
-    UnloadTexture(frenzyMark);
-    UnloadTexture(DiceBack);
+        std::cout<<"Unloaded dice faces\n";
+        UnloadTexture(mapTexture);
+        std::cout<<"Unloaded map\n";
+        UnloadFont(font);
+        std::cout<<"Unloaded font\n";
+        UnloadTexture(coffinBrokenTexture);
+        std::cout<<"Unloaded coffin broken\n";
+        UnloadTexture(coffinIntactTexture);
+        std::cout<<"Unloaded coffin intact\n";
+        UnloadTexture(frenzyMark);
+        std::cout<<"Unloaded frenzy mark\n";
+        UnloadTexture(DiceBack);
+        std::cout<<"Unloaded frenzy dice Background\n";
 }
 
 void ShowInTerminal::ShowMessageBox(const std::string &message)
