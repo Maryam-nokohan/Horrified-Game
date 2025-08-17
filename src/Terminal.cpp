@@ -1081,8 +1081,6 @@ void ShowInTerminal::DrawDiceMat()
         matPos.x + (diceW - (numDice * boxSize + (numDice - 1) * spacing)) / 2,  
         matPos.y + (diceH - boxSize) / 2                             
     };
-
-    Texture2D DiceBack = LoadTexture("../assets/Items/dice/diceBack.jpg");
     DrawTexturePro(DiceBack,
                    {0, 0, (float)DiceBack.width, (float)DiceBack.height},
                    {matPos.x, matPos.y, diceW, diceH},
@@ -1290,11 +1288,11 @@ std::vector<std::string> ShowInTerminal::ShowDiceRollAnimation(Dice &dice, Font 
     }
 
     BeginDrawing();
+    // ClearBackground(DARKBLUE);
     DrawTexturePro(DiceBack,
                    {0, 0, (float)DiceBack.width, (float)DiceBack.height},
                    {0, 0, (float)GetScreenWidth(), (float)GetScreenHeight()},
                    {0, 0}, 0.0f, WHITE);
-    // ClearBackground(DARKBLUE);
 
     for (int i = 0; i < numDice; ++i)
     {

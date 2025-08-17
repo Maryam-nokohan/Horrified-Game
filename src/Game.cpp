@@ -666,19 +666,17 @@ bool Game::HeroPhase()
 void Game::increaseTerrorLevel() { terrorLevel++; }
 void Game::MonsterPhase()
 {
+    MyTerminal.ShowBackgroundScreen("phase" ,"The Dark has been come The monster Phase begun...");
     if (MonsterDeck.empty())
     {
         MyTerminal.ShowPopupMessages(*this, "No Monster card left in the deck");
         return;
     }
     auto card = MonsterDeck.back();
-
-    MyTerminal.ShowPopupMessages(*this, "Monster Phase Begins!!!!!");
-
     MyTerminal.ShowMonsterPhase(*this, card);
     card->ApplyEffect(*this);
 
-    MyTerminal.ShowPopupMessages(*this, "Monster phase complete. Press Enter to continue...");
+    MyTerminal.ShowMessageBox("The sun Shines ,Monster phase completed");
     MonsterDeck.pop_back();
 }
 std::vector<std::shared_ptr<Villager>> &Game::getVillagers() { return villagers; }
