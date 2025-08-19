@@ -1664,16 +1664,42 @@ int ShowInTerminal::ShowHeroPhase(Game &game, const std::vector<std::string> &op
         DrawCharactersOnMap(game.heroes, game.Monsters, game.villagers, game.GetItemsInGame(), 30, {0, 0});
         DrawTerrorLevel(game.terrorLevel, font, {8, 484});
 
-        if (auto dracula = game.GetDracula())
-            DrawDraculaMat(game, {(float)GetScreenWidth() - 165.0f, 40.0f});
+        // --- Dracula Mat ---
+        Vector2 draculaMatPos = {(float)GetScreenWidth() - 165.0f, 40.0f};if (auto dracula = game.GetDracula())
+        {
+            DrawDraculaMat(game, draculaMatPos);
+        }
+        else
+        {
+            // Show a message if Dracula is defeated
+            const char *defeatedMsg = "Dracula is Defeated";
+            float fontSize = 18.0f;
+            Vector2 textSize = MeasureTextEx(font, defeatedMsg, fontSize, 1);
+            DrawTextEx(font, defeatedMsg, {draculaMatPos.x + (148.0f - textSize.x) / 2, draculaMatPos.y + 20}, fontSize, 1, RED);
+        }
+
+        // --- Invisible Man Mat ---
+        Vector2 inMatPos = {(float)GetScreenWidth() - 330.0f, 40.0f};
         if (auto invisible = game.GetInvisibleMan())
         {
-            Vector2 inMatPos = {(float)GetScreenWidth() - 330.0f, 40.0f};
             DrawInvisibleManMat(invisible->GetEvidence(), font, inMatPos);
+        }
+        else
+        {
+            
+            const char *defeatedMsg = "Invisible Man is Defeated";
+            float fontSize = 18.0f;
+            Vector2 textSize = MeasureTextEx(font, defeatedMsg, fontSize, 1);
+            DrawTextEx(font, defeatedMsg, {inMatPos.x + (148.0f - textSize.x) / 2, inMatPos.y + 20}, fontSize, 1, SKYBLUE);
+        }
 
-            Rectangle inventoryClickZone = {0};
-            if (game.heroPlayer)
-                DrawHeroInfo(game.heroPlayer, font, {inMatPos.x, inMatPos.y + 50.0f * (float)invisible->GetEvidence().size() + 40.0f}, &inventoryClickZone);
+        
+        Rectangle inventoryClickZone = {0};
+        if (game.heroPlayer)
+        {
+            
+            Vector2 heroInfoPos = {inMatPos.x, inMatPos.y + 290.0f};
+            DrawHeroInfo(game.heroPlayer, font, heroInfoPos, &inventoryClickZone);
             if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && CheckCollisionPointRec(GetMousePosition(), inventoryClickZone))
             {
                 showInventoryPopup = true;
