@@ -223,34 +223,68 @@ void ShowInTerminal ::UnloadAssets()
 
 void ShowInTerminal::ShowMessageBox(const std::string &message)
 {
-
     const int windowWidth = 900;
     const int windowHeight = 700;
 
+    
     const float boxWidth = 600;
     const float boxHeight = 150;
     const float boxX = (windowWidth - boxWidth) / 2;
-    const float boxY = (windowHeight - boxHeight) / 2;
+    const float boxY = (windowHeight - boxHeight) / 2 - 30; 
 
     Rectangle box = {boxX, boxY, boxWidth, boxHeight};
-
     float boxScale = 0.9f;
     float targetScale = 1.0f;
 
+    
+    const float buttonWidth = 200;
+    const float buttonHeight = 50;
+    const float buttonX = boxX + (boxWidth - buttonWidth) / 2;
+    const float buttonY = boxY + boxHeight + 20;
+    Rectangle continueButton = {buttonX, buttonY, buttonWidth, buttonHeight};
+
+    
     Color boxColor = {15, 25, 40, 200};
     Color borderColor = {0, 220, 255, 255};
     Color textColor = {220, 240, 255, 255};
-    Color hintColor = {150, 200, 220, 200};
+    const Color BUTTON_COLOR = {70, 85, 105, 255};
+    const Color BUTTON_BORDER_COLOR = {100, 120, 140, 255};
+    const Color HOVER_COLOR = {120, 145, 175, 255};
+    const Color TEXT_COLOR_BUTTON = {230, 230, 230, 255};
 
     bool waiting = true;
+    bool buttonPressed = false; 
+
     while (!WindowShouldClose() && waiting)
     {
         UpdateMusicStream(music);
-
         boxScale += (targetScale - boxScale) * 0.1f;
+        Vector2 mousePos = GetMousePosition();
+        bool mouseOverButton = CheckCollisionPointRec(mousePos, continueButton);
+
+        
+        if (boxScale > 0.98f && mouseOverButton)
+        {
+            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+            {
+                buttonPressed = true;
+            }
+            if (buttonPressed && IsMouseButtonReleased(MOUSE_LEFT_BUTTON))
+            {
+                waiting = false; 
+            }
+        }
+        
+        
+        if (buttonPressed && !mouseOverButton)
+        {
+            buttonPressed = false;
+        }
+
 
         BeginDrawing();
 
+        
         if (backgroundTextures["msg"].id != 0)
         {
             DrawTexturePro(backgroundTextures["msg"],
@@ -260,24 +294,22 @@ void ShowInTerminal::ShowMessageBox(const std::string &message)
         }
         else
         {
-
             DrawRectangleGradientV(0, 0, windowWidth, windowHeight,
                                    Color{240, 240, 250, 255},
                                    Color{200, 200, 220, 255});
         }
 
+        // --- Draw Scaled Message Box ---
         Rectangle scaledBox = {
             box.x + (box.width * (1 - boxScale)) / 2,
             box.y + (box.height * (1 - boxScale)) / 2,
             box.width * boxScale,
             box.height * boxScale};
-
         DrawRectangleRounded(scaledBox, 0.2f, 16, Fade(boxColor, boxScale));
-
         DrawRectangleRoundedLines(scaledBox, 0.2f, 16, Fade(borderColor, boxScale));
 
+        // --- Draw Message Text (with wrapping) ---
         int fontSize = 24;
-
         const float maxTextWidth = boxWidth - 40;
         Vector2 textSize = MeasureTextEx(font, message.c_str(), fontSize, 1.0f);
 
@@ -287,11 +319,9 @@ void ShowInTerminal::ShowMessageBox(const std::string &message)
             std::string currentLine;
             std::istringstream iss(message);
             std::string word;
-
             while (iss >> word)
             {
-                if (MeasureTextEx(font, (currentLine + word).c_str(), fontSize, 1.0f).x < maxTextWidth)
-                {
+                if (MeasureTextEx(font, (currentLine + word).c_str(), fontSize, 1.0f).x < maxTextWidth){
                     currentLine += word + " ";
                 }
                 else
@@ -301,7 +331,6 @@ void ShowInTerminal::ShowMessageBox(const std::string &message)
                 }
             }
             wrappedText += currentLine;
-
             DrawTextEx(font, wrappedText.c_str(),
                        Vector2{scaledBox.x + 20,
                                scaledBox.y + (scaledBox.height - fontSize * (1 + std::count(wrappedText.begin(), wrappedText.end(), '\n'))) / 2},
@@ -312,31 +341,28 @@ void ShowInTerminal::ShowMessageBox(const std::string &message)
             DrawTextEx(font, message.c_str(),
                        Vector2{scaledBox.x + (scaledBox.width - textSize.x) / 2,
                                scaledBox.y + (scaledBox.height - textSize.y) / 2},
-                       fontSize, 1.0f, Fade(textColor, boxScale)); // استفاده از رنگ متن جدید
+                       fontSize, 1.0f, Fade(textColor, boxScale));
         }
 
+        
         if (boxScale > 0.98f)
         {
-            const char *hintText = "Press ENTER or click to continue...";
-            int hintFontSize = 16;
-            Vector2 hintSize = MeasureTextEx(font, hintText, hintFontSize, 1.0f);
-            DrawTextEx(font, hintText,
-                       Vector2{windowWidth / 2 - hintSize.x / 2, boxY + boxHeight + 20},
-                       hintFontSize, 1.0f, WHITE);
+            
+            Color currentButtonColor = mouseOverButton && buttonPressed ? HOVER_COLOR : (mouseOverButton ? HOVER_COLOR : BUTTON_COLOR);
+            DrawRectangleRounded(continueButton, 0.2f, 10, currentButtonColor);
+            DrawRectangleRoundedLines(continueButton, 0.2f, 10, mouseOverButton ? SKYBLUE : BUTTON_BORDER_COLOR);
+
+            const char *buttonText = "Continue";
+            float buttonFontSize = 20.0f;
+            Vector2 buttonTextSize = MeasureTextEx(font, buttonText, buttonFontSize, 1);
+            float textX = continueButton.x + (continueButton.width - buttonTextSize.x) / 2;
+            float textY = continueButton.y + (continueButton.height - buttonTextSize.y) / 2;
+            DrawTextEx(font, buttonText, {textX, textY}, buttonFontSize, 1, TEXT_COLOR_BUTTON);
         }
 
         EndDrawing();
-
-        if ((IsKeyPressed(KEY_ENTER) || IsMouseButtonPressed(MOUSE_LEFT_BUTTON)))
-        {
-            if (boxScale > 0.98f)
-            {
-                waiting = false;
-            }
-        }
     }
 }
-
 void ShowInTerminal::ShowHelpScreen()
 {
     Texture2D bg = backgroundTextures["msg"];
@@ -1664,16 +1690,42 @@ int ShowInTerminal::ShowHeroPhase(Game &game, const std::vector<std::string> &op
         DrawCharactersOnMap(game.heroes, game.Monsters, game.villagers, game.GetItemsInGame(), 30, {0, 0});
         DrawTerrorLevel(game.terrorLevel, font, {8, 484});
 
-        if (auto dracula = game.GetDracula())
-            DrawDraculaMat(game, {(float)GetScreenWidth() - 165.0f, 40.0f});
+        // --- Dracula Mat ---
+        Vector2 draculaMatPos = {(float)GetScreenWidth() - 165.0f, 40.0f};if (auto dracula = game.GetDracula())
+        {
+            DrawDraculaMat(game, draculaMatPos);
+        }
+        else
+        {
+            // Show a message if Dracula is defeated
+            const char *defeatedMsg = "Dracula is Defeated";
+            float fontSize = 18.0f;
+            Vector2 textSize = MeasureTextEx(font, defeatedMsg, fontSize, 1);
+            DrawTextEx(font, defeatedMsg, {draculaMatPos.x + (148.0f - textSize.x) / 2, draculaMatPos.y + 20}, fontSize, 1, RED);
+        }
+
+        // --- Invisible Man Mat ---
+        Vector2 inMatPos = {(float)GetScreenWidth() - 330.0f, 40.0f};
         if (auto invisible = game.GetInvisibleMan())
         {
-            Vector2 inMatPos = {(float)GetScreenWidth() - 330.0f, 40.0f};
             DrawInvisibleManMat(invisible->GetEvidence(), font, inMatPos);
+        }
+        else
+        {
+            
+            const char *defeatedMsg = "Invisible Man is Defeated";
+            float fontSize = 18.0f;
+            Vector2 textSize = MeasureTextEx(font, defeatedMsg, fontSize, 1);
+            DrawTextEx(font, defeatedMsg, {inMatPos.x + (148.0f - textSize.x) / 2, inMatPos.y + 20}, fontSize, 1, SKYBLUE);
+        }
 
-            Rectangle inventoryClickZone = {0};
-            if (game.heroPlayer)
-                DrawHeroInfo(game.heroPlayer, font, {inMatPos.x, inMatPos.y + 50.0f * (float)invisible->GetEvidence().size() + 40.0f}, &inventoryClickZone);
+        
+        Rectangle inventoryClickZone = {0};
+        if (game.heroPlayer)
+        {
+            
+            Vector2 heroInfoPos = {inMatPos.x, inMatPos.y + 290.0f};
+            DrawHeroInfo(game.heroPlayer, font, heroInfoPos, &inventoryClickZone);
             if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && CheckCollisionPointRec(GetMousePosition(), inventoryClickZone))
             {
                 showInventoryPopup = true;

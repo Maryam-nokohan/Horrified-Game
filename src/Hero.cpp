@@ -218,6 +218,7 @@ void Hero::DefeatAction(std::shared_ptr<Monster> monster, Game &game)
         DecreaseAction();
 
         monster->GetLocation()->RemoveMonster(monster);
+        monster->MarkDefeated();
 
         auto &monsters = game.Monsters;
         monsters.erase(std::remove(monsters.begin(), monsters.end(), monster), monsters.end());
