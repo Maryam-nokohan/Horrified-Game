@@ -15,8 +15,9 @@ class Monster : public std :: enable_shared_from_this<Monster>
     std :: shared_ptr<Location> CurrentLocation;
     int FrenzyOrder;
     bool HasFrenzy;
+    bool isDefeated;
     public :
-    Monster(const std :: string  name, int frenzyOrder ,bool hasFrenzy );
+    Monster(const std :: string  name, int frenzyOrder ,bool hasFrenzy , bool isDefeated );
 
     virtual void Move(std :: shared_ptr<Location>)=0;
     virtual bool Attack(Game &game);
@@ -29,6 +30,8 @@ class Monster : public std :: enable_shared_from_this<Monster>
     const std :: shared_ptr<Location>& GetLocation()const;
     void SetLocation(std :: shared_ptr<Location>);
     virtual bool CanBeDefeated() = 0;
+    void MarkDefeated();
+    bool GetDefeated();
     virtual bool IsTasksLocation(std :: string) = 0;
 
     ~Monster(){}

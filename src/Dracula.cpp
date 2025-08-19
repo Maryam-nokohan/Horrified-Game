@@ -7,7 +7,7 @@
 using namespace LocationNames;
 
 //Constructor :
-Dracula :: Dracula() : Monster("Dracula",1,true){Table ={{false ,Crypt} ,{ false ,Cave} , {false,Dungeon} , {false,Graveyard} };}
+Dracula :: Dracula() : Monster("Dracula",1,true,false){Table ={{false ,Crypt} ,{ false ,Cave} , {false,Dungeon} , {false,Graveyard} };}
 //Power:
 void Dracula :: DarkCharm(Game &game) {
 game.MyTerminal.ShowPopupMessages(game,"Dracula using Dark Charm !!");

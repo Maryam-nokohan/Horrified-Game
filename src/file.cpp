@@ -11,6 +11,7 @@
 #include <fstream>
 #include <filesystem>
 #include <iostream>
+#include <algorithm>
 
 void GameFileHandler::SaveGame(Game &game, const std::string &filename)
 {
@@ -81,6 +82,7 @@ void GameFileHandler::SaveGame(Game &game, const std::string &filename)
 
     // Location status
     out << "locationCount " << game.mapPlan.getLocations().size() << "\n";
+    int aliveMonster = 0;
 
     for (const auto &[name, loc] : game.mapPlan.getLocations())
     {
@@ -118,6 +120,12 @@ void GameFileHandler::SaveGame(Game &game, const std::string &filename)
             out << "monster " << m->GetName() << "\n";
         }
     }
+    // is Defeated
+    for (const auto &m : game.Monsters)
+    {
+        out << "ISDefeated " << (m->GetDefeated() ? 1 : 0) << '\n';
+    }
+
     // Dracula's destroyed coffins
     auto dracula = game.GetDracula();
     if (dracula)
@@ -141,6 +149,7 @@ void GameFileHandler::SaveGame(Game &game, const std::string &filename)
             out << destroyed << " " << name << "\n";
         }
     }
+
     // Save Villagers
     out << "villagerCount " << game.villagers.size() << '\n';
     for (const auto &village : game.villagers)
@@ -302,7 +311,7 @@ void GameFileHandler::LoadGame(Game &game, const std::string &filename)
             in >> power >> color >> std::ws;
             std::getline(in, ItemName);
 
-            auto item = std::make_shared<Item>((ItemColor)color, power, loc,loc, ItemName);
+            auto item = std::make_shared<Item>((ItemColor)color, power, loc, loc, ItemName);
             loc->AddItem(item);
         }
 
@@ -352,6 +361,22 @@ void GameFileHandler::LoadGame(Game &game, const std::string &filename)
             }
         }
     }
+
+    for (auto &m : game.Monsters)
+    {
+        in >> token;
+        int ok;
+        in >> ok;
+        if (ok)
+        {
+            m->GetLocation()->RemoveMonster(m);
+            m->MarkDefeated();
+            auto it = std ::find(game.Monsters.begin(), game.Monsters.end(), m);
+            if (it != game.Monsters.end())
+            game.Monsters.erase(it);
+        }
+    }
+
     // Dracula coffins
     in >> token;
     if (token == "draculaCoffins")
@@ -359,7 +384,7 @@ void GameFileHandler::LoadGame(Game &game, const std::string &filename)
         int coffinCount;
         in >> coffinCount;
         auto dracula = game.GetDracula();
-     for (int i = 0; i < coffinCount; ++i)
+        for (int i = 0; i < coffinCount; ++i)
         {
             bool destroyed;
             std::string name;

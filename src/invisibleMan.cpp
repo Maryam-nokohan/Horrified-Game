@@ -9,7 +9,7 @@
 #include <iostream>
 #include <limits>
 using namespace LocationNames;
-InvisibleMan:: InvisibleMan() : Monster("Invisible Man",6,false){Evidences ={ {false , Inn} , {false , Laboratory} , {false ,Barn } , {false ,Mansion } , {false , Institute}};}
+InvisibleMan:: InvisibleMan() : Monster("Invisible Man",6,false , false){Evidences ={ {false , Inn} , {false , Laboratory} , {false ,Barn } , {false ,Mansion } , {false , Institute}};}
 //Move method
 void InvisibleMan :: Move(std :: shared_ptr<Location> NearestOppenent) {
     if(!CurrentLocation) return;
