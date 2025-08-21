@@ -1386,58 +1386,98 @@ void ShowInTerminal::ShowPopupMessages(Game &game, const std::string message)
             waiting = false;
     }
 }
-void ShowInTerminal::DrawInventoryPopup(std::shared_ptr<Hero> hero)
+void ShowInTerminal::DrawInventoryPopup(std::shared_ptr<Hero> hero, float &scrollY)
 {
     if (!hero)
         return;
 
-    DrawRectangleRec(inventoryPopupBounds, Fade(BLACK, 0.9f));
-    DrawRectangleLinesEx(inventoryPopupBounds, 3, SKYBLUE);
+    
+    Rectangle popupBounds = {
+        (GetScreenWidth() - 300.0f) / 2,
+        (GetScreenHeight() - 450.0f) / 2,
+        300.0f,                           
+        450.0f                           
+    };
 
-    const float padding = 15.0f;
-    const float columnSpacing = 200.0f;
+    
+    DrawRectangleRec(popupBounds, Fade(BLACK, 0.9f));
+    DrawRectangleLinesEx(popupBounds, 3, SKYBLUE);
+
+    const float padding = 20.0f;
     const float iconSize = 32.0f;
     const float itemSpacing = 40.0f;
-    const int maxItemsPerColumn = (int)((inventoryPopupBounds.height - 2 * padding - 40) / itemSpacing);
-
-    float xStart = inventoryPopupBounds.x + padding;
-    float yStart = inventoryPopupBounds.y + padding;
-
-    int fontSize = 20;
-    DrawTextEx(font, "Inventory", {xStart, yStart}, fontSize, 1, GOLD);
-    yStart += fontSize + 10;
-
+    const int titleFontSize = 24;
+    const float titleSectionHeight = titleFontSize + 30;
+    const int itemFontSize = 18;
     const auto &items = hero->getInventory();
-    if (items.empty())
+
+    
+    float totalContentHeight = items.empty() ? itemSpacing : items.size() * itemSpacing;
+
+    
+    DrawTextEx(font, "Inventory", {popupBounds.x + padding, popupBounds.y + 15}, titleFontSize, 1, GOLD);
+
+    
+    Rectangle closeBtn = {popupBounds.x + popupBounds.width - 40, popupBounds.y + 10, 30, 30};
+    DrawRectangleRounded(closeBtn, 0.2f, 4, RED);
+    DrawTextEx(font, "X", {closeBtn.x + 8, closeBtn.y + 4}, 24, 1, WHITE);
+
+    
+    Rectangle viewArea = {
+        popupBounds.x,
+        popupBounds.y + titleSectionHeight,
+        popupBounds.width,
+        popupBounds.height - titleSectionHeight - padding};
+
+    if (CheckCollisionPointRec(GetMousePosition(), popupBounds))
     {
-        DrawTextEx(font, "No items found.", {xStart, yStart}, fontSize, 1, LIGHTGRAY);
-    }
-    else
-    {
-        for (size_t i = 0; i < items.size(); i++)
+        float wheelMove = GetMouseWheelMove();
+        if (wheelMove != 0)
         {
-            int col = i / maxItemsPerColumn;
-            int row = i % maxItemsPerColumn;
-
-            float x = xStart + col * columnSpacing;
-            float y = yStart + row * itemSpacing;
-
-            Texture2D icon = itemTextures[items[i]->getName()];
-            DrawTexturePro(icon,
-                           {0, 0, (float)icon.width, (float)icon.height},
-                           {x, y, iconSize, iconSize},
-                           {0, 0}, 0.0f, WHITE);
-
-            std::string itemText = items[i]->getName() + "(" + std::to_string(items[i]->getPower()) + ")";
-            DrawTextEx(font, itemText.c_str(), {x + iconSize + 10, y + 4}, fontSize, 1, WHITE);
+            scrollY += wheelMove * 20; 
         }
     }
 
-    Rectangle closeBtn = {inventoryPopupBounds.x + inventoryPopupBounds.width - 40, inventoryPopupBounds.y + 10, 30, 30};
-    DrawRectangleRounded(closeBtn, 0.2f, 4, RED);
-    DrawTextEx(font, "X", {closeBtn.x + 8, closeBtn.y + 4}, 24, 1, WHITE);
-}
+    
+    if (scrollY > 0)
+        scrollY = 0;
+    float minScrollY = viewArea.height - totalContentHeight;
+    if (minScrollY > 0)
+        minScrollY = 0;
+    if (scrollY < minScrollY)
+        scrollY = minScrollY;
 
+    
+    BeginScissorMode(viewArea.x, viewArea.y, viewArea.width, viewArea.height);
+
+    float currentX = viewArea.x + padding;
+    float currentY = viewArea.y + scrollY + 10;
+
+    if (items.empty())
+    {
+        DrawTextEx(font, "No items found.", {currentX, currentY}, itemFontSize, 1, LIGHTGRAY);
+    }
+    else
+    {
+        
+        for (const auto &item : items)
+        {
+            if (itemTextures.count(item->getName()))
+            {
+                DrawTexturePro(itemTextures[item->getName()],
+                               {0, 0, (float)itemTextures[item->getName()].width, (float)itemTextures[item->getName()].height},
+                               {currentX, currentY, iconSize, iconSize},
+                               {0, 0}, 0.0f, WHITE);
+            }
+            std::string itemText = item->getName() + " (" + std::to_string(item->getPower()) + ")";
+            DrawTextEx(font, itemText.c_str(), {currentX + iconSize + 15, currentY + 4}, itemFontSize, 1, WHITE);
+            currentY += itemSpacing;
+        }
+    }
+
+    
+    EndScissorMode();
+}
 void ShowInTerminal::DrawLocationInfoPopup(std::shared_ptr<Location> location, float &scrollY)
 {
     if (!location)
@@ -1610,6 +1650,7 @@ int ShowInTerminal::ShowHeroPhase(Game &game, const std::vector<std::string> &op
         optionRects[i] = {x, y, buttonWidth, buttonHeight};
     }
     float locationScrolly = 0.0f;
+    float inventoryScrolly = 0.0f;
 
     while (!WindowShouldClose())
     {
@@ -1631,7 +1672,8 @@ int ShowInTerminal::ShowHeroPhase(Game &game, const std::vector<std::string> &op
 
             else if (showInventoryPopup)
             {
-                Rectangle closeBtn = {inventoryPopupBounds.x + inventoryPopupBounds.width - 40, inventoryPopupBounds.y + 10, 30, 30};
+                Rectangle popupBounds = {(GetScreenWidth() - 300.0f) / 2, (GetScreenHeight() - 450.0f) / 2 , 300.0f , 450.0f};
+                Rectangle closeBtn = {popupBounds.x + popupBounds.width - 40, popupBounds.y + 10, 30, 30};
                 if (CheckCollisionPointRec(mouse, closeBtn))
                 {
                     showInventoryPopup = false;
@@ -1729,6 +1771,7 @@ int ShowInTerminal::ShowHeroPhase(Game &game, const std::vector<std::string> &op
             if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && CheckCollisionPointRec(GetMousePosition(), inventoryClickZone))
             {
                 showInventoryPopup = true;
+                inventoryScrolly = 0.0f;
             }
         }
 
@@ -1763,7 +1806,7 @@ int ShowInTerminal::ShowHeroPhase(Game &game, const std::vector<std::string> &op
 
         if (showInventoryPopup)
         {
-            DrawInventoryPopup(game.heroPlayer);
+            DrawInventoryPopup(game.heroPlayer , inventoryScrolly);
         }
 
         if (showLocationItemsPopup)
