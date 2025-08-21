@@ -1569,7 +1569,8 @@ void ShowInTerminal::DrawLocationInfoPopup(std::shared_ptr<Location> location, f
             {
                 DrawTexturePro(villagerTextures[villager->getName()], {0, 0, (float)villagerTextures[villager->getName()].width, (float)villagerTextures[villager->getName()].height}, {currentX + 5, currentY, iconSize, iconSize}, {0, 0}, 0.0f, WHITE);
             }
-            DrawTextEx(font, villager->getName().c_str(), {currentX + iconSize + 15, currentY + 4}, itemFontSize, 1, WHITE);
+            std :: string villagerInfo = villager->getName() + " (" + villager->getSafeLocation()->GetCityName() + ")" ;
+            DrawTextEx(font, villagerInfo.c_str() , {currentX + iconSize + 15, currentY + 4}, itemFontSize, 1, WHITE);
             currentY += itemSpacing;
         }
     }
