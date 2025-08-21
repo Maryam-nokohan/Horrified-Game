@@ -182,43 +182,43 @@ void ShowInTerminal ::UnloadAssets()
 
     for (auto &[_, tex] : heroTextures)
         UnloadTexture(tex);
-        std::cout<<"Unloaded heros\n";
-        for (auto &[_, tex] : monsterTextures)
+    std::cout << "Unloaded heros\n";
+    for (auto &[_, tex] : monsterTextures)
         UnloadTexture(tex);
-        std::cout<<"Unloaded monsters\n";
-        for (auto &[_, tex] : villagerTextures)
+    std::cout << "Unloaded monsters\n";
+    for (auto &[_, tex] : villagerTextures)
         UnloadTexture(tex);
-        std::cout<<"Unloaded villagers\n";
-        for (auto &[_, tex] : perkTextures)
+    std::cout << "Unloaded villagers\n";
+    for (auto &[_, tex] : perkTextures)
         UnloadTexture(tex);
-        std::cout<<"Unloaded perks\n";
-        for (auto &[_, tex] : itemTextures)
+    std::cout << "Unloaded perks\n";
+    for (auto &[_, tex] : itemTextures)
         UnloadTexture(tex);
-        std::cout<<"Unloaded items\n";
-        for (auto &[_, tex] : monsterCardTextures)
+    std::cout << "Unloaded items\n";
+    for (auto &[_, tex] : monsterCardTextures)
         UnloadTexture(tex);
-        std::cout<<"Unloaded monsterdeck\n";
-        for (auto &[_, tex] : monstermatTextures)
+    std::cout << "Unloaded monsterdeck\n";
+    for (auto &[_, tex] : monstermatTextures)
         UnloadTexture(tex);
-        std::cout<<"Unloaded monster mat\n";
-        for (auto &[_, tex] : backgroundTextures)
+    std::cout << "Unloaded monster mat\n";
+    for (auto &[_, tex] : backgroundTextures)
         UnloadTexture(tex);
-        std::cout<<"Unloaded backgrounds\n";
-        for (auto &[_, tex] : diceFaces)
+    std::cout << "Unloaded backgrounds\n";
+    for (auto &[_, tex] : diceFaces)
         UnloadTexture(tex);
-        std::cout<<"Unloaded dice faces\n";
-        UnloadTexture(mapTexture);
-        std::cout<<"Unloaded map\n";
-        UnloadFont(font);
-        std::cout<<"Unloaded font\n";
-        UnloadTexture(coffinBrokenTexture);
-        std::cout<<"Unloaded coffin broken\n";
-        UnloadTexture(coffinIntactTexture);
-        std::cout<<"Unloaded coffin intact\n";
-        UnloadTexture(frenzyMark);
-        std::cout<<"Unloaded frenzy mark\n";
-        UnloadTexture(DiceBack);
-        std::cout<<"Unloaded frenzy dice Background\n";
+    std::cout << "Unloaded dice faces\n";
+    UnloadTexture(mapTexture);
+    std::cout << "Unloaded map\n";
+    UnloadFont(font);
+    std::cout << "Unloaded font\n";
+    UnloadTexture(coffinBrokenTexture);
+    std::cout << "Unloaded coffin broken\n";
+    UnloadTexture(coffinIntactTexture);
+    std::cout << "Unloaded coffin intact\n";
+    UnloadTexture(frenzyMark);
+    std::cout << "Unloaded frenzy mark\n";
+    UnloadTexture(DiceBack);
+    std::cout << "Unloaded frenzy dice Background\n";
 }
 
 void ShowInTerminal::ShowMessageBox(const std::string &message)
@@ -226,24 +226,21 @@ void ShowInTerminal::ShowMessageBox(const std::string &message)
     const int windowWidth = 900;
     const int windowHeight = 700;
 
-    
     const float boxWidth = 600;
     const float boxHeight = 150;
     const float boxX = (windowWidth - boxWidth) / 2;
-    const float boxY = (windowHeight - boxHeight) / 2 - 30; 
+    const float boxY = (windowHeight - boxHeight) / 2 - 30;
 
     Rectangle box = {boxX, boxY, boxWidth, boxHeight};
     float boxScale = 0.9f;
     float targetScale = 1.0f;
 
-    
     const float buttonWidth = 200;
     const float buttonHeight = 50;
     const float buttonX = boxX + (boxWidth - buttonWidth) / 2;
     const float buttonY = boxY + boxHeight + 20;
     Rectangle continueButton = {buttonX, buttonY, buttonWidth, buttonHeight};
 
-    
     Color boxColor = {15, 25, 40, 200};
     Color borderColor = {0, 220, 255, 255};
     Color textColor = {220, 240, 255, 255};
@@ -253,7 +250,7 @@ void ShowInTerminal::ShowMessageBox(const std::string &message)
     const Color TEXT_COLOR_BUTTON = {230, 230, 230, 255};
 
     bool waiting = true;
-    bool buttonPressed = false; 
+    bool buttonPressed = false;
 
     while (!WindowShouldClose() && waiting)
     {
@@ -262,7 +259,6 @@ void ShowInTerminal::ShowMessageBox(const std::string &message)
         Vector2 mousePos = GetMousePosition();
         bool mouseOverButton = CheckCollisionPointRec(mousePos, continueButton);
 
-        
         if (boxScale > 0.98f && mouseOverButton)
         {
             if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
@@ -271,20 +267,17 @@ void ShowInTerminal::ShowMessageBox(const std::string &message)
             }
             if (buttonPressed && IsMouseButtonReleased(MOUSE_LEFT_BUTTON))
             {
-                waiting = false; 
+                waiting = false;
             }
         }
-        
-        
+
         if (buttonPressed && !mouseOverButton)
         {
             buttonPressed = false;
         }
 
-
         BeginDrawing();
 
-        
         if (backgroundTextures["msg"].id != 0)
         {
             DrawTexturePro(backgroundTextures["msg"],
@@ -299,7 +292,6 @@ void ShowInTerminal::ShowMessageBox(const std::string &message)
                                    Color{200, 200, 220, 255});
         }
 
-        // --- Draw Scaled Message Box ---
         Rectangle scaledBox = {
             box.x + (box.width * (1 - boxScale)) / 2,
             box.y + (box.height * (1 - boxScale)) / 2,
@@ -308,7 +300,6 @@ void ShowInTerminal::ShowMessageBox(const std::string &message)
         DrawRectangleRounded(scaledBox, 0.2f, 16, Fade(boxColor, boxScale));
         DrawRectangleRoundedLines(scaledBox, 0.2f, 16, Fade(borderColor, boxScale));
 
-        // --- Draw Message Text (with wrapping) ---
         int fontSize = 24;
         const float maxTextWidth = boxWidth - 40;
         Vector2 textSize = MeasureTextEx(font, message.c_str(), fontSize, 1.0f);
@@ -321,7 +312,8 @@ void ShowInTerminal::ShowMessageBox(const std::string &message)
             std::string word;
             while (iss >> word)
             {
-                if (MeasureTextEx(font, (currentLine + word).c_str(), fontSize, 1.0f).x < maxTextWidth){
+                if (MeasureTextEx(font, (currentLine + word).c_str(), fontSize, 1.0f).x < maxTextWidth)
+                {
                     currentLine += word + " ";
                 }
                 else
@@ -344,10 +336,9 @@ void ShowInTerminal::ShowMessageBox(const std::string &message)
                        fontSize, 1.0f, Fade(textColor, boxScale));
         }
 
-        
         if (boxScale > 0.98f)
         {
-            
+
             Color currentButtonColor = mouseOverButton && buttonPressed ? HOVER_COLOR : (mouseOverButton ? HOVER_COLOR : BUTTON_COLOR);
             DrawRectangleRounded(continueButton, 0.2f, 10, currentButtonColor);
             DrawRectangleRoundedLines(continueButton, 0.2f, 10, mouseOverButton ? SKYBLUE : BUTTON_BORDER_COLOR);
@@ -720,7 +711,7 @@ void ShowInTerminal::ShowBackgroundScreen(std::string name, std::string message)
     float boxScale = 0.9f;
     float targetScale = 1.0f;
 
-    Color boxColor = {15, 25, 40, 160}; // Small semi-transparent box
+    Color boxColor = {15, 25, 40, 160};
     Color borderColor = {0, 220, 255, 200};
     Color textColor = {220, 240, 255, 255};
     int fontSize = 28;
@@ -753,24 +744,21 @@ void ShowInTerminal::ShowBackgroundScreen(std::string name, std::string message)
                            Vector2{0, 0}, 0.0f, WHITE);
         }
 
-        // Measure text size
         Vector2 textSize = MeasureTextEx(font, message.c_str(), fontSize, 1.0f);
         float padding = 40;
 
         Rectangle textBox = {
             (screenWidth - textSize.x - padding) / 2,
-            screenHeight - textSize.y - 80, // lower on the screen
+            screenHeight - textSize.y - 80,
             textSize.x + padding,
             textSize.y + 30};
 
-        // Scale box for slight zoom-in effect
         Rectangle scaledBox = {
             textBox.x + (textBox.width * (1 - boxScale)) / 2,
             textBox.y + (textBox.height * (1 - boxScale)) / 2,
             textBox.width * boxScale,
             textBox.height * boxScale};
 
-        // Draw box and text
         DrawRectangleRounded(scaledBox, 0.2f, 16, Fade(boxColor, boxScale));
         DrawRectangleRoundedLines(scaledBox, 0.2f, 16, Fade(borderColor, boxScale));
 
@@ -1094,7 +1082,7 @@ void ShowInTerminal::DrawMonsterCard(const std::shared_ptr<MonsterCard> &card, V
 }
 
 void ShowInTerminal::DrawDiceMat()
-{   
+{
     const float diceW = 265;
     const float diceH = 172;
     const float boxSize = 60;
@@ -1103,10 +1091,9 @@ void ShowInTerminal::DrawDiceMat()
     Vector2 matPos = {590, 370};
 
     int numDice = currentFaces.size();
-   Vector2 startPos = {
-        matPos.x + (diceW - (numDice * boxSize + (numDice - 1) * spacing)) / 2,  
-        matPos.y + (diceH - boxSize) / 2                             
-    };
+    Vector2 startPos = {
+        matPos.x + (diceW - (numDice * boxSize + (numDice - 1) * spacing)) / 2,
+        matPos.y + (diceH - boxSize) / 2};
     DrawTexturePro(DiceBack,
                    {0, 0, (float)DiceBack.width, (float)DiceBack.height},
                    {matPos.x, matPos.y, diceW, diceH},
@@ -1186,7 +1173,6 @@ void ShowInTerminal::DrawCharactersOnMap(
     float mapDrawHeight = 542)
 {
 
-    // === Draw Items
     for (const auto i : Items)
     {
         auto posIt = locationPositions.find(i->GetItemLocationName()->GetCityName());
@@ -1202,7 +1188,7 @@ void ShowInTerminal::DrawCharactersOnMap(
             DrawTextureEx(ItemTex, position, 0.0f, Scale, WHITE);
         }
     }
-    // === Draw Heroes
+
     for (const auto &h : heroes)
     {
         auto posIt = locationPositions.find(h->getLocation()->GetCityName());
@@ -1219,7 +1205,6 @@ void ShowInTerminal::DrawCharactersOnMap(
         }
     }
 
-    // === Draw Monsters
     for (const auto &m : monsters)
     {
         auto posIt = locationPositions.find(m->GetLocation()->GetCityName());
@@ -1243,7 +1228,6 @@ void ShowInTerminal::DrawCharactersOnMap(
         }
     }
 
-    // === Draw Villagers
     for (const auto &v : villagers)
     {
         if (v->getCurrentLocation())
@@ -1280,7 +1264,7 @@ std::vector<std::string> ShowInTerminal::ShowDiceRollAnimation(Dice &dice, Font 
     {
         UpdateMusicStream(music);
         BeginDrawing();
-        // ClearBackground(DARKBLUE);
+
         DrawTexturePro(DiceBack,
                        {0, 0, (float)DiceBack.width, (float)DiceBack.height},
                        {0, 0, (float)GetScreenWidth(), (float)GetScreenHeight()},
@@ -1302,7 +1286,6 @@ std::vector<std::string> ShowInTerminal::ShowDiceRollAnimation(Dice &dice, Font 
 
         EndDrawing();
 
-        // Simulate delay
         float delay = 0.09f;
         float elapsed = 0.0f;
         while (elapsed < delay)
@@ -1314,7 +1297,7 @@ std::vector<std::string> ShowInTerminal::ShowDiceRollAnimation(Dice &dice, Font 
     }
 
     BeginDrawing();
-    // ClearBackground(DARKBLUE);
+
     DrawTexturePro(DiceBack,
                    {0, 0, (float)DiceBack.width, (float)DiceBack.height},
                    {0, 0, (float)GetScreenWidth(), (float)GetScreenHeight()},
@@ -1391,15 +1374,12 @@ void ShowInTerminal::DrawInventoryPopup(std::shared_ptr<Hero> hero, float &scrol
     if (!hero)
         return;
 
-    
     Rectangle popupBounds = {
         (GetScreenWidth() - 300.0f) / 2,
         (GetScreenHeight() - 450.0f) / 2,
-        300.0f,                           
-        450.0f                           
-    };
+        300.0f,
+        450.0f};
 
-    
     DrawRectangleRec(popupBounds, Fade(BLACK, 0.9f));
     DrawRectangleLinesEx(popupBounds, 3, SKYBLUE);
 
@@ -1411,18 +1391,14 @@ void ShowInTerminal::DrawInventoryPopup(std::shared_ptr<Hero> hero, float &scrol
     const int itemFontSize = 18;
     const auto &items = hero->getInventory();
 
-    
     float totalContentHeight = items.empty() ? itemSpacing : items.size() * itemSpacing;
 
-    
     DrawTextEx(font, "Inventory", {popupBounds.x + padding, popupBounds.y + 15}, titleFontSize, 1, GOLD);
 
-    
     Rectangle closeBtn = {popupBounds.x + popupBounds.width - 40, popupBounds.y + 10, 30, 30};
     DrawRectangleRounded(closeBtn, 0.2f, 4, RED);
     DrawTextEx(font, "X", {closeBtn.x + 8, closeBtn.y + 4}, 24, 1, WHITE);
 
-    
     Rectangle viewArea = {
         popupBounds.x,
         popupBounds.y + titleSectionHeight,
@@ -1434,11 +1410,10 @@ void ShowInTerminal::DrawInventoryPopup(std::shared_ptr<Hero> hero, float &scrol
         float wheelMove = GetMouseWheelMove();
         if (wheelMove != 0)
         {
-            scrollY += wheelMove * 20; 
+            scrollY += wheelMove * 20;
         }
     }
 
-    
     if (scrollY > 0)
         scrollY = 0;
     float minScrollY = viewArea.height - totalContentHeight;
@@ -1447,7 +1422,6 @@ void ShowInTerminal::DrawInventoryPopup(std::shared_ptr<Hero> hero, float &scrol
     if (scrollY < minScrollY)
         scrollY = minScrollY;
 
-    
     BeginScissorMode(viewArea.x, viewArea.y, viewArea.width, viewArea.height);
 
     float currentX = viewArea.x + padding;
@@ -1459,7 +1433,7 @@ void ShowInTerminal::DrawInventoryPopup(std::shared_ptr<Hero> hero, float &scrol
     }
     else
     {
-        
+
         for (const auto &item : items)
         {
             if (itemTextures.count(item->getName()))
@@ -1475,7 +1449,6 @@ void ShowInTerminal::DrawInventoryPopup(std::shared_ptr<Hero> hero, float &scrol
         }
     }
 
-    
     EndScissorMode();
 }
 void ShowInTerminal::DrawLocationInfoPopup(std::shared_ptr<Location> location, float &scrollY)
@@ -1672,7 +1645,7 @@ int ShowInTerminal::ShowHeroPhase(Game &game, const std::vector<std::string> &op
 
             else if (showInventoryPopup)
             {
-                Rectangle popupBounds = {(GetScreenWidth() - 300.0f) / 2, (GetScreenHeight() - 450.0f) / 2 , 300.0f , 450.0f};
+                Rectangle popupBounds = {(GetScreenWidth() - 300.0f) / 2, (GetScreenHeight() - 450.0f) / 2, 300.0f, 450.0f};
                 Rectangle closeBtn = {popupBounds.x + popupBounds.width - 40, popupBounds.y + 10, 30, 30};
                 if (CheckCollisionPointRec(mouse, closeBtn))
                 {
@@ -1732,21 +1705,20 @@ int ShowInTerminal::ShowHeroPhase(Game &game, const std::vector<std::string> &op
         DrawCharactersOnMap(game.heroes, game.Monsters, game.villagers, game.GetItemsInGame(), 30, {0, 0});
         DrawTerrorLevel(game.terrorLevel, font, {8, 484});
 
-        // --- Dracula Mat ---
-        Vector2 draculaMatPos = {(float)GetScreenWidth() - 165.0f, 40.0f};if (auto dracula = game.GetDracula())
+        Vector2 draculaMatPos = {(float)GetScreenWidth() - 165.0f, 40.0f};
+        if (auto dracula = game.GetDracula())
         {
             DrawDraculaMat(game, draculaMatPos);
         }
         else
         {
-            // Show a message if Dracula is defeated
+
             const char *defeatedMsg = "Dracula is Defeated";
             float fontSize = 18.0f;
             Vector2 textSize = MeasureTextEx(font, defeatedMsg, fontSize, 1);
             DrawTextEx(font, defeatedMsg, {draculaMatPos.x + (148.0f - textSize.x) / 2, draculaMatPos.y + 20}, fontSize, 1, RED);
         }
 
-        // --- Invisible Man Mat ---
         Vector2 inMatPos = {(float)GetScreenWidth() - 330.0f, 40.0f};
         if (auto invisible = game.GetInvisibleMan())
         {
@@ -1754,18 +1726,17 @@ int ShowInTerminal::ShowHeroPhase(Game &game, const std::vector<std::string> &op
         }
         else
         {
-            
+
             const char *defeatedMsg = "Invisible Man is Defeated";
             float fontSize = 18.0f;
             Vector2 textSize = MeasureTextEx(font, defeatedMsg, fontSize, 1);
             DrawTextEx(font, defeatedMsg, {inMatPos.x + (148.0f - textSize.x) / 2, inMatPos.y + 20}, fontSize, 1, SKYBLUE);
         }
 
-        
         Rectangle inventoryClickZone = {0};
         if (game.heroPlayer)
         {
-            
+
             Vector2 heroInfoPos = {inMatPos.x, inMatPos.y + 290.0f};
             DrawHeroInfo(game.heroPlayer, font, heroInfoPos, &inventoryClickZone);
             if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && CheckCollisionPointRec(GetMousePosition(), inventoryClickZone))
@@ -1806,7 +1777,7 @@ int ShowInTerminal::ShowHeroPhase(Game &game, const std::vector<std::string> &op
 
         if (showInventoryPopup)
         {
-            DrawInventoryPopup(game.heroPlayer , inventoryScrolly);
+            DrawInventoryPopup(game.heroPlayer, inventoryScrolly);
         }
 
         if (showLocationItemsPopup)
@@ -1824,12 +1795,10 @@ void ShowInTerminal::ShowMonsterPhase(Game &game, std::shared_ptr<MonsterCard> c
     float screenW = (float)GetScreenWidth();
     float screenH = (float)GetScreenHeight();
 
-    // Map
     float mapW = 545;
     float mapH = 542;
     Vector2 mapPos = {0, 0};
 
-    // Monster Card
     float cardW = 265;
     float cardH = 370;
     Texture2D monsterTexture = monsterCardTextures[card->GetName()];
@@ -1837,11 +1806,10 @@ void ShowInTerminal::ShowMonsterPhase(Game &game, std::shared_ptr<MonsterCard> c
     Vector2 cardPos = {mapPos.x + mapW + 45, 0};
 
     BeginDrawing();
-    // === Backgound
+
     Texture2D bg = backgroundTextures["menu"];
     DrawTexturePro(bg, {0, 0, (float)bg.width, (float)bg.height}, {0, 0, (float)GetScreenWidth(), (float)GetScreenHeight()}, {0, 0}, 0.0f, WHITE);
 
-    // === Map
     DrawRectangleLines(mapPos.x - 5, mapPos.y - 5, mapW + 10, mapH + 10, DARKGRAY);
     DrawTexturePro(
         mapTexture,
@@ -1849,7 +1817,6 @@ void ShowInTerminal::ShowMonsterPhase(Game &game, std::shared_ptr<MonsterCard> c
         {mapPos.x, mapPos.y, mapW, mapH},
         {0, 0}, 0.0f, WHITE);
 
-    // === Characters on Map
     DrawCharactersOnMap(game.heroes,
                         game.Monsters,
                         game.villagers,
@@ -1857,10 +1824,9 @@ void ShowInTerminal::ShowMonsterPhase(Game &game, std::shared_ptr<MonsterCard> c
                         30,
                         {0, 0});
 
-    // === Monster Card
     DrawRectangleLines(cardPos.x - 5, cardPos.y - 5, cardW + 10, cardH + 10, DARKGRAY);
     DrawMonsterCard(card, cardPos, cardScale);
-    // === Dice mat
+
     DrawDiceMat();
 
     EndDrawing();
