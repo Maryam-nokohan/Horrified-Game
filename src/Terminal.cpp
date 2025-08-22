@@ -522,6 +522,9 @@ int GUI::MenuGenerator(const std::vector<std::string> &options)
         optionRects[i] = {x, y, buttonWidth, buttonHeight};
     }
 
+    
+    int selectedIndex = -1;
+
     while (!WindowShouldClose())
     {
         UpdateMusicStream(music);
@@ -529,13 +532,27 @@ int GUI::MenuGenerator(const std::vector<std::string> &options)
 
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
         {
+            selectedIndex = -1;
             for (int i = 0; i < options.size(); i++)
             {
                 if (CheckCollisionPointRec(mouse, optionRects[i]))
                 {
-                    return i;
+                    selectedIndex = i;
+                    break;
                 }
             }
+        }
+        
+        if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON))
+        {
+            if (selectedIndex != -1)
+            {
+                if (CheckCollisionPointRec(mouse, optionRects[selectedIndex]))
+                {
+                    return selectedIndex;
+                }
+            }
+            selectedIndex = -1;
         }
 
         BeginDrawing();
@@ -546,15 +563,21 @@ int GUI::MenuGenerator(const std::vector<std::string> &options)
         for (int i = 0; i < options.size(); i++)
         {
             bool hovered = CheckCollisionPointRec(mouse, optionRects[i]);
+            
+            
+            Color currentButtonColor = BUTTON_COLOR;
+            if (i == selectedIndex && IsMouseButtonDown(MOUSE_LEFT_BUTTON)) {
+                currentButtonColor = HOVER_COLOR;
+            } else if (hovered) {
+                currentButtonColor = HOVER_COLOR;
+            }
 
-            DrawRectangleRounded(optionRects[i], 0.2f, 10, hovered ? HOVER_COLOR : BUTTON_COLOR);
+            DrawRectangleRounded(optionRects[i], 0.2f, 10, currentButtonColor);
             DrawRectangleRoundedLines(optionRects[i], 0.2f, 10, hovered ? SKYBLUE : BUTTON_BORDER_COLOR);
 
             float fontSize = 20.0f;
             const float textPadding = 15.0f;
-            Vector2 textSize;
-
-            do
+            Vector2 textSize;do
             {
                 textSize = MeasureTextEx(font, options[i].c_str(), fontSize, 1);
                 if (textSize.x > buttonWidth - textPadding)
