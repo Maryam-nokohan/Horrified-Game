@@ -12,7 +12,7 @@
 #include "raylib.h"
 #include <unordered_map>
 class Game;
-class ShowInTerminal{
+class GUI{
   private :
   std :: unordered_map<std :: string , Texture2D> heroTextures;
   std :: unordered_map<std :: string , Texture2D> monsterTextures;
@@ -43,7 +43,7 @@ Rectangle locationPopupBounds = { 200, 100, 400, 500 };
   public :
   Music music;
   void DrawLocationInfoPopup(std::shared_ptr<Location> location, float& scrollY);
-  ShowInTerminal()= default;
+  GUI()= default;
   void ShowMessageBox(const std :: string&);
   void LoadAssets();
   void UnloadAssets();

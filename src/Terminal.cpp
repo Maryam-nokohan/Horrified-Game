@@ -20,7 +20,7 @@
 
 using namespace Names;
 using namespace LocationNames;
-void ShowInTerminal ::LoadAssets()
+void GUI ::LoadAssets()
 {
     // Heroes
     heroTextures["Mayor"] = LoadTexture("../assets/Heros/Mayor.png");
@@ -177,7 +177,7 @@ void ShowInTerminal ::LoadAssets()
     locationBounds[Hospital] = {210.0f - r, 497.0f - r, 2 * r, 2 * r};
     locationBounds[Graveyard] = {328.0f - r, 488.0f - r, 2 * r, 2 * r};
 }
-void ShowInTerminal ::UnloadAssets()
+void GUI ::UnloadAssets()
 {
 
     for (auto &[_, tex] : heroTextures)
@@ -221,7 +221,7 @@ void ShowInTerminal ::UnloadAssets()
     std::cout << "Unloaded frenzy dice Background\n";
 }
 
-void ShowInTerminal::ShowMessageBox(const std::string &message)
+void GUI::ShowMessageBox(const std::string &message)
 {
     const int windowWidth = 900;
     const int windowHeight = 700;
@@ -354,7 +354,7 @@ void ShowInTerminal::ShowMessageBox(const std::string &message)
         EndDrawing();
     }
 }
-void ShowInTerminal::ShowHelpScreen()
+void GUI::ShowHelpScreen()
 {
     Texture2D bg = backgroundTextures["msg"];
     const int screenWidth = GetScreenWidth();
@@ -470,7 +470,7 @@ void ShowInTerminal::ShowHelpScreen()
         EndDrawing();
     }
 }
-int ShowInTerminal::MenuGenerator(const std::vector<std::string> &options)
+int GUI::MenuGenerator(const std::vector<std::string> &options)
 {
 
     const Color BG_COLOR = {21, 30, 39, 255};
@@ -575,7 +575,7 @@ int ShowInTerminal::MenuGenerator(const std::vector<std::string> &options)
     return -1;
 }
 
-bool ShowInTerminal::GetPlayerInfo(std::string &name, int &days)
+bool GUI::GetPlayerInfo(std::string &name, int &days)
 {
 
     const int screenWidth = GetScreenWidth();
@@ -701,7 +701,7 @@ bool ShowInTerminal::GetPlayerInfo(std::string &name, int &days)
     return submitClicked;
 }
 
-void ShowInTerminal::ShowBackgroundScreen(std::string name, std::string message)
+void GUI::ShowBackgroundScreen(std::string name, std::string message)
 {
     const int screenWidth = GetScreenWidth();
     const int screenHeight = GetScreenHeight();
@@ -779,7 +779,7 @@ void ShowInTerminal::ShowBackgroundScreen(std::string name, std::string message)
     SetMusicVolume(music, 1.0f);
 }
 
-void ShowInTerminal ::DrawTerrorLevel(int terrorLevel, Font font, Vector2 position)
+void GUI ::DrawTerrorLevel(int terrorLevel, Font font, Vector2 position)
 {
 
     std::string label = "Terror Level: " + std::to_string(terrorLevel);
@@ -795,7 +795,7 @@ void ShowInTerminal ::DrawTerrorLevel(int terrorLevel, Font font, Vector2 positi
 
     DrawRectangleLinesEx(barBg, 2, BLACK);
 }
-void ShowInTerminal::DrawDraculaMat(Game &game, Vector2 startPos)
+void GUI::DrawDraculaMat(Game &game, Vector2 startPos)
 {
     auto dracula = game.GetDracula();
     if (!dracula)
@@ -891,7 +891,7 @@ void ShowInTerminal::DrawDraculaMat(Game &game, Vector2 startPos)
                    14, 1, GRAY);
     }
 }
-void ShowInTerminal::DrawInvisibleManMat(const std::vector<std::pair<bool, std::string>> &evidences, Font font, Vector2 startPos)
+void GUI::DrawInvisibleManMat(const std::vector<std::pair<bool, std::string>> &evidences, Font font, Vector2 startPos)
 {
     if (evidences.empty())
         return;
@@ -964,7 +964,7 @@ void ShowInTerminal::DrawInvisibleManMat(const std::vector<std::pair<bool, std::
     }
 }
 
-void ShowInTerminal ::DrawItemsList(const std::vector<std::shared_ptr<Item>> &items, Font font, Vector2 position)
+void GUI ::DrawItemsList(const std::vector<std::shared_ptr<Item>> &items, Font font, Vector2 position)
 {
     float fontSize = 18;
     float spacing = 2;
@@ -991,7 +991,7 @@ void ShowInTerminal ::DrawItemsList(const std::vector<std::shared_ptr<Item>> &it
     }
 }
 
-void ShowInTerminal::DrawHeroInfo(std::shared_ptr<Hero> hero, Font font, Vector2 startPos, Rectangle *outClickZone)
+void GUI::DrawHeroInfo(std::shared_ptr<Hero> hero, Font font, Vector2 startPos, Rectangle *outClickZone)
 {
     if (!hero)
         return;
@@ -1060,7 +1060,7 @@ void ShowInTerminal::DrawHeroInfo(std::shared_ptr<Hero> hero, Font font, Vector2
     }
 }
 
-void ShowInTerminal::DrawMonsterCard(const std::shared_ptr<MonsterCard> &card, Vector2 position, float scale)
+void GUI::DrawMonsterCard(const std::shared_ptr<MonsterCard> &card, Vector2 position, float scale)
 {
     if (!card)
         return;
@@ -1081,7 +1081,7 @@ void ShowInTerminal::DrawMonsterCard(const std::shared_ptr<MonsterCard> &card, V
     }
 }
 
-void ShowInTerminal::DrawDiceMat()
+void GUI::DrawDiceMat()
 {
     const float diceW = 265;
     const float diceH = 172;
@@ -1120,7 +1120,7 @@ void ShowInTerminal::DrawDiceMat()
     }
 }
 
-float ShowInTerminal::GetBestScaleForCharacters(Texture2D ObjectTexture)
+float GUI::GetBestScaleForCharacters(Texture2D ObjectTexture)
 {
     float TargetWidth = 59;
     float TargetHeight = 86;
@@ -1129,7 +1129,7 @@ float ShowInTerminal::GetBestScaleForCharacters(Texture2D ObjectTexture)
     return fmin(ScaleX, ScaleY);
 }
 
-void ShowInTerminal::DrawPerkCard(const std::shared_ptr<PerkCard> &card, Font font, Vector2 position)
+void GUI::DrawPerkCard(const std::shared_ptr<PerkCard> &card, Font font, Vector2 position)
 {
     DrawTextEx(font, "Perk Card", {position.x + 35, position.y}, 20, 2, GREEN);
 
@@ -1162,7 +1162,7 @@ void ShowInTerminal::DrawPerkCard(const std::shared_ptr<PerkCard> &card, Font fo
     }
 }
 
-void ShowInTerminal::DrawCharactersOnMap(
+void GUI::DrawCharactersOnMap(
     const std::vector<std::shared_ptr<Hero>> &heroes,
     const std::vector<std::shared_ptr<Monster>> &monsters,
     const std::vector<std::shared_ptr<Villager>> &villagers,
@@ -1184,7 +1184,7 @@ void ShowInTerminal::DrawCharactersOnMap(
             position.y -= 60;
             position.x -= 30;
 
-            float Scale = ShowInTerminal::GetBestScaleForCharacters(ItemTex);
+            float Scale = GUI::GetBestScaleForCharacters(ItemTex);
             DrawTextureEx(ItemTex, position, 0.0f, Scale, WHITE);
         }
     }
@@ -1200,7 +1200,7 @@ void ShowInTerminal::DrawCharactersOnMap(
             position.y -= 60;
             position.x -= 30;
 
-            float Scale = ShowInTerminal::GetBestScaleForCharacters(HeroTex);
+            float Scale = GUI::GetBestScaleForCharacters(HeroTex);
             DrawTextureEx(HeroTex, position, 0.0f, Scale, WHITE);
         }
     }
@@ -1216,7 +1216,7 @@ void ShowInTerminal::DrawCharactersOnMap(
             position.y -= 80;
             position.x -= 50;
 
-            float Scale = ShowInTerminal::GetBestScaleForCharacters(MonsterTex);
+            float Scale = GUI::GetBestScaleForCharacters(MonsterTex);
             DrawTextureEx(MonsterTex, position, 0.0f, Scale, WHITE);
             if (m->GetFrenzyMarker())
             {
@@ -1241,14 +1241,14 @@ void ShowInTerminal::DrawCharactersOnMap(
                 position.y -= 60;
                 position.x -= 5;
 
-                float Scale = ShowInTerminal::GetBestScaleForCharacters(VillagerTex);
+                float Scale = GUI::GetBestScaleForCharacters(VillagerTex);
                 DrawTextureEx(VillagerTex, position, 0.0f, Scale, WHITE);
             }
         }
     }
 }
 
-std::vector<std::string> ShowInTerminal::ShowDiceRollAnimation(Dice &dice, Font font)
+std::vector<std::string> GUI::ShowDiceRollAnimation(Dice &dice, Font font)
 {
     const int numDice = 3;
     const int rollFrames = 20;
@@ -1329,7 +1329,7 @@ std::vector<std::string> ShowInTerminal::ShowDiceRollAnimation(Dice &dice, Font 
     currentFaces = resultFaces;
     return resultFaces;
 }
-void ShowInTerminal::ShowPopupMessages(Game &game, const std::string message)
+void GUI::ShowPopupMessages(Game &game, const std::string message)
 {
     float screenW = (float)GetScreenWidth();
     float screenH = (float)GetScreenHeight();
@@ -1369,7 +1369,7 @@ void ShowInTerminal::ShowPopupMessages(Game &game, const std::string message)
             waiting = false;
     }
 }
-void ShowInTerminal::DrawInventoryPopup(std::shared_ptr<Hero> hero, float &scrollY)
+void GUI::DrawInventoryPopup(std::shared_ptr<Hero> hero, float &scrollY)
 {
     if (!hero)
         return;
@@ -1451,7 +1451,7 @@ void ShowInTerminal::DrawInventoryPopup(std::shared_ptr<Hero> hero, float &scrol
 
     EndScissorMode();
 }
-void ShowInTerminal::DrawLocationInfoPopup(std::shared_ptr<Location> location, float &scrollY)
+void GUI::DrawLocationInfoPopup(std::shared_ptr<Location> location, float &scrollY)
 {
     if (!location)
         return;
@@ -1598,7 +1598,7 @@ void ShowInTerminal::DrawLocationInfoPopup(std::shared_ptr<Location> location, f
 
     EndScissorMode();
 }
-int ShowInTerminal::ShowHeroPhase(Game &game, const std::vector<std::string> &options)
+int GUI::ShowHeroPhase(Game &game, const std::vector<std::string> &options)
 {
     int selected = -1;
 
@@ -1791,7 +1791,7 @@ int ShowInTerminal::ShowHeroPhase(Game &game, const std::vector<std::string> &op
 
     return selected;
 }
-void ShowInTerminal::ShowMonsterPhase(Game &game, std::shared_ptr<MonsterCard> card)
+void GUI::ShowMonsterPhase(Game &game, std::shared_ptr<MonsterCard> card)
 {
     float screenW = (float)GetScreenWidth();
     float screenH = (float)GetScreenHeight();
@@ -1833,4 +1833,4 @@ void ShowInTerminal::ShowMonsterPhase(Game &game, std::shared_ptr<MonsterCard> c
     EndDrawing();
 }
 
-Font ShowInTerminal::GetFont() { return font; }
+Font GUI::GetFont() { return font; }

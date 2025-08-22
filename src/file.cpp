@@ -417,6 +417,7 @@ void GameFileHandler::LoadGame(Game &game, const std::string &filename)
         }
     }
     // Villagers
+    game.villagers.clear();
     int villageCount;
     in >> token >> villageCount;
     for (int i = 0; i < villageCount; ++i)
@@ -436,20 +437,31 @@ void GameFileHandler::LoadGame(Game &game, const std::string &filename)
         in >> token;
         int stateInt;
         in >> stateInt;
-        std::cout << villagerName <<'\n';
         auto safeLocation = game.mapPlan.GetLocationptr(safeLoc);
-        std::cout << "problem\n";
         auto currentLoc = (currentLocStr == "NO_LOCATION") ? nullptr : game.mapPlan.GetLocationptr(currentLocStr);
 
-        auto villager = std::make_shared<Villager>(villagerName, safeLocation,currentLoc);
+        auto it = std::find_if(game.villagers.begin(), game.villagers.end(),
+                               [&](const std::shared_ptr<Villager> &v)
+                               {
+                                   return v->getName() == villagerName;
+                               });
+
+        std::shared_ptr<Villager> villager;
+        if (it != game.villagers.end())
+        {
+            villager = *it;
+        }
+        else
+        {
+            villager = std::make_shared<Villager>(villagerName, safeLocation, currentLoc);
+            game.villagers.push_back(villager);
+        }
         villager->SetState(static_cast<State>(stateInt));
 
         if (currentLoc && villager->isAlive() != State::Killed && villager->isAlive() != State::Rescued)
         {
-            villager->SetLocation(currentLoc); // only active villagers get placed
+            villager->SetLocation(currentLoc);
         }
-
-        game.villagers.push_back(villager);
     }
 
     in.close();

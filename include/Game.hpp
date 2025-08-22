@@ -18,7 +18,7 @@
 class Game{
     friend class Hero;
     friend class Monster;
-    friend class ShowInTerminal;
+    friend class GUI;
     friend class PerkCard;
     friend class MonsterCard;
     friend class Dracula;
@@ -48,7 +48,7 @@ class Game{
     void InitializeCards();
     void InitializeCharacters();
     public :
-    ShowInTerminal MyTerminal;
+    GUI MyTerminal;
     void GameStart();
     Game();
     Game(const Game &) = delete;
