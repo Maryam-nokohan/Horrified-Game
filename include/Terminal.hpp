@@ -47,7 +47,7 @@ Rectangle locationPopupBounds = { 200, 100, 400, 500 };
   void ShowMessageBox(const std :: string&);
   void LoadAssets();
   void UnloadAssets();
-  void DrawInventoryPopup(std::shared_ptr<Hero> hero);
+  void DrawInventoryPopup(std::shared_ptr<Hero> hero ,float &scrollY);
   std::vector<std::string> ShowDiceRollAnimation(Dice &dice, Font font);
   void DrawDiceMat();
   int MenuGenerator(const std::vector<std::string>& options);

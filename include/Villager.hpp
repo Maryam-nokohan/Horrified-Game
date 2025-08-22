@@ -17,7 +17,7 @@ class Villager :public std :: enable_shared_from_this<Villager>
       std :: shared_ptr<Location> currentLocation;
       std :: shared_ptr<Location> safeLocation;
     public:
-       Villager(const std :: string Name , std :: shared_ptr<Location> SafeLoc); 
+       Villager(const std :: string Name , std :: shared_ptr<Location> SafeLoc , std::shared_ptr<Location> curr = nullptr); 
       const std::string& getName() const;
       void SetLocation(std :: shared_ptr<Location>);
       const std :: shared_ptr<Location>& getCurrentLocation() const;
