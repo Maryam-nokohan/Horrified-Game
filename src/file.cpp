@@ -96,14 +96,6 @@ void GameFileHandler::SaveGame(Game &game, const std::string &filename)
             out << "item " << item->getPower() << " " << static_cast<int>(item->getColor()) << " " << item->getName() << "\n";
         }
 
-        // Villagers
-        // const auto &villagers = loc->GetVillager();
-        // out << "villagers " << villagers.size() << "\n";
-        // for (const auto &v : villagers)
-        // {
-        //     out << "villager " << v->getName() << "\n";
-        // }
-
         // Heroes
         const auto &heroes = loc->GetHero();
         out << "heroes " << heroes.size() << "\n";
@@ -156,7 +148,6 @@ void GameFileHandler::SaveGame(Game &game, const std::string &filename)
     {
         out << "villagerName " << village->getName() << '\n';
 
-        // ✅ Handle null currentLocation explicitly
         if (village->getCurrentLocation())
             out << "currentLocation " << village->getCurrentLocation()->GetCityName() << '\n';
         else
@@ -290,12 +281,10 @@ void GameFileHandler::LoadGame(Game &game, const std::string &filename)
         game.MonsterDeck.push_back(std::make_shared<MonsterCard>(name, item, event, MonsterStrike(order, move, dice)));
     }
 
-    std::vector<std::pair<std::string, std::string>> villagerLocationPairs;
-
     // Locs
     int locCount;
     in >> token >> locCount;
-
+    game.Items.clear();
     for (int i = 0; i < locCount; ++i)
     {
         in >> token;
@@ -308,6 +297,7 @@ void GameFileHandler::LoadGame(Game &game, const std::string &filename)
         int count;
 
         // Items
+        loc->ClearItems();
         in >> token >> count;
         for (int j = 0; j < count; ++j)
         {
@@ -320,17 +310,6 @@ void GameFileHandler::LoadGame(Game &game, const std::string &filename)
             auto item = std::make_shared<Item>((ItemColor)color, power, loc, loc, ItemName);
             loc->AddItem(item);
         }
-
-        // Villagers
-        // in >> token >> count;
-
-        // for (int j = 0; j < count; ++j)
-        // {
-        //     in >> token >> std::ws;
-        //     std::string name;
-        //     std::getline(in, name);
-        //     villagerLocationPairs.emplace_back(name, loc->GetCityName());
-        // }
 
         // Heroes
         in >> token >> count;

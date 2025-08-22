@@ -29,7 +29,6 @@ class Game{
     Map mapPlan;
     int terrorLevel;
     std :: shared_ptr <Hero>heroPlayer;
-    std :: shared_ptr <Hero>heroPlayer2;
     bool GameOver;
     bool skipMonsterPhase;
     bool showMessage;
@@ -70,6 +69,5 @@ class Game{
     std::shared_ptr<InvisibleMan> GetInvisibleMan();
     void Reset();
     Game& GetGame(){return *this;};
-    // test
 };
 #endif

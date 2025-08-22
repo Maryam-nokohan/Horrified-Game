@@ -961,7 +961,10 @@ void Game::Reset()
     {
         loc.second->ClearVillagers();
     }
-    Items.clear();
+     for (auto &loc : mapPlan.getLocations())
+    {
+        loc.second->ClearItems();
+    }
     EmptyBackUpItems.clear();
     PerkDeck.clear();
     MonsterDeck.clear();
