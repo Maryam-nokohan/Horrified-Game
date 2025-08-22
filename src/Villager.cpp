@@ -2,7 +2,7 @@
 #include "../include/Location.hpp"
 #include <stdexcept>
 
-Villager :: Villager(const std :: string Name , std :: shared_ptr<Location> SafeLoc): currentLocation(nullptr) , state(State::Alive)
+Villager :: Villager(const std :: string Name , std :: shared_ptr<Location> SafeLoc , std::shared_ptr<Location> currentLocation): currentLocation(currentLocation) , state(State::Alive)
 {
     name = Name;
     safeLocation = SafeLoc;

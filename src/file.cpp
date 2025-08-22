@@ -97,12 +97,12 @@ void GameFileHandler::SaveGame(Game &game, const std::string &filename)
         }
 
         // Villagers
-        const auto &villagers = loc->GetVillager();
-        out << "villagers " << villagers.size() << "\n";
-        for (const auto &v : villagers)
-        {
-            out << "villager " << v->getName() << "\n";
-        }
+        // const auto &villagers = loc->GetVillager();
+        // out << "villagers " << villagers.size() << "\n";
+        // for (const auto &v : villagers)
+        // {
+        //     out << "villager " << v->getName() << "\n";
+        // }
 
         // Heroes
         const auto &heroes = loc->GetHero();
@@ -155,7 +155,13 @@ void GameFileHandler::SaveGame(Game &game, const std::string &filename)
     for (const auto &village : game.villagers)
     {
         out << "villagerName " << village->getName() << '\n';
-        out << "currentLocation " << village->getCurrentLocationName() << '\n';
+
+        // ✅ Handle null currentLocation explicitly
+        if (village->getCurrentLocation())
+            out << "currentLocation " << village->getCurrentLocation()->GetCityName() << '\n';
+        else
+            out << "currentLocation NO_LOCATION\n";
+
         out << "safeHouse " << village->getSafeLocation()->GetCityName() << '\n';
         out << "villagerState " << static_cast<int>(village->isAlive()) << '\n';
     }
@@ -316,15 +322,15 @@ void GameFileHandler::LoadGame(Game &game, const std::string &filename)
         }
 
         // Villagers
-        in >> token >> count;
+        // in >> token >> count;
 
-        for (int j = 0; j < count; ++j)
-        {
-            in >> token >> std::ws;
-            std::string name;
-            std::getline(in, name);
-            villagerLocationPairs.emplace_back(name, loc->GetCityName());
-        }
+        // for (int j = 0; j < count; ++j)
+        // {
+        //     in >> token >> std::ws;
+        //     std::string name;
+        //     std::getline(in, name);
+        //     villagerLocationPairs.emplace_back(name, loc->GetCityName());
+        // }
 
         // Heroes
         in >> token >> count;
@@ -373,7 +379,7 @@ void GameFileHandler::LoadGame(Game &game, const std::string &filename)
             m->MarkDefeated();
             auto it = std ::find(game.Monsters.begin(), game.Monsters.end(), m);
             if (it != game.Monsters.end())
-            game.Monsters.erase(it);
+                game.Monsters.erase(it);
         }
     }
 
@@ -430,15 +436,18 @@ void GameFileHandler::LoadGame(Game &game, const std::string &filename)
         in >> token;
         int stateInt;
         in >> stateInt;
-
+        std::cout << villagerName <<'\n';
         auto safeLocation = game.mapPlan.GetLocationptr(safeLoc);
+        std::cout << "problem\n";
         auto currentLoc = (currentLocStr == "NO_LOCATION") ? nullptr : game.mapPlan.GetLocationptr(currentLocStr);
 
-        auto villager = std::make_shared<Villager>(villagerName, safeLocation);
+        auto villager = std::make_shared<Villager>(villagerName, safeLocation,currentLoc);
         villager->SetState(static_cast<State>(stateInt));
 
-        if (currentLoc)
-            villager->SetLocation(currentLoc);
+        if (currentLoc && villager->isAlive() != State::Killed && villager->isAlive() != State::Rescued)
+        {
+            villager->SetLocation(currentLoc); // only active villagers get placed
+        }
 
         game.villagers.push_back(villager);
     }
